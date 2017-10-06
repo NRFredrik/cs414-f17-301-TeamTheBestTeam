@@ -3,6 +3,8 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.BorderLayout;
 import javax.swing.SwingConstants;
 
@@ -26,7 +28,7 @@ import javax.swing.ImageIcon;
 
 public class Register {
 
-	private JFrame frame;
+	public JFrame frame;
 	private JTextField typeUsername;
 	private JTextField typeEmail;
 	private JPasswordField typePassword;
@@ -162,6 +164,15 @@ public class Register {
 					
 					//break out of while loop
 					isValid = true;
+					
+					//indicator telling user they registered and now need to login
+					JOptionPane.showMessageDialog(null,"You have Successfully registered. Please login now");
+					
+					/**
+					 * redirect to login page
+					 */
+					Login login = new Login();
+					login.frame.setVisible(true);
 					
 				}
 			}//end while

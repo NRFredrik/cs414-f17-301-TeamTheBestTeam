@@ -20,7 +20,7 @@ import java.awt.event.ActionEvent;
 
 public class Login {
 
-	private JFrame frame;
+	public JFrame frame;
 	private JTextField typeUsername;
 	private JPasswordField typePassword;
 
@@ -89,12 +89,19 @@ public class Login {
 					
 					System.out.println("you're logged in");
 					System.out.println("Now we need functionality to send user to start game\n");
+					frame.dispose(); //close this frame 
 				}
 				else
 				{
 					// TODO  Redirect user to register page
 					System.out.println("User is not registered");
 					System.out.println("Now we need functionality to send user to register page\n");
+					frame.dispose(); //close frame
+					/**
+					 * redirect to register page
+					 */
+					Register register = new Register();
+					register.frame.setVisible(true);
 				}
 				
 			}

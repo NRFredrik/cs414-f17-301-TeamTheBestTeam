@@ -25,11 +25,6 @@ public class RegisterTest {
 	ResultSet result;
 	Config conf;
 	
-	/**
-	 * Use for Hashing
-	 */
-	HashPassword hash;
-	
 	@Before
 	public void initialize()
 	{
@@ -41,7 +36,6 @@ public class RegisterTest {
 			String connURL = "jdbc:mysql://localhost:3306/Rollerball?useSSL=false";
 			this.con = DriverManager.getConnection(connURL, "root", "password");
 			this.stmt = con.createStatement();
-			this.hash = new HashPassword();
 			conf = new Config();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -60,13 +54,11 @@ public class RegisterTest {
 		String mail = "test@test.com";
 		String hashedPass = null;
 		try {
-			hashedPass = hash.hashPassword("password");
+			hashedPass = HashPassword.hashPassword("password");
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
-		}
-		
+		}	
 		boolean addedUser = conf.addNewUser(uname, mail, hashedPass);
-		
 		/**
 		 * if user was added successfully, addedUser will be true
 		 * and we can proceed with adding another user to the database using the same email
@@ -77,17 +69,73 @@ public class RegisterTest {
 			String mail2 = "test@test.com";
 			String hashedPass2 = null;
 			try {
-				hashedPass2 = hash.hashPassword("password");
+				hashedPass2 = HashPassword.hashPassword("password");
 			} catch (NoSuchAlgorithmException e) {
 				e.printStackTrace();
 			}
-			//this boolean should have value of 0 indicating the add failed
-			boolean addedUser2 = conf.addNewUser(uname2, mail2, hashedPass2);
-			//remove test user from database
-			conf.removeUser(mail);
-			
+			boolean addedUser2 = conf.addNewUser(uname2, mail2, hashedPass2); //this boolean should have value of 0 indicating the add failed
+			conf.removeUser(mail);	 //remove test user from database
 			assertEquals(false, addedUser = addedUser2);
 		}
+	}
+	
+	/**
+	 * @author kb
+	 * Test to make ensure that user can register when using a unique email
+	 */
+	@Test
+	public void addUserUniqueEmail() 
+	{
+		//add a user to the database
+		String uname = "testName";
+		String mail = "test@test.com";
+		String hashedPass = null;
+		try {
+			hashedPass = HashPassword.hashPassword("password");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}	
+		boolean addedUser = conf.addNewUser(uname, mail, hashedPass);
+		/**
+		 * if user was added successfully, addedUser will be true
+		 * and we can proceed with adding another user to the database using unique email
+		 */
+		if(addedUser)
+		{
+			String uname2 = "testName2";
+			String mail2 = "test@test22.com";
+			String hashedPass2 = null;
+			try {
+				hashedPass2 = HashPassword.hashPassword("password");
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			}
+			boolean addedUser2 = conf.addNewUser(uname2, mail2, hashedPass2); //this boolean should have value of 0 indicating the add failed
+			conf.removeUser(mail);	 //remove test user from database
+			conf.removeUser(mail2);	 //remove test user from database
+			assertEquals(true, addedUser = addedUser2);
+		}
+	}
+	
+	/**
+	 * @author kb
+	 * Test to make ensure that user can register when using a unique username
+	 */
+	@Test
+	public void addUserUnique() 
+	{
+		//add a unique user to the database
+		String uname = "testName";
+		String mail = "test@testMe.com";
+		String hashedPass = null;
+		try {
+			hashedPass = HashPassword.hashPassword("password");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}	
+		boolean addedUser = conf.addNewUser(uname, mail, hashedPass);
+		conf.removeUser(mail);	 //remove test user from database
+		assertEquals(true, addedUser);
 	}
 
 }

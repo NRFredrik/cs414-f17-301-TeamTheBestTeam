@@ -3,8 +3,10 @@ package edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Piece;
 
 public final class OccupiedTile extends Tile{
-	Piece pieceOnTile;
-	OccupiedTile(int tileCoordinate, Piece pieceOnTile) {		
+	//cannot be referenced without getter
+	private final Piece pieceOnTile;
+	
+	OccupiedTile(final int tileCoordinate, Piece pieceOnTile) {		
 		super(tileCoordinate);
 		this.pieceOnTile = pieceOnTile;
 	}

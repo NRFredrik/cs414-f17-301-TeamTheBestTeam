@@ -11,6 +11,7 @@ public abstract class Tile {
 	//can only be set at construction and is only visible to sub classes
 	protected final int tileCoordinate;
 	
+	//empty tiles cache
 	private static final Map<Integer, EmptyTile> EMPTY_TILES = createAllPossibleEmptyTiles();
 	
 	public static Tile createTile(final int tileCoordinate, final Piece piece){

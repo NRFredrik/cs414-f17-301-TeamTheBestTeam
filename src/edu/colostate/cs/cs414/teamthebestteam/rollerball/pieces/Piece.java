@@ -15,5 +15,9 @@ public abstract class Piece {
 	}
 	
 	public abstract List<Move> calculateLegalMoves(final Board board);
+
+	public Alliance getColor() {
+		return this.pieceAlliance;
+	}
 	
 }

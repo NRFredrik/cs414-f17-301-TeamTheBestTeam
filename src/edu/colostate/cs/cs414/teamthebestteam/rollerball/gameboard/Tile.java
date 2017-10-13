@@ -1,7 +1,9 @@
 package edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -22,6 +24,29 @@ public abstract class Tile {
 	
 	private Tile(int tileCoordinate){
 		this.tileCoordinate = tileCoordinate;
+	}
+	
+	/**
+	 * 
+	 * @param coordinate
+	 * @return true if the coordinate received is one of the non visible coordinates (in the 3x3)
+	 */
+	public static boolean isNotUsableTile(int coordinate)
+	{
+		//there are 49 possible tiles since board is 7x7, but there is a 3x3 missing from middle
+		//  TODO figure what to do about the 3x3 in middle (17,18,19), (24,25,26), (31,32,33)
+		Set<Integer> restrictedTiles = new HashSet<>();
+		restrictedTiles.add(16);
+		restrictedTiles.add(17);
+		restrictedTiles.add(18);
+		restrictedTiles.add(23);
+		restrictedTiles.add(24);
+		restrictedTiles.add(25);
+		restrictedTiles.add(30);
+		restrictedTiles.add(31);
+		restrictedTiles.add(32);
+		
+		return restrictedTiles.contains(coordinate);
 	}
 	
 	private static Map<Integer, EmptyTile> createAllPossibleEmptyTiles() {

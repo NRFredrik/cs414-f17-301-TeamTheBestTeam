@@ -13,7 +13,7 @@ import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Tile;
 public class King extends Piece {
 	private final static int[] CANDIDATE_MOVE_COORDINATES = {};
 
-	King(final int piecePosition, final Alliance pieceAlliance) {
+	public King(final int piecePosition, final Alliance pieceAlliance) {
 		super(piecePosition, pieceAlliance);
 
 	}

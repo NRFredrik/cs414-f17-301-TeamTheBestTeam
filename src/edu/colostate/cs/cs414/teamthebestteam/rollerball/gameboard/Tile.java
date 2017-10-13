@@ -14,6 +14,8 @@ public abstract class Tile {
 	//empty tiles cache
 	private static final Map<Integer, EmptyTile> EMPTY_TILES = createAllPossibleEmptyTiles();
 	
+	//this will be the only way to create a tile
+	//this will return new Occupied tile, or a cashed empty tile
 	public static Tile createTile(final int tileCoordinate, final Piece piece){
 		return piece != null ? new OccupiedTile(tileCoordinate, piece) : EMPTY_TILES.get(tileCoordinate);
 	}
@@ -58,6 +60,8 @@ public abstract class Tile {
 			super(tileCoordinate);
 			this.pieceOnTile = pieceOnTile;
 		}
+		
+		
 		@Override
 		public boolean isTileOccupided() {
 			return true;

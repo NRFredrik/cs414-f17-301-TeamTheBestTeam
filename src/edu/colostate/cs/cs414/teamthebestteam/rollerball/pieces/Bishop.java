@@ -7,7 +7,7 @@ import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Move;
 
 public class Bishop extends Piece{
 
-	Bishop(int piecePosition, Alliance pieceAlliance) {
+	public Bishop(int piecePosition, Alliance pieceAlliance) {
 		super(piecePosition, pieceAlliance);
 		// TODO Auto-generated constructor stub
 	}

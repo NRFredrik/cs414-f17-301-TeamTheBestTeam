@@ -7,7 +7,7 @@ import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Move;
 
 public class Pawn extends Piece{
 
-	Pawn(int piecePosition, Alliance pieceAlliance) {
+	public Pawn(int piecePosition, Alliance pieceAlliance) {
 		super(piecePosition, pieceAlliance);
 		// TODO Auto-generated constructor stub
 	}

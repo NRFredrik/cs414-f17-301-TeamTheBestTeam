@@ -40,6 +40,59 @@ public class BoardUtilities {
 	final int[] BLACK_ROOK_STARTING_POINTS ={39,46};
 	final int[] BLACK_BISHOP_STARTING_POINTS ={45};
 	final int[] BLACK_KING_STARTING_POINTS ={38};
+	
+	/**
+	 * These boolean arrays are used to tell if a piece is in a specific column
+	 * This is important because different pieces have certain corner cases where some of their "legal moves won't work"
+	 * This can also be used to determine if a rebound can occur
+	 */
+	//initialize all entries in first column to true 
+	public static final boolean[] FIRST_COLUMN = initColumn(0);
+	//public static final boolean[] SECOND_COLUMN = initColumn(1);
+	//public static final boolean[] THIRD_COLUMN = initColumn(2);
+	//public static final boolean[] FOURTH_COLUMN = initColumn(3);
+	//public static final boolean[] FIFTH_COLUMN = initColumn(4);
+	//public static final boolean[] SIXTH_COLUMN = initColumn(5);
+	//initialize all entries in last column to true
+	public static final boolean[] LAST_COLUMN = initColumn(6);
+
+
+	/**
+	 * we can use these boolean arrays to know when we are at a corner square 
+	 * corner squares are where certain pieces can "rebound"
+	 */
+	//initialize tile id's that begin the row
+	public static final boolean[] FIRST_ROW = initRow(0);
+	public static final boolean[] SECOND_ROW = initRow(7);
+	public static final boolean[] THIRD_ROW = initRow(14);
+	public static final boolean[] FOURTH_ROW = initRow(21);
+	public static final boolean[] FIFTH_ROW = initRow(28);
+	public static final boolean[] SIXTH_ROW = initRow(35);
+	public static final boolean[] LAST_ROW = initRow(42);
+	
+	
+	private static boolean[] initColumn(int columnNumber)
+	{
+		//initialize spot in column to true then increment counter by 7 to make whole column true
+		final boolean[] column = new boolean[49];
+		do{
+			column[columnNumber] = true;
+			columnNumber += 7;
+		}while(columnNumber < 49);
+		return column;
+	}
+
+	private static boolean[] initRow(int i) 
+	{
+		final boolean[] row = new boolean[NUM_TILES];
+
+		do{
+			row[i] = true;
+			i++;
+		}while(i % NUM_TILES_PER_ROW != 0);
+
+		return row;
+	}
 
 
 	private BoardUtilities(){

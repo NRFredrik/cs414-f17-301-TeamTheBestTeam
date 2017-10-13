@@ -7,7 +7,7 @@ import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Move;
 
 public class Rook extends Piece{
 
-	Rook(int piecePosition, Alliance pieceAlliance) {
+	public Rook(int piecePosition, Alliance pieceAlliance) {
 		super(piecePosition, pieceAlliance);
 		// TODO Auto-generated constructor stub
 	}

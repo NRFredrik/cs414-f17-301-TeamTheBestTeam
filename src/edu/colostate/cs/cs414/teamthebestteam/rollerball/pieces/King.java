@@ -10,6 +10,7 @@ import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.BoardUtilitie
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Move;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Tile;
 
+
 public class King extends Piece {
 	private final static int[] CANDIDATE_MOVE_COORDINATES = {};
 
@@ -64,6 +65,12 @@ public class King extends Piece {
 	
 	private static boolean isInnerRingQuadrantTwoExclusion(final int currentPosition, final int candidateOffset){
 		return BoardUtilities.INNER_RING[currentPosition] && BoardUtilities.QUADRANT_TWO[currentPosition];
+	}
+	
+	@Override
+	public String toString()
+	{
+		return PieceType.King.toString();
 	}
 
 }

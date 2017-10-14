@@ -5,6 +5,7 @@ import java.util.List;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Board;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Move;
 
+
 public class Bishop extends Piece{
 
 	public Bishop(int piecePosition, Alliance pieceAlliance) {
@@ -16,6 +17,12 @@ public class Bishop extends Piece{
 	public List<Move> calculateLegalMoves(Board board) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return PieceType.Bishop.toString();
 	}
 
 }

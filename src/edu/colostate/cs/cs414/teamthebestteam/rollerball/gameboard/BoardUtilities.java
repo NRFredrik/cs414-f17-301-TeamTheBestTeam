@@ -14,17 +14,17 @@ public class BoardUtilities {
 
 	//Constants for Boundary Exclusionary Cases with Movements
 	//All the tile coordinates for the outer ring of the board
-	public static final boolean[] OUTER_RING = null;
+	public static final boolean[] OUTER_RING = new boolean[48];
 	//All the tile coordinates for the inner ring of the board
-	public static final boolean[] INNER_RING = null;
+	public static final boolean[] INNER_RING = new boolean[48];
 	//All the tile coordinates where forward = to the right
-	public static final boolean[] QUADRANT_ONE = null;
+	public static final boolean[] QUADRANT_ONE = new boolean[48];
 	//All the tile coordinates where moving forward is down
-	public static final boolean[] QUADRANT_TWO = null;
+	public static final boolean[] QUADRANT_TWO = new boolean[48];
 	//All the tile coordinates where moving forward is to the left
-	public static final boolean[] QUADRANT_THREE = null;
+	public static final boolean[] QUADRANT_THREE = new boolean[48];
 	//All the tile coordinates where moving forward is up
-	public static final boolean[] QUADRANT_FOUR = null;
+	public static final boolean[] QUADRANT_FOUR = new boolean[48];
 
 	public static final int NUM_TILES = 49; //these will be constant
 	public static final int NUM_TILES_PER_ROW = 7; //also constant
@@ -74,11 +74,11 @@ public class BoardUtilities {
 	private static boolean[] initColumn(int columnNumber)
 	{
 		//initialize spot in column to true then increment counter by 7 to make whole column true
-		final boolean[] column = new boolean[49];
+		final boolean[] column = new boolean[NUM_TILES];
 		do{
 			column[columnNumber] = true;
 			columnNumber += 7;
-		}while(columnNumber < 49);
+		}while(columnNumber < NUM_TILES);
 		return column;
 	}
 
@@ -130,6 +130,20 @@ public class BoardUtilities {
 		restrictedTiles.add(32);
 
 		return restrictedTiles.contains(coordinate);
+	}
+	
+	/**
+	 * @author kb
+	 * @param coordinate
+	 * @return true if tile is a corner tile where Rook is allowed to rebound
+	 */
+	public boolean isCornerReboundRing(int coordinate)
+	{
+		if(coordinate == 0 || coordinate == 6 || coordinate == 48 || coordinate == 42)
+		{
+			return true;
+		}
+		return false;
 	}
 
 	/**

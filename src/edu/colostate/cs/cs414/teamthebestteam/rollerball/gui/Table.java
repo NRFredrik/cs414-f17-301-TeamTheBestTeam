@@ -18,12 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 import com.google.common.collect.ImmutableList;
 
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.common.Rollerball;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Board;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.BoardUtilities;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Move;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Move.FactoryMove;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Tile;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Piece;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.player.MoveTransition;
 
 import javax.imageio.ImageIO;
+import javax.swing.SwingUtilities;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -37,7 +42,7 @@ import javax.swing.JPanel;
 public class Table {
 
 	private JFrame gameFrame;
-	private final Board rollBoard;
+	private Board rollBoard;
 
 	private static Dimension OUTER_DIMENSION = new Dimension(600,600);
 	//dimensions of board panel
@@ -47,9 +52,9 @@ public class Table {
 
 	//represents board panel
 	private BoardPanel boardPanel;
-	private Tile sourceTile;
+	private Tile tilePieceIsOn;
 	private Tile destinationTile;
-	private Piece humanMovedPiece;
+	private Piece movedByPlayer;
 
 	public Table()
 	{
@@ -122,6 +127,22 @@ public class Table {
 			setPreferredSize(BOARD_DIMENSIONS);
 			validate();
 		}
+
+		/**
+		 * clear board and re-draw tile
+		 * @param rollBoard
+		 */
+		public void drawBoard(Board rollBoard) 
+		{
+			removeAll();
+			for(TilePanel t : boardTile)
+			{
+				t.drawTile(rollBoard);
+				add(t);
+			}
+			validate();
+			repaint();
+		}
 	}
 
 	//visual component representing the tiles on chess board
@@ -137,78 +158,120 @@ public class Table {
 			this.tileID = tileID;
 			setPreferredSize(TILE_DIMENSION);
 			//used to distinguish dark from light tiles
-			assignTileColor();
+			setColorOfTile();
 
-			assignTilePieceIcon(rollBoard);
-			
-			//listen for mouse click events
+			setTilesIcon(rollBoard);
+
+			//listen for mouse click events for each tile
 			addMouseListener(new MouseListener(){
 
 				//listen for clicks on all tiles
 				//if click occurs get tileid and assign to source tile
 				@Override
-				public void mouseClicked(MouseEvent e) {
-					
-					//when user right clicks a tile it unselects chosen piece
-				/*	if(isRightMouseButton(event))
+				public void mouseClicked(MouseEvent e) 
+				{
+
+					//cancel all selections out. Means player changed mind 
+					if(SwingUtilities.isRightMouseButton(e))
 					{
-						//if tile is clicked and not empty set it 
-						if(sourceTile == null)
-						{
-							sourceTile = rollBoard.getTile(tileID);
-							humanMovedPiece = sourceTile.getPiece();
-							
-							if(humanMovedPiece == null)
-							{
-								sourceTile = null;
-							}
-						}
+						tilePieceIsOn = null;
+						destinationTile = null;
+						movedByPlayer = null;
+						System.out.println("Right mouse button pressed, so select your source again");
 					}
 					//something was picked and is being moved (2nd click)
-					else if(isLeftMouseButton(event))
+					else if(SwingUtilities.isLeftMouseButton(e))
 					{
-						destinationTile = rollBoard.getTile(tileID);
-						
-						//the move based on source and destination tiles that user selected
-						final Moves move = null;
-						
-						//MoveTransition
-					}*/
-					
+						//player has not made source tile selection yet
+						if(tilePieceIsOn == null)
+						{
+							//assign this tile to the source tile
+							tilePieceIsOn = rollBoard.getTile(tileID);
+							System.out.println("Source tile: "+ tilePieceIsOn.getTileCoord()+ " was selected");
+							movedByPlayer = tilePieceIsOn.getPiece();
+							//if there's no piece on tile
+							if(movedByPlayer == null)
+							{
+								tilePieceIsOn = null;
+							}
+						}
+						//there's a piece so lets move it
+						//TODO need move implementation
+						else
+						{
+							destinationTile = rollBoard.getTile(tileID);
+							System.out.println("Destination tile: "+ destinationTile.getTileCoord()+ " was selected\n");
+
+							//factory method will check for the desired move in the list of legal moves and return the move if its in there, or null
+							Move move = Move.FactoryMove.createMove(rollBoard, tilePieceIsOn.getTileCoord(), destinationTile.getTileCoord());
+							MoveTransition trans = rollBoard.currentPlayer().movePlayer(move);
+							if(trans.getStatus().isDone())
+							{
+								rollBoard = trans.getBoard();
+								//TODO add the move to a log for debugging
+							}
+							else
+							{
+								System.out.println("THAT MOVE IS NOT VALID FOR THE CHOSEN PIECE. REFER TO RULE BOOK AND TRY AGAIN\n");
+							}
+							tilePieceIsOn = null;
+							destinationTile = null;
+							movedByPlayer = null;
+						}//end else
+
+						//need the GUI to update
+						SwingUtilities.invokeLater(new Runnable()
+						{
+							@Override
+							public void run()
+							{
+								boardPanel.drawBoard(rollBoard);
+							}
+						});
+					}//end else if
 				}
 
 				@Override
 				public void mousePressed(MouseEvent e) {
 					// TODO Auto-generated method stub
-					
+
 				}
 
 				@Override
 				public void mouseReleased(MouseEvent e) {
 					// TODO Auto-generated method stub
-					
+
 				}
 
 				@Override
 				public void mouseEntered(MouseEvent e) {
 					// TODO Auto-generated method stub
-					
+
 				}
 
 				@Override
 				public void mouseExited(MouseEvent e) {
 					// TODO Auto-generated method stub
-					
+
 				}
-				
+
 			});
-			
-			
+
+
 
 			validate();
 		}
 
-		private void assignTilePieceIcon(final Board board)
+		//TODO will need to update this once we make highlighting legal moves functionality
+		public void drawTile(Board rollBoard) 
+		{
+			setColorOfTile();
+			setTilesIcon(rollBoard);
+			validate();
+			repaint();
+		}
+
+		private void setTilesIcon(final Board board)
 		{
 			this.removeAll();
 			//if the tile is occupied get piece name and match it with pic in folder
@@ -229,7 +292,7 @@ public class Table {
 		}
 
 		//draw tiles according to game specs giving them color
-		private void assignTileColor() 
+		private void setColorOfTile() 
 		{ 
 			//setting color for odd tiles.
 			if(BoardUtilities.FIRST_ROW[this.tileID] || BoardUtilities.THIRD_ROW[this.tileID]  || BoardUtilities.FIFTH_ROW[this.tileID] || BoardUtilities.LAST_ROW[this.tileID])
@@ -238,7 +301,7 @@ public class Table {
 				{
 					setBackground(Color.WHITE);
 				}
-				
+
 				else if(this.tileID % 2 == 0)
 				{
 					Color color = new Color (203,128,93);

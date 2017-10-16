@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableMap;
 
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Piece;
 
+
 public abstract class Tile {
 	//can only be set at construction and is only visible to sub classes
 	protected final int tileCoordinate;
@@ -51,7 +52,7 @@ public abstract class Tile {
 	
 	private static Map<Integer, EmptyTile> createAllPossibleEmptyTiles() {
 		final Map<Integer,EmptyTile> emptyTileMap = new HashMap<>();
-		for(int i = 0; i < 40; i++){
+		for(int i = 0; i < BoardUtilities.NUM_TILES; i++){
 			emptyTileMap.put(i, new EmptyTile(i));
 		}
 		return ImmutableMap.copyOf(emptyTileMap);		
@@ -60,6 +61,11 @@ public abstract class Tile {
 	public abstract boolean isTileOccupided();
 	
 	public abstract Piece getPiece();
+	
+	public int getTileCoord()
+	{
+		return this.tileCoordinate;
+	}
 	
 	public static final class EmptyTile extends Tile{
 		private EmptyTile(final int coordinate){

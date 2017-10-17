@@ -11,7 +11,7 @@ public class Rollerball {
 		//print board. Takes advantage of tosting() for each of the pieces 
 		//to print this string representation of the board
 		
-		System.out.println(board);
+		//System.out.println(board);
 		
 		//Define the table to be a 600X600 table and is visibkle right now
 		@SuppressWarnings("unused")

@@ -1,5 +1,9 @@
 package edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces;
 
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.player.BlackPlayer;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.player.Player;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.player.WhitePlayer;
+
 //enum for black or white piece
 public enum Alliance {
 	/**
@@ -9,21 +13,46 @@ public enum Alliance {
 	WHITE
 	{
 		@Override
-		public int getDirection()
-		{
-			return -1;
+		public boolean isWhite() {
+			// TODO Auto-generated method stub
+			return true;
+		}
+
+		@Override
+		public boolean isBlack() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public Player playersTurn(WhitePlayer white, BlackPlayer black) {
+			return white;
 		}
 	},
 	
 	BLACK
 	{
+
 		@Override
-		public int getDirection()
-		{
-			return 1;
+		public boolean isWhite() {
+			// TODO Auto-generated method stub
+			return false;
 		}
+
+		@Override
+		public boolean isBlack() {
+			// TODO Auto-generated method stub
+			return true;
+		}
+
+		@Override
+		public Player playersTurn(WhitePlayer white, BlackPlayer black) {
+			return black;
+		}
+		
 	};
 	
-	//need a way to determine direction
-	public abstract int getDirection();
+	public abstract boolean isWhite();
+	public abstract boolean isBlack();
+	public abstract Player playersTurn(WhitePlayer white, BlackPlayer black); //determine who's turn it is
 }

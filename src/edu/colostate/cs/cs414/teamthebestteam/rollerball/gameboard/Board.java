@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.common.*;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Alliance;
@@ -16,6 +17,7 @@ import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Pawn;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Piece;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Rook;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.player.BlackPlayer;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.player.Player;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.player.WhitePlayer;
 
 
@@ -28,7 +30,8 @@ public class Board {
 	//keep track of white pieces 
 	private final Collection<Piece> whitePieces;
 	private final Collection<Piece> blackPieces;
-	
+	private final Player currentPlayer;
+
 	//Both players
 	private WhitePlayer white;
 	private BlackPlayer black;
@@ -40,46 +43,41 @@ public class Board {
 		this.gameBoard = createGameBoard(builder);
 		this.whitePieces = calculateActivePieces(this.gameBoard, Alliance.WHITE);
 		this.blackPieces = calculateActivePieces(this.gameBoard, Alliance.BLACK);
-
 		final Collection<Move> whiteStandardLegalMove = calculateLegalMove(this.whitePieces);
 		final Collection<Move> blackStandardLegalMove = calculateLegalMove(this.blackPieces);
-		
-		//this.white = new WhitePlayer();
-		//this.black = new BlackPlayer();
+
+		this.white = new WhitePlayer(this, whiteStandardLegalMove, blackStandardLegalMove);
+		this.black = new BlackPlayer(this, whiteStandardLegalMove, blackStandardLegalMove);
+
+		//TODO
+		this.currentPlayer = builder.nextMoveMaker.playersTurn(this.white,this.black);
+		System.out.println("TURN: "+ this.currentPlayer.getAlliance() + " player's turn to go\n");
 	}
 
 	//used to view the board since I dont have gui
+	//old version of this method saved
 	@Override 
 	public String toString()
 	{
-		final StringBuilder builder =  new StringBuilder();
-		for(int i = 0; i < BoardUtilities.NUM_TILES; i++)
-		{
-			final String tileText = this.gameBoard.get(i).toString();
-			builder.append(String.format("%3s", tileText));
-			if((i + 1) % BoardUtilities.NUM_TILES_PER_ROW == 0)
-			{
-				builder.append("\n");
-			}
-		}
-		return builder.toString();
+		return "";
 	}
 
-	private static String printNicely(Tile tile) {
-		return tile.toString();
-	}
-
+	/**
+	 * Calculate legal moves for a given set of pieces
+	 * @param pieces
+	 * @return
+	 */
 	private Collection<Move> calculateLegalMove(final Collection<Piece> pieces) 
 	{
 		final List<Move> legalMove = new ArrayList<>();
 
-		//loop through pieces and calculate legal moves for current board
-		//and add the legal moves
+		//loop through pieces and calculate legal moves for current board and add the legal moves
+		//This might throw error if legalMoves not implemented for a piece type
 		if(pieces.size() > 0)
 		{
 			for(final Piece p : pieces)
 			{
-				//legalMove.addAll(p.calculateLegalMove(this));
+				legalMove.addAll(p.calculateLegalMoves(this));
 			}
 		}
 		return ImmutableList.copyOf(legalMove);
@@ -120,7 +118,7 @@ public class Board {
 		return ImmutableList.copyOf(tiles);
 	}
 
-   /*build the initial board setting pieces where they go at start
+	/*build the initial board setting pieces where they go at start
 	according to board in wiki
 	Might have to come back to make the 3x3 white squares, or figure out how to handle that*/
 	public static Board createStandardBoard()
@@ -149,6 +147,9 @@ public class Board {
 		//Set the White Pieces for Pawn
 		builder.setPiece(new Pawn(37, Alliance.WHITE));
 		builder.setPiece(new Pawn(44, Alliance.WHITE));
+
+		//set turn to White player initially
+		builder.setMoveMaker(Alliance.WHITE);
 
 		return builder.build();
 	}
@@ -193,5 +194,35 @@ public class Board {
 		{
 			return new Board(this);
 		}
+	}
+
+	public Player whitePlayer()
+	{
+		return this.white;
+	}
+
+	public Player blackPlayer()
+	{
+		return this.black;
+	}
+
+	public Collection<Piece> getBlackPieces() 
+	{
+		return this.blackPieces;
+	}
+
+	public Collection<Piece> getWhitePieces() 
+	{
+		return this.whitePieces;
+	}
+
+	public Player currentPlayer() {
+		return this.currentPlayer;
+	}
+
+	//return an iterable of both players moves
+	public Iterable<Move> getAllLegalMoves() {
+		Iterable<Move> obj =  Iterables.unmodifiableIterable(Iterables.concat(this.white.getLegalMoves(), this.black.getLegalMoves()));
+		return obj;
 	}
 }

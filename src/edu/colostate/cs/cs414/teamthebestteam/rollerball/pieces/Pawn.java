@@ -66,6 +66,7 @@ public class Pawn extends Piece{
 			//pass in board, current piece that we are on,
 			if(!candidateTile.isTileOccupided())
 			{
+				System.out.println(possibleDestinationCoordinate);
 				legalMove.add(new Move.BasicMove(board, this, possibleDestinationCoordinate));
 			}
 
@@ -87,7 +88,7 @@ public class Pawn extends Piece{
 				}
 			}
 		}//end loop through 
-
+		
 		return ImmutableList.copyOf(legalMove);
 	}//end calculateLegalMove
 
@@ -163,7 +164,7 @@ public class Pawn extends Piece{
 			else 
 			{
 				coords.add(-7);
-				coords.add(-6);
+				coords.add(-8);
 			}
 		}
 		return coords;

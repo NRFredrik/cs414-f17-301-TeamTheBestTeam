@@ -29,7 +29,7 @@ public abstract class Move {
 	}
 
 	//return a new board with the newly executed move/piece position
-	public Board executeMove() 
+	public Board executeMove() throws Exception
 	{
 		final Builder builder = new Builder();
 

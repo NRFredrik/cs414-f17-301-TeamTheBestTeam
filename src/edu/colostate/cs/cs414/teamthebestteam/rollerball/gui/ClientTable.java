@@ -15,10 +15,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.common.RollIF;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.common.Rollerball;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Board;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.BoardUtilities;
@@ -40,7 +42,7 @@ import javax.swing.JPanel;
 
 
 
-public class Table {
+public class ClientTable implements RollIF {
 
 	private JFrame gameFrame;
 	private Board rollBoard;
@@ -56,11 +58,13 @@ public class Table {
 	private Tile tilePieceIsOn;
 	private Tile destinationTile;
 	private Piece movedByPlayer;
-	
-	
-	public Table()throws Exception
-	{
+	public Rollerball roll;
 
+	
+	
+	public ClientTable()throws Exception
+	{
+		roll = new Rollerball("localhost", 5555, this);
 		
 		//create the new 600 by 600 frame with the name Rollerball
 		this.gameFrame = new JFrame("Rollerball");
@@ -79,6 +83,7 @@ public class Table {
 		this.gameFrame.add(this.boardPanel, BorderLayout.CENTER);
 
 		this.gameFrame.setVisible(true);
+		
 	}
 
 	private void fillMenu(JMenuBar menuBar) 
@@ -208,15 +213,19 @@ public class Table {
 
 							//factory method will check for the desired move in the list of legal moves and return the move if its in there, or null
 							Move move = Move.FactoryMove.createMove(rollBoard, tilePieceIsOn.getTileCoord(), destinationTile.getTileCoord());
+		
 							MoveTransition trans;
+							
 							try {
 								trans = rollBoard.currentPlayer().movePlayer(move);
 							
 							if(trans.getStatus().isDone())
 							{
+								roll.handleMessageFromClientUI(tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
 								rollBoard = trans.getBoard();
 								//TODO add the move to a log for debugging
 							}
+							
 							else
 							{
 								System.out.println("THAT MOVE IS NOT VALID FOR THE CHOSEN PIECE. REFER TO RULE BOOK AND TRY AGAIN\n");
@@ -241,8 +250,11 @@ public class Table {
 								boardPanel.drawBoard(rollBoard);
 							}
 						});
+						
+						
 					}//end else if
-				}
+				
+			}
 
 				@Override
 				public void mousePressed(MouseEvent e) {
@@ -347,6 +359,60 @@ public class Table {
 			}
 
 		}
+	}
+	public static void main(String[] args) throws Exception
+	{
+	
+		//this is board from a starting position
+		Board board = Board.createStandardBoard();
+		//print board. Takes advantage of tosting() for each of the pieces 
+		//to print this string representation of the board
+		
+		//System.out.println(board);
+		
+		//Define the table to be a 600X600 table and is visible right now
+		ClientTable table = new ClientTable();
+	}
+
+	@Override
+	public void display(Object message) 
+	{
+		System.out.println("here!!!!!!!!!!!!!!!!!!!!!");
+		List<String> items = Arrays.asList(((String) message).split(","));
+		int curCoord =Integer.parseInt(items.get(0));
+		int endCoord =Integer.parseInt(items.get(1));
+		
+		Move move = Move.FactoryMove.createMove(rollBoard, curCoord, endCoord);
+		
+		MoveTransition trans;
+		
+		try {
+			trans = rollBoard.currentPlayer().movePlayer(move);
+		
+		if(trans.getStatus().isDone())
+		{
+			rollBoard = trans.getBoard();
+			//TODO add the move to a log for debugging
+		}
+		tilePieceIsOn = null;
+		destinationTile = null;
+		movedByPlayer = null;
+		
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				//roll.handleMessageFromClientUI(rollBoard);
+				boardPanel.drawBoard(rollBoard);
+			}
+		});
+		
 	}
 }
 

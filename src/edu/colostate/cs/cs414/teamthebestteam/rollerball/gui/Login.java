@@ -73,7 +73,7 @@ public class Login {
 		typePassword.setBounds(140, 118, 163, 31);
 		frame.getContentPane().add(typePassword);
 		
-		final Config con = new Config();
+		Config con = new Config();
 		
 		JButton typeLogin = new JButton("Login");
 		typeLogin.addActionListener(new ActionListener() {

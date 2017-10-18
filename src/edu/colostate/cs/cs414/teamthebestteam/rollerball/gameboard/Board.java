@@ -1,7 +1,5 @@
 package edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,12 +36,10 @@ public class Board {
 	private WhitePlayer white;
 	private BlackPlayer black;
 
-	
 
-	public Board(Builder builder)throws Exception
+
+	public Board(Builder builder)
 	{
-		
-			
 		this.gameBoard = createGameBoard(builder);
 		this.whitePieces = calculateActivePieces(this.gameBoard, Alliance.WHITE);
 		this.blackPieces = calculateActivePieces(this.gameBoard, Alliance.BLACK);
@@ -56,8 +52,6 @@ public class Board {
 		//TODO
 		this.currentPlayer = builder.nextMoveMaker.playersTurn(this.white,this.black);
 		System.out.println("TURN: "+ this.currentPlayer.getAlliance() + " player's turn to go\n");
-		//accept();
-		
 	}
 
 	//used to view the board since I dont have gui
@@ -127,7 +121,7 @@ public class Board {
 	/*build the initial board setting pieces where they go at start
 	according to board in wiki
 	Might have to come back to make the 3x3 white squares, or figure out how to handle that*/
-	public static Board createStandardBoard()throws Exception
+	public static Board createStandardBoard()
 	{
 		final Builder builder = new Builder();
 
@@ -169,7 +163,7 @@ public class Board {
 	 * @author kb
 	 *building instance of a board
 	 */
-	public static class Builder 
+	public static class Builder
 	{
 		//map tile id to a given piece on that tile id
 		Map<Integer, Piece> boardConfig;
@@ -196,7 +190,7 @@ public class Board {
 			return this;
 		}
 
-		public Board build()throws Exception
+		public Board build()
 		{
 			return new Board(this);
 		}
@@ -231,7 +225,4 @@ public class Board {
 		Iterable<Move> obj =  Iterables.unmodifiableIterable(Iterables.concat(this.white.getLegalMoves(), this.black.getLegalMoves()));
 		return obj;
 	}
-	
-	
-
 }

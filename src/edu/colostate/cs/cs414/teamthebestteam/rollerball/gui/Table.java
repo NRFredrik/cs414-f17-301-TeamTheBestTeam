@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.google.common.collect.ImmutableList;
 
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.common.Rollerball;
@@ -52,16 +51,13 @@ public class Table {
 	private static final Dimension TILE_DIMENSION = new Dimension(10,10);
 
 	//represents board panel
-	public BoardPanel boardPanel;
+	private BoardPanel boardPanel;
 	private Tile tilePieceIsOn;
 	private Tile destinationTile;
 	private Piece movedByPlayer;
-	
-	
-	public Table()throws Exception
-	{
 
-		
+	public Table()
+	{
 		//create the new 600 by 600 frame with the name Rollerball
 		this.gameFrame = new JFrame("Rollerball");
 		this.gameFrame.setLayout(new BorderLayout());
@@ -107,7 +103,7 @@ public class Table {
 
 	//visual component representing the board
 	//adds 49 tiles to list and added to board panel
-	public class BoardPanel extends JPanel
+	private class BoardPanel extends JPanel
 	{
 		List<TilePanel> boardTile;
 
@@ -151,12 +147,12 @@ public class Table {
 
 	//visual component representing the tiles on chess board
 	//maps to a tile in game
-	private class TilePanel  extends JPanel
+	private class TilePanel extends JPanel
 	{
 		private int tileID;
 
 
-		public TilePanel(final BoardPanel boardPanel, final int tileID) 
+		public TilePanel(BoardPanel boardPanel, int tileID)
 		{
 			super(new GridBagLayout());
 			this.tileID = tileID;
@@ -208,10 +204,7 @@ public class Table {
 
 							//factory method will check for the desired move in the list of legal moves and return the move if its in there, or null
 							Move move = Move.FactoryMove.createMove(rollBoard, tilePieceIsOn.getTileCoord(), destinationTile.getTileCoord());
-							MoveTransition trans;
-							try {
-								trans = rollBoard.currentPlayer().movePlayer(move);
-							
+							MoveTransition trans = rollBoard.currentPlayer().movePlayer(move);
 							if(trans.getStatus().isDone())
 							{
 								rollBoard = trans.getBoard();
@@ -224,11 +217,6 @@ public class Table {
 							tilePieceIsOn = null;
 							destinationTile = null;
 							movedByPlayer = null;
-							
-							} catch (Exception e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
 						}//end else
 
 						//need the GUI to update
@@ -237,7 +225,6 @@ public class Table {
 							@Override
 							public void run()
 							{
-								//roll.handleMessageFromClientUI(rollBoard);
 								boardPanel.drawBoard(rollBoard);
 							}
 						});

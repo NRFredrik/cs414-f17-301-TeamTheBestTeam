@@ -11,19 +11,26 @@ public class Rollerball extends AbstractClient
 		super(host, port); // Call the superclass constructor
 		this.clientUI = clientUI;
 		openConnection();
-		//handleMessageFromClientUI("login");		
+		handleMessageFromClientUI("login");		
 	}
 	@Override
 	protected void handleMessageFromServer(Object msg) 
 	{
-		clientUI.display(msg);	
+		if(msg.equals("quit"))
+		{
+			System.exit(0);
+		}
+		else
+		{
+			clientUI.display(msg);	
+		}
+		
 	}
 	public void handleMessageFromClientUI(Object message) 
 	{
 		try 
 		{			
 			sendToServer(message);
-			System.out.println("Sent");
 		} catch (IOException error) 
 		{
 			System.out.println(error);

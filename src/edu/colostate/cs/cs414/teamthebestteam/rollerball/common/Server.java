@@ -19,26 +19,42 @@ public class Server extends AbstractServer
 	final public static int DEFAULT_PORT = 5555;
 	Board board;
 	static Table table;
-	
+	String turn;
 	
 	protected boolean isClosed;
 	// Constructors ****************************************************
 	public Server(int port) {
 		super(port);
-		this.isClosed = false;	
+		this.isClosed = false;
+		turn = "white";
 	}
 
 
 	public void handleMessageFromClient(Object message, ConnectionToClient client) 
 	{
-				
-		if((message.equals("login")))
+		
+		
+		if(((String)message).equals("login"))
 		{
 			
+			login(client);
 		}
-		
-		this.sendToAllClients((String)message);
-			
+		else
+		{
+			if(client.getInfo("color").equals(turn))
+			{
+				this.sendToAllClients((String)message);
+				
+				if(client.getInfo("color").equals("white"))
+				{
+					turn= "black";
+				}
+				else
+				{
+					turn= "white";
+				}
+			}	
+		}		
 	}
 
 
@@ -167,19 +183,23 @@ public class Server extends AbstractServer
 	}
 
 
-	protected void login(String userID, ConnectionToClient client, String password) {
-		boolean validUser = true;
-		boolean passCorrect = true;
+	protected void login(ConnectionToClient client) 
+	{
 		
-		client.setInfo("user", userID);
-			
-		if (validUser == true && passCorrect == true) {
-			System.out.println(userID + " has connected.");
-			this.sendToAllClients(userID + " has logged in.");
+		
+		Thread[] clientThreadList = getClientConnections();
+		if(clientThreadList.length == 1)
+		{
+			client.setInfo("color", "white");
+		}
+		else if(clientThreadList.length == 2)
+		{
+			client.setInfo("color", "black");
 		}
 		else
 		{
 			try {
+				msgToCli("quit",client);
 				client.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

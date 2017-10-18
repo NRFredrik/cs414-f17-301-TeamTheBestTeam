@@ -5,8 +5,11 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.management.RuntimeErrorException;
+
 import com.google.common.collect.ImmutableList;
-import com.sun.corba.se.spi.ior.MakeImmutable;
+//import com.sun.corba.se.spi.ior.MakeImmutable;
+
+
 
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Board;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Move;
@@ -84,7 +87,7 @@ public abstract class Player {
 	}
 	
 	//when you move, keep track of all info about the move that you made so you have it on next board
-	public MoveTransition movePlayer(final Move move)
+	public MoveTransition movePlayer(final Move move)throws Exception
 	{
 		//if the move is not legal, return same board with status of Illegal
 		if(!isMoveValid(move))
@@ -136,10 +139,17 @@ public abstract class Player {
 	{
 		for(Move m : this.legalMoves)
 		{
-			MoveTransition trans = movePlayer(m);
+			MoveTransition trans;
+			try {
+				trans = movePlayer(m);
+			
 			if(trans.getStatus().isDone())
 			{
 				return true;
+			}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		return false;

@@ -13,11 +13,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-
-
-
-
-
 public class Server extends AbstractServer 
 {
 	// Class variables *************************************************
@@ -36,14 +31,15 @@ public class Server extends AbstractServer
 
 	public void handleMessageFromClient(Object message, ConnectionToClient client) 
 	{
+				
+		if((message.equals("login")))
+		{
+			
+		}
 		
-		
-		//System.out.println(curCoord);
-		System.out.println((String)message);
 		this.sendToAllClients((String)message);
 			
 	}
-
 
 
 	protected void serverStarted() {
@@ -134,6 +130,7 @@ public class Server extends AbstractServer
 	 * This command is used to terminate a server gracefully It will let current
 	 * users know that it is ending and that they will no longer be able to chat
 	 */
+	//test
 	protected void quit() {
 		try {
 			this.sendToAllClients("Server on port " + getPort() + " is terminating...");
@@ -199,22 +196,6 @@ public class Server extends AbstractServer
 
 	}
 	
-	/*
-	public void sendToAllClients(Object msg, String userID) 
-	{
-		Thread[] clientThreadList = getClientConnections();
-		for (int i = 0; i < clientThreadList.length; i++) 
-		{
-			try 
-			{
-				((ConnectionToClient) clientThreadList[i]).sendToClient(msg);
-				
-			} catch (Exception ex) 
-			{
-				
-			}
-		}
-	}*/
 
 	protected void msgToCli(Object msg, ConnectionToClient client) {
 		try {

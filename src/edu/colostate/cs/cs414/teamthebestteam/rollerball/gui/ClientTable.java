@@ -40,7 +40,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-
+//testasdsadas
 
 public class ClientTable implements RollIF {
 
@@ -59,7 +59,7 @@ public class ClientTable implements RollIF {
 	private Tile destinationTile;
 	private Piece movedByPlayer;
 	public Rollerball roll;
-
+	public int test;
 	
 	
 	public ClientTable()throws Exception

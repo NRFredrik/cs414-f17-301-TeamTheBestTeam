@@ -1,16 +1,7 @@
 package edu.colostate.cs.cs414.teamthebestteam.rollerball.common;
 
 import java.io.IOException;
-
-
-
-import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Board;
-import edu.colostate.cs.cs414.teamthebestteam.rollerball.gui.ClientTable;
-import edu.colostate.cs.cs414.teamthebestteam.rollerball.gui.Table;
-
-
-
-
+//test
 public class Rollerball extends AbstractClient 
 {
 	RollIF clientUI;
@@ -18,10 +9,9 @@ public class Rollerball extends AbstractClient
 	public Rollerball(String host, int port, RollIF clientUI) throws IOException 
 	{	
 		super(host, port); // Call the superclass constructor
-		openConnection();
 		this.clientUI = clientUI;
-		//handleMessageFromClientUI("login");
-		
+		openConnection();
+		handleMessageFromClientUI("login");		
 	}
 	@Override
 	protected void handleMessageFromServer(Object msg) 
@@ -31,8 +21,7 @@ public class Rollerball extends AbstractClient
 	public void handleMessageFromClientUI(Object message) 
 	{
 		try 
-		{
-			
+		{			
 			sendToServer(message);
 			System.out.println("Sent");
 		} catch (IOException error) 

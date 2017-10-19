@@ -208,9 +208,10 @@ public class ClientTable implements RollIF {
 						//TODO need move implementation
 						else
 						{
-							destinationTile = rollBoard.getTile(tileID);
-							System.out.println("Destination tile: "+ destinationTile.getTileCoord()+ " was selected\n");
-
+							destinationTile = rollBoard.getTile(tileID);			
+							roll.handleMessageFromClientUI(tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
+							/*System.out.println("Destination tile: "+ destinationTile.getTileCoord()+ " was selected\n");
+							
 							//factory method will check for the desired move in the list of legal moves and return the move if its in there, or null
 							Move move = Move.FactoryMove.createMove(rollBoard, tilePieceIsOn.getTileCoord(), destinationTile.getTileCoord());
 		
@@ -251,8 +252,9 @@ public class ClientTable implements RollIF {
 							}
 						});
 						
-						
+					*/	
 					}//end else if
+				}
 				
 			}
 
@@ -377,7 +379,6 @@ public class ClientTable implements RollIF {
 	@Override
 	public void display(Object message) 
 	{
-		System.out.println("here!!!!!!!!!!!!!!!!!!!!!");
 		List<String> items = Arrays.asList(((String) message).split(","));
 		int curCoord =Integer.parseInt(items.get(0));
 		int endCoord =Integer.parseInt(items.get(1));

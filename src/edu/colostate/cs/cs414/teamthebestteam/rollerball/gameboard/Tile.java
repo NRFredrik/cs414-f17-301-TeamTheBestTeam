@@ -100,7 +100,14 @@ public abstract class Tile {
 		@Override
 		public Piece getPiece() {
 			return this.pieceOnTile;
-		}		
+		}	
+		
+		public String toString(){
+			if(this.isTileOccupided()){
+				return "tile occupied: ";
+			} else return "tile not occupied: ";
+			
+		}
 
 	}
 	

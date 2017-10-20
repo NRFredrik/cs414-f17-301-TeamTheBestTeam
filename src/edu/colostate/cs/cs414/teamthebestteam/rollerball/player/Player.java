@@ -103,9 +103,11 @@ public abstract class Player {
 		Collection<Move> kingAttacks = Player.calculateAttacksOnTile(transitionBoard.currentPlayer().getOpponent().getPlayerKing().getPiecePosition(),
 										transitionBoard.currentPlayer().getLegalMoves());
 		
+		//Collection<Move> kingAttacks = new ArrayList<>();
 		//are there any attacks on current players king if so return same board and status letting us know its bad move
 		if(!kingAttacks.isEmpty())
 		{
+			//System.out.println("not empty.");
 			return new MoveTransition(this.board, move, StatusOfMove.RESULTS_IN_CHECK);
 		}
 		

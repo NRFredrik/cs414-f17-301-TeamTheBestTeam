@@ -71,6 +71,7 @@ public class Bishop extends Piece {
 					// there is some piece there. Find out what it is and do
 					// stuff
 					else {
+						
 						// get the piece at this location
 						final Piece pieceAtDestination = candidateTile.getPiece();
 
@@ -83,6 +84,7 @@ public class Bishop extends Piece {
 						if (this.pieceAlliance != pieceAlliance) {
 							// need board, piece, destination tile, and piece
 							// that is being captured
+							System.out.println("ATTACK!!!!!");
 							legalMove.add(new Move.CaptureMove(board, this, candidateDestinationCoordinate,
 									pieceAtDestination));
 						}

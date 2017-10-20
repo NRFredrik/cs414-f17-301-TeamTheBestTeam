@@ -162,6 +162,8 @@ public class Board {
 
 
 	public Tile getTile(int tileCoordinate) {
+		//System.out.println("getting tile?");
+		//System.out.println(gameBoard.get(tileCoordinate).toString());
 		return gameBoard.get(tileCoordinate);
 	}
 

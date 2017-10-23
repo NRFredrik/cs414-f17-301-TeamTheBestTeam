@@ -9,6 +9,8 @@ import java.awt.GridLayout;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -21,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.common.Config;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.common.RollIF;
@@ -33,7 +36,9 @@ import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Piece;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.player.MoveTransition;
 
 import javax.imageio.ImageIO;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -48,6 +53,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
 
 
 
@@ -75,6 +81,11 @@ public class ClientTable implements RollIF {
 	private JFrame mainFrame;
     private JFrame loginFrame;
     private JPanel loginPanel;
+    private JFrame inviteFrame;
+    private JPanel invitePanel;
+    private JFrame receiveFrame;
+    private JPanel receivePanel;
+    
     private JTextField messageField;
     private JTextField userField;
     private JTextField passField;
@@ -84,10 +95,16 @@ public class ClientTable implements RollIF {
     private JButton loginButton;
     private JButton registerButton;
     private JButton logoffButton;
+    private JButton inviteButton;
+    private JButton quitButton;
     private JLabel colorLabel; 
     private JLayeredPane left;
     private Timer timer;
     private JTextArea statusArea;
+    private JComboBox userList;
+    private ArrayList<String> users;
+    private String opponent;
+    private JPanel right;
     
 	public ClientTable()throws Exception
 	{
@@ -156,10 +173,10 @@ public class ClientTable implements RollIF {
        loginPanel.add(registerButton);
         
        //rollerboard panel
-		this.rollBoard = Board.createStandardBoard();
-		this.boardPanel = new BoardPanel();
-		this.boardPanel.setBounds(140, 450, 530, 45);
-		
+       this.rollBoard = Board.createStandardBoard();
+       this.boardPanel = new BoardPanel();
+       this.boardPanel.setBounds(140, 450, 530, 45);
+	
 		
 		left = new JLayeredPane();
         mainPane.setBackground(SystemColor.inactiveCaptionBorder);
@@ -173,9 +190,19 @@ public class ClientTable implements RollIF {
         //logoffButton.addActionListener(new logoffListener());
         logoffButton.setBounds(10, 5, 115, 25);
         left.add(logoffButton);
-	
-
-       
+        
+        inviteButton = new JButton("Invite Player");
+        inviteButton.setEnabled(false);
+        inviteButton.addActionListener(new inviteListener());
+        inviteButton.setBounds(245, 5, 115, 25);
+        left.add(inviteButton);
+        
+        quitButton = new JButton("Quit Game");
+        quitButton.setEnabled(false);
+        quitButton.addActionListener(new quitListener());
+        quitButton.setBounds(365, 5, 115, 25);
+        left.add(quitButton);
+        quitButton.setVisible(false);
 
         //Pane to show users 
         JScrollPane statusScrollPane = new JScrollPane();
@@ -218,9 +245,10 @@ public class ClientTable implements RollIF {
         sendButton.setBounds(365, 400, 115, 25);
         left.add(sendButton);
 		
-        JPanel right = boardPanel;
+        right = boardPanel;
 		mainPane.add(left);
 		mainPane.add(right);
+		right.setVisible(false);
 		mainFrame.getContentPane().add(mainPane);
 		this.mainFrame.setVisible(true);
 		this.loginFrame.setVisible(true);
@@ -501,10 +529,48 @@ public class ClientTable implements RollIF {
 	public void displayColor(String message) 
 	{
 		colorLabel = new JLabel(message);
-		colorLabel.setFont(new Font("Tahoma", Font.BOLD, 15));
-        colorLabel.setBounds(130, 7, 102, 21);
+		colorLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+        colorLabel.setBounds(130, 7, 120, 21);
 		left.add(colorLabel);
 		colorLabel.setVisible(true);
+	}
+	
+	
+	public void displayInvite(String userID) 
+	{
+		opponent = userID;
+		System.out.println(opponent);
+		
+		//login frame
+	   	receiveFrame = new JFrame("Login");
+	   	receiveFrame.setBounds(100, 100, 300, 250);
+	   	receiveFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+         
+        //login panel
+		receivePanel = new JPanel();
+		receivePanel.setLayout(null);
+		receivePanel.setBackground(Color.lightGray);
+		receiveFrame.add(receivePanel);
+       
+       //Label for user field
+       JLabel userLabel = new JLabel("Invite From: " + opponent);
+       userLabel.setBounds(10, 70, 200, 25);
+       receivePanel.add(userLabel);
+       
+       //Login Button on login panel
+       JButton acceptButton = new JButton("Accept");
+       //acceptButton.setToolTipText("Make sure information in all fields is correct");
+       acceptButton.addActionListener(new acceptListener());;
+       acceptButton.setBounds(75, 150, 100, 25);
+       receivePanel.add(acceptButton);
+       
+       JButton declineButton = new JButton("Decline");
+      // declineButton.setToolTipText("Make sure information in all fields is correct");
+       declineButton.addActionListener(new declineListener());
+       declineButton.setBounds(180, 150, 100, 25);
+       receivePanel.add(declineButton);
+       
+       receiveFrame.setVisible(true);
 	}
 	
 	public void displayBoard(int curCoord, int endCoord)
@@ -544,6 +610,7 @@ public class ClientTable implements RollIF {
 	@Override
 	public void display(Object message) 
 	{
+		
 		if(message instanceof String)
 		{
 			if(message.toString().contains("login"))
@@ -551,6 +618,47 @@ public class ClientTable implements RollIF {
 				List<String> items = Arrays.asList(((String) message).split(","));
 				String color =items.get(1);
 				displayColor(color);
+			}
+			else if(message.toString().contains("invite"))
+			{
+				List<String> items = Arrays.asList(((String) message).split(","));
+				String user =items.get(1);
+				
+				displayInvite(user);
+			}
+			else if(message.toString().contains("decline"))
+			{
+				JOptionPane.showMessageDialog(loginFrame, "Your invite has been declined!");
+			}
+			else if(message.toString().contains("start"))
+			{
+				System.out.println("Start");
+				//right.setVisible(true);
+				inviteButton.setEnabled(false);
+				quitButton.setVisible(true);
+				quitButton.setEnabled(true);
+				try {
+					rollBoard = Board.createStandardBoard();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}  
+				boardPanel.drawBoard(rollBoard);
+				right.setVisible(true);
+				
+				
+				
+				
+			}
+			else if(message.toString().contains("quit"))
+			{
+				JOptionPane.showMessageDialog(loginFrame, "Your opponent has quit!");
+				System.out.println("quit");
+				opponent = null;
+				right.setVisible(false);
+				quitButton.setVisible(false);
+				quitButton.setEnabled(false);
+				inviteButton.setEnabled(true);
 			}
 			else
 			{
@@ -640,6 +748,8 @@ public class ClientTable implements RollIF {
 	    {
 	        statusArea.setText("");
 	        
+	        this.users = users;
+	        
 	        for (int i = 0; i < users.size(); i++) 
 	        {
 	            statusArea.append( users.get(i)+"\n");
@@ -679,6 +789,7 @@ public class ClientTable implements RollIF {
 					System.out.println("you're logged in");
 					loginFrame.setVisible(false);
 					ServerRequests();//start sending requests to server
+					inviteButton.setEnabled(true);
 					
 				}
 				else
@@ -716,6 +827,91 @@ public class ClientTable implements RollIF {
 					Register register = new Register();
 					register.frame.setVisible(true);
 			}
+	    }
+	  
+	  private class acceptListener implements ActionListener 
+	    {
+		  
+	        public void actionPerformed(ActionEvent event) 
+	        {
+				roll.handleMessageFromClientUI("#accept,"+opponent);
+				receiveFrame.setVisible(false);
+				inviteButton.setEnabled(false);
+				quitButton.setVisible(true);
+				quitButton.setEnabled(true);
+			    
+			    try {
+					rollBoard = Board.createStandardBoard();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+
+					boardPanel.drawBoard(rollBoard);
+
+			    right.setVisible(true);
+			}
+	    }
+	  
+	  	private class declineListener implements ActionListener 
+	    {
+		  
+	        public void actionPerformed(ActionEvent event) 
+	        {
+				roll.handleMessageFromClientUI("#decline,"+opponent);
+				opponent = null;
+				receiveFrame.setVisible(false);
+				
+			}
+	    } 
+	  	
+	  	private class quitListener implements ActionListener 
+	    {
+		  
+	        public void actionPerformed(ActionEvent event) 
+	        {
+				roll.handleMessageFromClientUI("#quit,"+opponent);
+				opponent = null;
+				right.setVisible(false);
+				quitButton.setVisible(false);
+				inviteButton.setEnabled(true);
+			}
+	    } 
+	  
+	  private class inviteListener implements ActionListener 
+	    {
+		  
+	        public void actionPerformed(ActionEvent event) 
+	        {
+	        	 //login frame
+	    	   	inviteFrame = new JFrame("Invite Player");
+	    	   	inviteFrame.setBounds(100, 100, 300, 250);
+	    	   	inviteFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	             
+	            //login panel
+	    	   	invitePanel = new JPanel();
+	    	   	invitePanel.setLayout(null);
+	    	   	invitePanel.setBackground(Color.lightGray);
+	    	   	inviteFrame.add(invitePanel);
+	           
+	           //Label for user field
+	           JLabel userLabel = new JLabel("User");
+	           userLabel.setBounds(10, 70, 80, 25);
+	           invitePanel.add(userLabel);
+	           
+	           
+	           userList = new JComboBox();
+	           userList.setToolTipText("Switch channels. Main is the default chat room.");
+	           userList.setEnabled(false);
+	           userList.setModel(new DefaultComboBoxModel(users.toArray()));
+	           userList.addItemListener(new UserListListener());
+	           userList.setBounds(100, 70, 160, 25);
+	           userList.setBackground(Color.WHITE);
+	           invitePanel.add(userList); 
+	           userList.setEnabled(true);
+	           inviteFrame.setVisible(true);
+	           
+			}
 	    }  
 	  
 	  private class ConnectionChecker implements ActionListener 
@@ -724,7 +920,7 @@ public class ClientTable implements RollIF {
 	        {
 	            if (!roll.isConnected()) 
 	            {
-	                //logoffButton.doClick();
+	                quitButton.doClick();
 	            }
 	        }
 	    }
@@ -733,6 +929,7 @@ public class ClientTable implements RollIF {
 	    {
 	        public void actionPerformed(ActionEvent event) 
 	        {
+	        	//System.out.println("userList Request");
 	            roll.handleMessageFromClientUI(("#userList"));
 	        }
 	    }
@@ -741,13 +938,27 @@ public class ClientTable implements RollIF {
 	    {
 
 	        timer = new Timer(1000, new ConnectionChecker());
-	        timer.setInitialDelay(0);
+	        timer.setInitialDelay(1000);
 	        timer.setDelay(1000);
 	        timer.addActionListener(new RequestOnlineUsers());   
 	        timer.start();
 	    }
 	  
-	
+	  //handles invite users
+	    private class UserListListener implements ItemListener 
+	    {
+	    	 public void itemStateChanged(ItemEvent event) 
+	         {
+	             if (event.getStateChange() == ItemEvent.SELECTED) 
+	             {
+	                 String user = (String)userList.getSelectedItem();
+	                 
+	                 //System.out.println("#invite," + user);
+	                 roll.handleMessageFromClientUI("#invite," + user);
+	                 inviteFrame.setVisible(false);
+	             }
+	         }
+	   }
 }
 
 

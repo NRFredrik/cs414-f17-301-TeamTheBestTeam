@@ -137,6 +137,7 @@ public class Config {
 				String hashedPass = "";
 				try {
 					hashedPass = HashPassword.hashPassword(password); //get has of password that was entered in login
+					System.out.println(hashedPass);
 				} catch (NoSuchAlgorithmException e) {
 					e.printStackTrace();
 				}

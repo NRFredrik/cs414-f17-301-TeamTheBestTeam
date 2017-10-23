@@ -9,9 +9,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
 
 public class Server extends AbstractServer 
 {
@@ -32,17 +34,29 @@ public class Server extends AbstractServer
 
 	public void handleMessageFromClient(Object message, ConnectionToClient client) 
 	{
+
+		//System.out.println((String)message);
+		//System.out.println(client.getInfo("color"));
+		//System.out.println(turn);
 		
 		
-		if(((String)message).equals("login"))
+		if(((String)message).contains("#login"))
 		{
 			
-			login(client);
+			List<String> items = Arrays.asList(((String) message).split(","));
+			String userID =items.get(1);
+			login(client,userID);
+		}
+		else if(((String)message).contains("#userList"))
+		{
+			ArrayList<String> userList = userList(client);
+			msgToCli(userList, client);
 		}
 		else
 		{
 			if(client.getInfo("color").equals(turn))
 			{
+				//System.out.println("Server Recieved");
 				this.sendToAllClients((String)message);
 				
 				if(client.getInfo("color").equals("white"))
@@ -51,7 +65,7 @@ public class Server extends AbstractServer
 				}
 				else
 				{
-					turn= "white";
+					turn="white";
 				}
 			}	
 		}		
@@ -183,18 +197,23 @@ public class Server extends AbstractServer
 	}
 
 
-	protected void login(ConnectionToClient client) 
+	protected void login(ConnectionToClient client, String userID) 
 	{
 		
 		
 		Thread[] clientThreadList = getClientConnections();
 		if(clientThreadList.length == 1)
 		{
+			System.out.println("color sent");
 			client.setInfo("color", "white");
+			client.setInfo("userID", userID);
+			msgToCli("login,white", client);
 		}
 		else if(clientThreadList.length == 2)
 		{
 			client.setInfo("color", "black");
+			client.setInfo("userID", userID);
+			msgToCli("login,black", client);
 		}
 		else
 		{
@@ -225,6 +244,28 @@ public class Server extends AbstractServer
 			e.printStackTrace();
 		}
 	}
+	
+	
+	protected ArrayList<String> userList(ConnectionToClient client) 
+	{
+		
+		ArrayList<String> users = new ArrayList<String>();
+		
+
+
+			Thread[] clientThreadList = getClientConnections();
+			
+			for (int i = 0; i < clientThreadList.length; i++) 
+			{
+				
+				String user = ((String) ((ConnectionToClient) clientThreadList[i]).getInfo("userID"));
+				//System.out.println(user);
+				users.add(user);
+
+			
+			}
+		return users;
+	}	
 
 	/**
 	 * This method is responsible for the creation of the server instance (there

@@ -171,9 +171,9 @@ public class Register {
 					/**
 					 * redirect to login page
 					 */
-					Login login = new Login();
-					login.frame.setVisible(true);
-					
+					//Login login = new Login();
+					//login.frame.setVisible(true);
+					frame.setVisible(false);
 				}
 			}//end while
 		}//end actionPerformed

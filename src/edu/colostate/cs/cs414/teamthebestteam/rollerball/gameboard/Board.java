@@ -32,11 +32,11 @@ public class Board {
 	//keep track of white pieces 
 	private final Collection<Piece> whitePieces;
 	private final Collection<Piece> blackPieces;
-	private final Player currentPlayer;
+	public final Player currentPlayer;
 
 	//Both players
-	private WhitePlayer white;
-	private BlackPlayer black;
+	public WhitePlayer white;
+	public BlackPlayer black;
 
 	
 

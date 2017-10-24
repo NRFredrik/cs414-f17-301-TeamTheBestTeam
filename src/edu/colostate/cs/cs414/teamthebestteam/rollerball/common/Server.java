@@ -21,21 +21,21 @@ public class Server extends AbstractServer
 	final public static int DEFAULT_PORT = 5555;
 	Board board;
 	static Table table;
-	String turn;
+	//String turn;
 	
 	protected boolean isClosed;
 	// Constructors ****************************************************
 	public Server(int port) {
 		super(port);
 		this.isClosed = false;
-		turn = "white";
+		//turn = "white";
 	}
 
 
 	public void handleMessageFromClient(Object message, ConnectionToClient client) 
 	{
 
-		//System.out.println((String)message);
+		
 		//System.out.println(client.getInfo("color"));
 		//System.out.println(turn);
 		
@@ -49,11 +49,47 @@ public class Server extends AbstractServer
 		}
 		else if(((String)message).contains("#userList"))
 		{
+			
 			ArrayList<String> userList = userList(client);
 			msgToCli(userList, client);
 		}
+		else if(((String)message).contains("#invite"))
+		{
+			
+
+			List<String> items = Arrays.asList(((String) message).split(","));
+			String userID =items.get(1);
+			invite(client,userID);
+			
+		}
+		else if(((String)message).contains("#accept"))
+		{
+			
+			List<String> items = Arrays.asList(((String) message).split(","));
+			String userID =items.get(1);
+			accept(client,userID);
+		}
+		else if(((String)message).contains("#decline"))
+		{
+			List<String> items = Arrays.asList(((String) message).split(","));
+			String userID =items.get(1);
+			decline(client,userID);
+		}
+		else if(((String)message).contains("#quit"))
+		{
+			List<String> items = Arrays.asList(((String) message).split(","));
+			String userID =items.get(1);
+			quitGame(client,userID);
+		}
 		else
 		{
+			
+			if((boolean) client.getInfo("turn"))
+			{
+				move(client,(String)message);
+			}
+			//move(client,(String)message);
+			/*
 			if(client.getInfo("color").equals(turn))
 			{
 				//System.out.println("Server Recieved");
@@ -67,7 +103,7 @@ public class Server extends AbstractServer
 				{
 					turn="white";
 				}
-			}	
+			}*/	
 		}		
 	}
 
@@ -199,21 +235,22 @@ public class Server extends AbstractServer
 
 	protected void login(ConnectionToClient client, String userID) 
 	{
+		client.setInfo("userID", userID);
 		
-		
+		/*
 		Thread[] clientThreadList = getClientConnections();
 		if(clientThreadList.length == 1)
 		{
-			System.out.println("color sent");
-			client.setInfo("color", "white");
+			//System.out.println("color sent");
+			//client.setInfo("color", "white");
 			client.setInfo("userID", userID);
-			msgToCli("login,white", client);
+			msgToCli("login," + userID+ ": White", client);
 		}
 		else if(clientThreadList.length == 2)
 		{
-			client.setInfo("color", "black");
+			//client.setInfo("color", "black");
 			client.setInfo("userID", userID);
-			msgToCli("login,black", client);
+			msgToCli("login," + userID+ ": Black", client);
 		}
 		else
 		{
@@ -225,7 +262,7 @@ public class Server extends AbstractServer
 				e.printStackTrace();
 			}
 		}
-		
+		*/
 	}
 
 	protected void logoff(String userID) 
@@ -233,6 +270,133 @@ public class Server extends AbstractServer
 		System.out.println(userID + " has disconnected.");
 		this.sendToAllClients(userID + " has logged off.");
 
+	}
+	
+	protected void invite(ConnectionToClient sendingClient, String userID) 
+	{
+		
+		
+		Thread[] clientThreadList = getClientConnections();
+		
+		for (int i = 0; i < clientThreadList.length; i++) 
+		{
+			//System.out.println(((ConnectionToClient) clientThreadList[i]).getInfo("userID"));
+			
+			if(((ConnectionToClient) clientThreadList[i]).getInfo("userID").equals(userID))
+			{
+				msgToCli("invite," + sendingClient.getInfo("userID"),(ConnectionToClient)clientThreadList[i]);
+				
+				//System.out.println("invite," + sendingClient.getInfo("userID"));
+			}
+			
+		}
+			
+		
+	}
+	
+	protected void move(ConnectionToClient sendingClient, String move) 
+	{
+		ConnectionToClient opposingClient =null;
+		
+		Thread[] clientThreadList = getClientConnections();
+		
+		for (int i = 0; i < clientThreadList.length; i++) 
+		{
+			
+			if(((ConnectionToClient) clientThreadList[i]).getInfo("userID").equals(sendingClient.getInfo("opponent")))
+			{
+				msgToCli(move,(ConnectionToClient)clientThreadList[i]);
+				opposingClient = (ConnectionToClient)clientThreadList[i];
+			}
+			
+		}
+		
+		msgToCli(move,sendingClient);
+		
+		sendingClient.setInfo("turn", false);
+		opposingClient.setInfo("turn", true);
+	}
+	
+	protected void accept(ConnectionToClient sendingClient, String userID) 
+	{
+		System.out.println("start");
+		ConnectionToClient startingClient =null;
+		
+		Thread[] clientThreadList = getClientConnections();
+		
+		for (int i = 0; i < clientThreadList.length; i++) 
+		{
+			if(((ConnectionToClient) clientThreadList[i]).getInfo("userID").equals(userID))
+			{
+				startingClient = (ConnectionToClient)clientThreadList[i];
+			}
+		}
+		
+		startingClient.setInfo("opponent",sendingClient.getInfo("userID"));
+		startingClient.setInfo("color", "white");
+		startingClient.setInfo("turn", true);
+		msgToCli("login,Your Color: White", startingClient);
+		
+		
+		sendingClient.setInfo("opponent",userID);
+		sendingClient.setInfo("color", "black");
+		sendingClient.setInfo("turn", false);
+		msgToCli("login,Your Color: Black", sendingClient);
+		
+		msgToCli("start",startingClient);
+		
+	}
+	
+	protected void decline(ConnectionToClient sendingClient, String userID) 
+	{
+		
+		ConnectionToClient startingClient =null;
+		
+		Thread[] clientThreadList = getClientConnections();
+		
+		for (int i = 0; i < clientThreadList.length; i++) 
+		{
+			if(((ConnectionToClient) clientThreadList[i]).getInfo("userID").equals(userID))
+			{
+				startingClient = (ConnectionToClient)clientThreadList[i];
+			}
+		}
+		
+		msgToCli("decline",startingClient);
+		
+	}
+	
+	
+	protected void quitGame(ConnectionToClient sendingClient, String userID) 
+	{
+		
+	ConnectionToClient opposingClient =null;
+		
+		Thread[] clientThreadList = getClientConnections();
+		
+		for (int i = 0; i < clientThreadList.length; i++) 
+		{
+			
+			if(((ConnectionToClient) clientThreadList[i]).getInfo("userID").equals(sendingClient.getInfo("opponent")))
+			{
+				msgToCli("quit",(ConnectionToClient)clientThreadList[i]);
+				opposingClient = (ConnectionToClient)clientThreadList[i];
+			}
+			
+		}
+		
+		
+		opposingClient.setInfo("opponent",null);
+		opposingClient.setInfo("color", null);
+		opposingClient.setInfo("turn", null);
+		
+		
+		
+		sendingClient.setInfo("opponent",null);
+		sendingClient.setInfo("color", null);
+		sendingClient.setInfo("turn", null);
+
+		
 	}
 	
 
@@ -250,19 +414,18 @@ public class Server extends AbstractServer
 	{
 		
 		ArrayList<String> users = new ArrayList<String>();
+		users.add("Users");
 		
-
-
 			Thread[] clientThreadList = getClientConnections();
 			
 			for (int i = 0; i < clientThreadList.length; i++) 
 			{
-				
-				String user = ((String) ((ConnectionToClient) clientThreadList[i]).getInfo("userID"));
-				//System.out.println(user);
-				users.add(user);
-
-			
+				if(!(((String) ((ConnectionToClient) clientThreadList[i]).getInfo("userID")).equals(client.getInfo("userID"))))
+				{
+					String user = ((String) ((ConnectionToClient) clientThreadList[i]).getInfo("userID"));
+					//System.out.println(user);
+					users.add(user);
+				}
 			}
 		return users;
 	}	

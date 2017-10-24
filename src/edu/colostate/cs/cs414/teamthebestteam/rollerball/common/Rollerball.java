@@ -18,24 +18,15 @@ public class Rollerball extends AbstractClient
 	@Override
 	protected void handleMessageFromServer(Object msg) 
 	{
-		
-		System.out.println("Client Recieved: "+ msg);
-		
-		if(msg.equals("quit"))
-		{
-			System.exit(0);
-		}
-		else
-		{
-			System.out.println("Client Recieved: " + msg);
+		//System.out.println(msg);
 			clientUI.display(msg);	
-		}
 		
 	}
 	public void handleMessageFromClientUI(Object message) 
 	{
 		try 
 		{	
+			//System.out.println(message);
 			sendToServer(message);
 		} catch (IOException error) 
 		{

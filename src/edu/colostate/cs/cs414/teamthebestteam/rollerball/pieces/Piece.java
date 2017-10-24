@@ -1,7 +1,10 @@
 package edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Board;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Move;
@@ -13,6 +16,10 @@ public abstract class Piece {
 	protected final boolean isFirstMove;
 	protected final boolean didRebound; //only apply's to rook and bishop
 	protected final PieceType pieceType;
+	protected final Set<Integer> Q1;
+	protected final Set<Integer> Q2;
+	protected final Set<Integer> Q3;
+	protected final Set<Integer> Q4;
 	
 	Piece(PieceType pieceType, final int piecePosition, final Alliance pieceAlliance ){
 		this.piecePosition = piecePosition;
@@ -20,6 +27,44 @@ public abstract class Piece {
 		this.isFirstMove = false;
 		this.didRebound = false;
 		this.pieceType = pieceType;
+		Q1 = quad1();
+		Q2 = quad2();
+		Q3 = quad3();
+		Q4 = quad4();
+	}
+	
+	//Quadrant sets to be used for backwards movements
+	//quad1
+	private Set<Integer> quad1() {
+		Set<Integer> quadrant = new HashSet<>();
+		for(int i = 0; i < 12; i++){
+			if(i != 5 || i != 6){
+				quadrant.add(i);
+			}
+		}
+		return quadrant;
+	}
+	//quad2
+	private Set<Integer> quad2() {
+		Integer[] quad_two = { 5,6,12,13,19,20,26,27,33,34 };
+		Set<Integer> quadrant = new HashSet<>(Arrays.asList(quad_two));
+		return quadrant;
+	}
+	//quad3
+	private Set<Integer> quad3(){
+		Set<Integer> quadrant = new HashSet<>();
+		for(int i = 37; i < 49; i++){
+			if(i != 42 || i != 43){
+				quadrant.add(i);
+			}
+		}
+		return quadrant;
+	}
+	//quad4
+	private Set<Integer> quad4(){
+		Integer[] quad_four = { 42,43,35,36,28,29,21,22,14,15 } ;
+		Set<Integer> quadrant = new HashSet<>(Arrays.asList(quad_four));
+		return quadrant;
 	}
 	
 	@Override

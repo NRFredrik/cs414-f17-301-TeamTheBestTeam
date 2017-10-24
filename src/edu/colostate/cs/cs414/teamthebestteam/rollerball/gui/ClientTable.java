@@ -79,12 +79,23 @@ public class ClientTable implements RollIF {
 
 	
 	private JFrame mainFrame;
+	private JFrame mmFrame;
+	private JPanel mmPanel;
     private JFrame loginFrame;
     private JPanel loginPanel;
     private JFrame inviteFrame;
     private JPanel invitePanel;
     private JFrame receiveFrame;
     private JPanel receivePanel;
+    
+    private JFrame unRegFrame;
+    private JPanel unRegPanel;
+    private JTextField emailField;
+    private JButton unregisterButton;
+    
+    private JButton loginMMButton;
+    private JButton registerMMButton;
+    private JButton inviteButton;
     
     private JTextField messageField;
     private JTextField userField;
@@ -95,7 +106,6 @@ public class ClientTable implements RollIF {
     private JButton loginButton;
     private JButton registerButton;
     private JButton logoffButton;
-    private JButton inviteButton;
     private JButton quitButton;
     private JLabel colorLabel; 
     private JLayeredPane left;
@@ -124,6 +134,66 @@ public class ClientTable implements RollIF {
         mainPane.setBackground(Color.lightGray);
         
         
+        //Unregister Frame
+      	unRegFrame = new JFrame("Unregister");
+      	unRegFrame.setBounds(100, 100, 300, 250);
+      	unRegFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      	
+      	//Unregister panel
+  		unRegPanel = new JPanel();
+  		unRegPanel.setLayout(null);
+  		unRegPanel.setBackground(Color.lightGray);
+  		unRegFrame.add(unRegPanel);
+        
+  		//label for email
+        JLabel emailLabel = new JLabel("Email");
+        emailLabel.setBounds(10, 100, 80, 25);
+        unRegPanel.add(emailLabel);
+        
+        //Email Field
+        emailField = new JTextField();
+        emailField.setBounds(100, 100, 160, 25);
+        emailField.addKeyListener(new EnterPressed());
+        unRegPanel.add(emailField);
+  		
+        //Unregister Button on Unregister panel
+        unregisterButton = new JButton("Unregister");
+        unregisterButton.addActionListener(new unregisterListener());
+        unregisterButton.setBounds(75, 150, 100, 25);
+        unRegPanel.add(unregisterButton);
+        
+  		
+        
+        //MainMenu Frame
+      	mmFrame = new JFrame("Main Menu");
+      	mmFrame.setBounds(100, 100, 300, 250);
+      	mmFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      	
+      	//login panel
+  		mmPanel = new JPanel();
+  		mmPanel.setLayout(null);
+  		mmPanel.setBackground(Color.lightGray);
+  		mmFrame.add(mmPanel);
+    
+		loginMMButton = new JButton("Login");
+		loginMMButton.setToolTipText("Make sure information in all fields is correct");
+		loginMMButton.addActionListener(new loginMMListener());
+		loginMMButton.setBounds(80, 10, 125, 25);
+		mmPanel.add(loginMMButton);
+		
+		registerMMButton = new JButton("Register");
+		registerMMButton.setToolTipText("Make sure information in all fields is correct");
+		registerMMButton.addActionListener(new registerListener());
+		registerMMButton.setBounds(80, 60, 125, 25);
+		mmPanel.add(registerMMButton);
+	
+		inviteButton = new JButton("Create Game");
+	    inviteButton.setEnabled(true);
+	    inviteButton.addActionListener(new inviteListener());
+	    inviteButton.setBounds(80, 110, 125, 25);
+	    mmPanel.add(inviteButton);
+	    inviteButton.setEnabled(false);
+  		
         //login frame
 	   	loginFrame = new JFrame("Login");
 	   	loginFrame.setBounds(100, 100, 300, 250);
@@ -142,7 +212,6 @@ public class ClientTable implements RollIF {
        
        //User field on login panel
        userField = new JTextField();
-       userField.setText("username");
        userField.setBounds(100, 70, 160, 25);
        userField.addKeyListener(new EnterPressed());
        loginPanel.add(userField);
@@ -154,7 +223,6 @@ public class ClientTable implements RollIF {
        
        //Pasword Field
        passField = new JTextField();
-       passField.setText("password\r\n");
        passField.setBounds(100, 100, 160, 25);
        passField.addKeyListener(new EnterPressed());
        loginPanel.add(passField);
@@ -166,12 +234,14 @@ public class ClientTable implements RollIF {
        loginButton.setBounds(75, 150, 100, 25);
        loginPanel.add(loginButton);
        
+       
        registerButton = new JButton("Register");
        registerButton.setToolTipText("Make sure information in all fields is correct");
        registerButton.addActionListener(new registerListener());
        registerButton.setBounds(180, 150, 100, 25);
        loginPanel.add(registerButton);
         
+       
        //rollerboard panel
        this.rollBoard = Board.createStandardBoard();
        this.boardPanel = new BoardPanel();
@@ -183,7 +253,7 @@ public class ClientTable implements RollIF {
         mainPane.setBackground(Color.lightGray);
         mainFrame.getContentPane().add(mainPane);
 
-        
+        /*
 		logoffButton = new JButton("Logoff");
         logoffButton.setToolTipText("Say Good bye :)");
         logoffButton.setEnabled(false);
@@ -191,18 +261,19 @@ public class ClientTable implements RollIF {
         logoffButton.setBounds(10, 5, 115, 25);
         left.add(logoffButton);
         
+        
         inviteButton = new JButton("Invite Player");
         inviteButton.setEnabled(false);
         inviteButton.addActionListener(new inviteListener());
         inviteButton.setBounds(245, 5, 115, 25);
         left.add(inviteButton);
-        
+        */
         quitButton = new JButton("Quit Game");
         quitButton.setEnabled(false);
         quitButton.addActionListener(new quitListener());
         quitButton.setBounds(365, 5, 115, 25);
         left.add(quitButton);
-        quitButton.setVisible(false);
+        quitButton.setVisible(true);
 
         //Pane to show users 
         JScrollPane statusScrollPane = new JScrollPane();
@@ -248,10 +319,10 @@ public class ClientTable implements RollIF {
         right = boardPanel;
 		mainPane.add(left);
 		mainPane.add(right);
-		right.setVisible(false);
 		mainFrame.getContentPane().add(mainPane);
-		this.mainFrame.setVisible(true);
-		this.loginFrame.setVisible(true);
+		this.mainFrame.setVisible(false);
+		this.mmFrame.setVisible(true);
+		this.loginFrame.setVisible(false);
 	}
 
 	private void fillMenu(JMenuBar menuBar) 
@@ -632,9 +703,7 @@ public class ClientTable implements RollIF {
 			}
 			else if(message.toString().contains("start"))
 			{
-				System.out.println("Start");
-				//right.setVisible(true);
-				inviteButton.setEnabled(false);
+				mmFrame.setVisible(false);
 				quitButton.setVisible(true);
 				quitButton.setEnabled(true);
 				try {
@@ -644,21 +713,15 @@ public class ClientTable implements RollIF {
 					e.printStackTrace();
 				}  
 				boardPanel.drawBoard(rollBoard);
-				right.setVisible(true);
-				
-				
-				
-				
+				mainFrame.setVisible(true);
 			}
 			else if(message.toString().contains("quit"))
 			{
 				JOptionPane.showMessageDialog(loginFrame, "Your opponent has quit!");
 				System.out.println("quit");
 				opponent = null;
-				right.setVisible(false);
-				quitButton.setVisible(false);
-				quitButton.setEnabled(false);
-				inviteButton.setEnabled(true);
+				mainFrame.setVisible(false);
+				mmFrame.setVisible(true);
 			}
 			else
 			{
@@ -756,6 +819,37 @@ public class ClientTable implements RollIF {
 	        }
 	    }
 	  
+	  private class loginMMListener implements ActionListener 
+	  {
+	        public void actionPerformed(ActionEvent event) 
+	        {   
+	        	String loginMMText = loginMMButton.getText();
+	        	
+	        	
+	        	
+	        	 if (loginMMText.equals("Login"))
+	             {
+	        		 	loginMMButton.setText("Logoff");
+	        			mmFrame.setVisible(false);
+	    	        	loginFrame.setVisible(true);
+	    	        	registerMMButton.setText("Unregister");
+	    	        	inviteButton.setEnabled(true);
+	             }
+	        	 
+	        	 //open login window
+	        	 else if(loginMMText.equals("Logoff"))
+	        	 {
+	        		 inviteButton.setEnabled(false);
+	        		 loginMMButton.setText("Login"); 
+	        		 loginFrame.setVisible(false);
+	        		 stopTimer();
+	        		 roll.quit();
+	        		 registerMMButton.setText("Register");
+	        	 }
+	        }
+	  }
+	    
+	    
 	  private class loginListener implements ActionListener 
 	    {
 	        public void actionPerformed(ActionEvent event) 
@@ -787,10 +881,11 @@ public class ClientTable implements RollIF {
 						e.printStackTrace();
 					}
 					System.out.println("you're logged in");
-					loginFrame.setVisible(false);
+					//loginFrame.setVisible(false);
 					ServerRequests();//start sending requests to server
-					inviteButton.setEnabled(true);
-					
+					//inviteButton.setEnabled(true);
+					mmFrame.setVisible(true);
+		        	loginFrame.setVisible(false);
 				}
 				else
 				{
@@ -824,9 +919,36 @@ public class ClientTable implements RollIF {
 		  
 	        public void actionPerformed(ActionEvent event) 
 	        {
-					Register register = new Register();
+	        	String registerMMText = registerMMButton.getText();
+	        	
+	        	if(registerMMText.equals("Register"))
+	        	{
+	        		Register register = new Register();
 					register.frame.setVisible(true);
+	        	}
+	        	else
+	        	{
+	        		unRegFrame.setVisible(true);
+	        		mmFrame.setVisible(false);
+	        	}
+					
 			}
+	    }
+	  
+	  private class unregisterListener implements ActionListener 
+	    {
+		  public void actionPerformed(ActionEvent event) 
+	        {
+			  final Config con = new Config();
+			  
+			  String email = emailField.getText();
+			  con.removeUser(email);
+			  unRegFrame.setVisible(false);
+			  mmFrame.setVisible(true);
+			  loginMMButton.doClick();
+			  
+			  
+	        }
 	    }
 	  
 	  private class acceptListener implements ActionListener 
@@ -836,7 +958,6 @@ public class ClientTable implements RollIF {
 	        {
 				roll.handleMessageFromClientUI("#accept,"+opponent);
 				receiveFrame.setVisible(false);
-				inviteButton.setEnabled(false);
 				quitButton.setVisible(true);
 				quitButton.setEnabled(true);
 			    
@@ -848,8 +969,8 @@ public class ClientTable implements RollIF {
 				} 
 
 					boardPanel.drawBoard(rollBoard);
-
-			    right.setVisible(true);
+				mmFrame.setVisible(false);
+			    mainFrame.setVisible(true);
 			}
 	    }
 	  
@@ -872,9 +993,8 @@ public class ClientTable implements RollIF {
 	        {
 				roll.handleMessageFromClientUI("#quit,"+opponent);
 				opponent = null;
-				right.setVisible(false);
-				quitButton.setVisible(false);
-				inviteButton.setEnabled(true);
+				mainFrame.setVisible(false);
+				mmFrame.setVisible(true);
 			}
 	    } 
 	  
@@ -883,6 +1003,7 @@ public class ClientTable implements RollIF {
 		  
 	        public void actionPerformed(ActionEvent event) 
 	        {
+	        	
 	        	 //login frame
 	    	   	inviteFrame = new JFrame("Invite Player");
 	    	   	inviteFrame.setBounds(100, 100, 300, 250);
@@ -901,7 +1022,6 @@ public class ClientTable implements RollIF {
 	           
 	           
 	           userList = new JComboBox();
-	           userList.setToolTipText("Switch channels. Main is the default chat room.");
 	           userList.setEnabled(false);
 	           userList.setModel(new DefaultComboBoxModel(users.toArray()));
 	           userList.addItemListener(new UserListListener());
@@ -910,7 +1030,7 @@ public class ClientTable implements RollIF {
 	           invitePanel.add(userList); 
 	           userList.setEnabled(true);
 	           inviteFrame.setVisible(true);
-	           
+	           mmFrame.setVisible(false);
 			}
 	    }  
 	  
@@ -944,6 +1064,12 @@ public class ClientTable implements RollIF {
 	        timer.start();
 	    }
 	  
+	  private void stopTimer() 
+	    {
+	        timer.stop();
+	        timer = null;
+	    }
+	  
 	  //handles invite users
 	    private class UserListListener implements ItemListener 
 	    {
@@ -956,6 +1082,7 @@ public class ClientTable implements RollIF {
 	                 //System.out.println("#invite," + user);
 	                 roll.handleMessageFromClientUI("#invite," + user);
 	                 inviteFrame.setVisible(false);
+	                 mmFrame.setVisible(true);
 	             }
 	         }
 	   }

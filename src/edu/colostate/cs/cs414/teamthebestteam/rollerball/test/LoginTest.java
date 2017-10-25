@@ -60,7 +60,7 @@ public class LoginTest {
 		boolean addedUser = conf.userExists(uname, hashedPass);
 		assertEquals(false, addedUser);
 	}
-	
+
 	/**
 	 * @author kb
 	 * checks to make sure verification of user works.
@@ -80,7 +80,7 @@ public class LoginTest {
 		boolean addedUser = conf.userExists(uname, hashedPass);
 		assertEquals(false, addedUser);
 	}
-	
+
 	/**
 	 * @author kb
 	 * checks to make sure verification of user works.
@@ -89,16 +89,24 @@ public class LoginTest {
 	@Test
 	public void LoggedIn() 
 	{
-		//add a unique user to the database
-		String uname = "kbthetruth";
+
+		//add a user to the database
+		String uname = "testName";
+		String mail = "test@test.com";
 		String hashedPass = null;
 		try {
 			hashedPass = HashPassword.hashPassword("password");
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}	
-		boolean addedUser = conf.userExists(uname, hashedPass);
-		assertEquals(true, addedUser);
+		boolean addedUser = conf.addNewUser(uname, mail, hashedPass);
+
+		String uname2 = "testName";
+		String hashedPass2 = "password";
+
+		boolean addedUser2 = conf.userExists(uname2, hashedPass2);
+		assertEquals(true, addedUser2);
+		conf.removeUser("test@test.com");	 //remove test user from database
 	}
 
 }

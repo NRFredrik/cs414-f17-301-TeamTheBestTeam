@@ -281,7 +281,239 @@ public class Rook extends Piece{
 
 				//add offset and check if new destination is valid
 				candidateDestinationCoordinate += candidateOffset;
+				// REBOUNDING
+				// If quadrant one rebound tile == 6
+				if (BoardUtilities.QUADRANT_ONE.contains(this.piecePosition) && candidateDestinationCoordinate == 6) {
+					int tempCandidateDestinationCoordinate = 6;
+					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
 
+						// add offset and check if new destination is valid
+						tempCandidateDestinationCoordinate += 7;//seven is moving downward orthagonally
+
+						if (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
+							// get tile of the board of the destination
+							// coordinate
+							// where you want to move your piece
+							final Tile candidateTile = board.getTile(tempCandidateDestinationCoordinate);
+
+							// if tile is NOT occupied add to the list of valid
+							// moves and continue back to while loop
+							if (!candidateTile.isTileOccupided()) {
+								/*
+								 * if(backwards = true && (!(quadrant == 3 &&
+								 * candidateOffset == 1) || !(quadrant == 1 &&
+								 * candidateOffset == -1) || !(quadrant == 2 &&
+								 * candidateOffset == -7) || !(quadrant == 4 &&
+								 * candidateOffset == 7))) { legalMove.add(new
+								 * Move.BasicMove(board, this,
+								 * candidateDestinationCoordinate)); }
+								 */
+
+								legalMove.add(new Move.BasicMove(board, this, tempCandidateDestinationCoordinate));
+							}
+							// there is some piece there. Find out what it is
+							// and do
+							// stuff
+							else {
+								// get the piece at this location
+								final Piece pieceAtDestination = candidateTile.getPiece();
+
+								// get the association of the piece
+								final Alliance pieceAlliance = pieceAtDestination.getPieceAssociation();
+
+								// if THIS piece that we are examining is not =
+								// to
+								// piece association that is at our destination
+								// tile
+								// we know this is an enemy piece. So do a
+								// capture
+								// move
+								if (this.pieceAlliance != pieceAlliance) {
+									// need board, piece, destination tile, and
+									// piece that is being captured
+									legalMove.add(new Move.CaptureMove(board, this, tempCandidateDestinationCoordinate,
+											pieceAtDestination));
+								}
+								break; // break when we encounter an occupied
+										// tile
+							}
+						} // end if isValidTileCoordinate
+					} // end while isValidTileCoordinate
+				}//end Q1 rebound
+				// If quadrant two rebound tile == 48
+				if (BoardUtilities.QUADRANT_TWO.contains(this.piecePosition) && candidateDestinationCoordinate == 48) {
+					int tempCandidateDestinationCoordinate = 48;
+					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
+
+						// add offset and check if new destination is valid
+						tempCandidateDestinationCoordinate += -1;//seven is moving left orthagonally
+
+						if (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
+							// get tile of the board of the destination
+							// coordinate
+							// where you want to move your piece
+							final Tile candidateTile = board.getTile(tempCandidateDestinationCoordinate);
+
+							// if tile is NOT occupied add to the list of valid
+							// moves and continue back to while loop
+							if (!candidateTile.isTileOccupided()) {
+								/*
+								 * if(backwards = true && (!(quadrant == 3 &&
+								 * candidateOffset == 1) || !(quadrant == 1 &&
+								 * candidateOffset == -1) || !(quadrant == 2 &&
+								 * candidateOffset == -7) || !(quadrant == 4 &&
+								 * candidateOffset == 7))) { legalMove.add(new
+								 * Move.BasicMove(board, this,
+								 * candidateDestinationCoordinate)); }
+								 */
+
+								legalMove.add(new Move.BasicMove(board, this, tempCandidateDestinationCoordinate));
+							}
+							// there is some piece there. Find out what it is
+							// and do
+							// stuff
+							else {
+								// get the piece at this location
+								final Piece pieceAtDestination = candidateTile.getPiece();
+
+								// get the association of the piece
+								final Alliance pieceAlliance = pieceAtDestination.getPieceAssociation();
+
+								// if THIS piece that we are examining is not =
+								// to
+								// piece association that is at our destination
+								// tile
+								// we know this is an enemy piece. So do a
+								// capture
+								// move
+								if (this.pieceAlliance != pieceAlliance) {
+									// need board, piece, destination tile, and
+									// piece that is being captured
+									legalMove.add(new Move.CaptureMove(board, this, tempCandidateDestinationCoordinate,
+											pieceAtDestination));
+								}
+								break; // break when we encounter an occupied
+										// tile
+							}
+						} // end if isValidTileCoordinate
+					} // end while isValidTileCoordinate
+				}//end Q2 rebound
+				// If quadrant three rebound tile == 42
+				if (BoardUtilities.QUADRANT_THREE.contains(this.piecePosition) && candidateDestinationCoordinate == 42) {
+					int tempCandidateDestinationCoordinate = 42;
+					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
+
+						// add offset and check if new destination is valid
+						tempCandidateDestinationCoordinate += -7;//seven is moving downward orthagonally
+
+						if (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
+							// get tile of the board of the destination
+							// coordinate
+							// where you want to move your piece
+							final Tile candidateTile = board.getTile(tempCandidateDestinationCoordinate);
+
+							// if tile is NOT occupied add to the list of valid
+							// moves and continue back to while loop
+							if (!candidateTile.isTileOccupided()) {
+								/*
+								 * if(backwards = true && (!(quadrant == 3 &&
+								 * candidateOffset == 1) || !(quadrant == 1 &&
+								 * candidateOffset == -1) || !(quadrant == 2 &&
+								 * candidateOffset == -7) || !(quadrant == 4 &&
+								 * candidateOffset == 7))) { legalMove.add(new
+								 * Move.BasicMove(board, this,
+								 * candidateDestinationCoordinate)); }
+								 */
+
+								legalMove.add(new Move.BasicMove(board, this, tempCandidateDestinationCoordinate));
+							}
+							// there is some piece there. Find out what it is
+							// and do
+							// stuff
+							else {
+								// get the piece at this location
+								final Piece pieceAtDestination = candidateTile.getPiece();
+
+								// get the association of the piece
+								final Alliance pieceAlliance = pieceAtDestination.getPieceAssociation();
+
+								// if THIS piece that we are examining is not =
+								// to
+								// piece association that is at our destination
+								// tile
+								// we know this is an enemy piece. So do a
+								// capture
+								// move
+								if (this.pieceAlliance != pieceAlliance) {
+									// need board, piece, destination tile, and
+									// piece that is being captured
+									legalMove.add(new Move.CaptureMove(board, this, tempCandidateDestinationCoordinate,
+											pieceAtDestination));
+								}
+								break; // break when we encounter an occupied
+										// tile
+							}
+						} // end if isValidTileCoordinate
+					} // end while isValidTileCoordinate
+				}//end Q3 rebound
+				// If quadrant four rebound tile == 0
+				if (BoardUtilities.QUADRANT_FOUR.contains(this.piecePosition) && candidateDestinationCoordinate == 0) {
+					int tempCandidateDestinationCoordinate = 0;
+					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
+
+						// add offset and check if new destination is valid
+						tempCandidateDestinationCoordinate += 1;//seven is moving downward orthagonally
+
+						if (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
+							// get tile of the board of the destination
+							// coordinate
+							// where you want to move your piece
+							final Tile candidateTile = board.getTile(tempCandidateDestinationCoordinate);
+
+							// if tile is NOT occupied add to the list of valid
+							// moves and continue back to while loop
+							if (!candidateTile.isTileOccupided()) {
+								/*
+								 * if(backwards = true && (!(quadrant == 3 &&
+								 * candidateOffset == 1) || !(quadrant == 1 &&
+								 * candidateOffset == -1) || !(quadrant == 2 &&
+								 * candidateOffset == -7) || !(quadrant == 4 &&
+								 * candidateOffset == 7))) { legalMove.add(new
+								 * Move.BasicMove(board, this,
+								 * candidateDestinationCoordinate)); }
+								 */
+
+								legalMove.add(new Move.BasicMove(board, this, tempCandidateDestinationCoordinate));
+							}
+							// there is some piece there. Find out what it is
+							// and do
+							// stuff
+							else {
+								// get the piece at this location
+								final Piece pieceAtDestination = candidateTile.getPiece();
+
+								// get the association of the piece
+								final Alliance pieceAlliance = pieceAtDestination.getPieceAssociation();
+
+								// if THIS piece that we are examining is not =
+								// to
+								// piece association that is at our destination
+								// tile
+								// we know this is an enemy piece. So do a
+								// capture
+								// move
+								if (this.pieceAlliance != pieceAlliance) {
+									// need board, piece, destination tile, and
+									// piece that is being captured
+									legalMove.add(new Move.CaptureMove(board, this, tempCandidateDestinationCoordinate,
+											pieceAtDestination));
+								}
+								break; // break when we encounter an occupied
+										// tile
+							}
+						} // end if isValidTileCoordinate
+					} // end while isValidTileCoordinate
+				}//end Q4 rebound
 				if(BoardUtilities.isValidTileCoordinate(candidateDestinationCoordinate))
 				{
 					//get tile of the board of the destination coordinate where you want to move your piece

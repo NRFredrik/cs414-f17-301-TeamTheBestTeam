@@ -39,9 +39,11 @@ public class Rollerball extends AbstractClient
 		try {
 			//handleMessageFromClientUI("#logoff ");
 			closeConnection();
-		} catch (IOException error) {
+		} catch (IOException error) 
+		{
+			System.exit(0);
 		}
-		System.exit(0);
+		
 	}
 	
 	

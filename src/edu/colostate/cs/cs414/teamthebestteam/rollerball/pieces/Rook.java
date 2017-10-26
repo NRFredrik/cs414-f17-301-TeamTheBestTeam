@@ -115,7 +115,7 @@ public class Rook extends Piece{
 			}
 
 			//check quad 2
-			if (this.Q2.contains(this.piecePosition) && candidateOffset == 7 && !backwards) {
+			if (this.Q2.contains(this.piecePosition) && candidateOffset == -7 && !backwards) {
 				System.out.println("check 2rook");
 				backwards = true;
 
@@ -222,7 +222,7 @@ public class Rook extends Piece{
 			}
 			
 			//check quad 4
-			if (this.Q4.contains(this.piecePosition) && candidateOffset == -7 && !backwards) {
+			if (this.Q4.contains(this.piecePosition) && candidateOffset == 7 && !backwards) {
 				System.out.println("check 4rook");
 				backwards = true;
 

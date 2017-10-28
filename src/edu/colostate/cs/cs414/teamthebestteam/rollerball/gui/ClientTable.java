@@ -79,246 +79,246 @@ public class ClientTable implements RollIF {
 	public Rollerball roll;
 	public int test;
 
-	
+
 	private JFrame mainFrame;
 	private JFrame mmFrame;
 	private JPanel mmPanel;
-    private JFrame loginFrame;
-    private JPanel loginPanel;
-    private JFrame inviteFrame;
-    private JPanel invitePanel;
-    private JFrame receiveFrame;
-    private JPanel receivePanel;
-    
-    private JFrame unRegFrame;
-    private JPanel unRegPanel;
-    private JTextField emailField;
-    private JButton unregisterButton;
-    
-    private JButton loginMMButton;
-    private JButton registerMMButton;
-    private JButton inviteButton;
-    
-    private JTextField messageField;
-    private JTextField userField;
-    private JTextField passField;
-    private JPanel mainPane;
-    private JTextArea textBox;
-    private JButton sendButton;
-    private JButton loginButton;
-    private JButton registerButton;
-    private JButton logoffButton;
-    private JButton quitButton;
-    private JLabel colorLabel; 
-    private JLayeredPane left;
-    private Timer timer;
-    private JTextArea statusArea;
-    private JComboBox userList;
-    private ArrayList<String> users;
-    private String opponent;
-    private JPanel right;
-    
+	private JFrame loginFrame;
+	private JPanel loginPanel;
+	private JFrame inviteFrame;
+	private JPanel invitePanel;
+	private JFrame receiveFrame;
+	private JPanel receivePanel;
+
+	private JFrame unRegFrame;
+	private JPanel unRegPanel;
+	private JTextField emailField;
+	private JButton unregisterButton;
+
+	private JButton loginMMButton;
+	private JButton registerMMButton;
+	private JButton inviteButton;
+
+	private JTextField messageField;
+	private JTextField userField;
+	private JTextField passField;
+	private JPanel mainPane;
+	private JTextArea textBox;
+	private JButton sendButton;
+	private JButton loginButton;
+	private JButton registerButton;
+	private JButton logoffButton;
+	private JButton quitButton;
+	private JLabel colorLabel; 
+	private JLayeredPane left;
+	private Timer timer;
+	private JTextArea statusArea;
+	private JComboBox userList;
+	private ArrayList<String> users;
+	private String opponent;
+	private JPanel right;
+
 	public ClientTable()throws Exception
 	{
-	
+
 		mainFrame = new JFrame();
-        mainFrame.setTitle("Rollerball");
-        mainFrame.setBounds(200, 200, 770, 550);
-        mainFrame.setSize(1000,500);
-        
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.getContentPane().setLayout(new GridLayout(1, 0, 0, 0));
-        mainFrame.setResizable(false);
-        mainFrame.addWindowListener(new ExitWindow());
-        
-        mainPane = new JPanel(new GridLayout(1,1));
-        mainPane.setBackground(SystemColor.inactiveCaptionBorder);
-        mainPane.setBackground(Color.lightGray);
-        
-        
-        //Unregister Frame
-      	unRegFrame = new JFrame("Unregister");
-      	unRegFrame.setBounds(100, 100, 300, 250);
-      	unRegFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      	
-      	//Unregister panel
-  		unRegPanel = new JPanel();
-  		unRegPanel.setLayout(null);
-  		unRegPanel.setBackground(Color.lightGray);
-  		unRegFrame.add(unRegPanel);
-        
-  		//label for email
-        JLabel emailLabel = new JLabel("Email");
-        emailLabel.setBounds(10, 100, 80, 25);
-        unRegPanel.add(emailLabel);
-        
-        //Email Field
-        emailField = new JTextField();
-        emailField.setBounds(100, 100, 160, 25);
-        emailField.addKeyListener(new EnterPressed());
-        unRegPanel.add(emailField);
-  		
-        //Unregister Button on Unregister panel
-        unregisterButton = new JButton("Unregister");
-        unregisterButton.addActionListener(new unregisterListener());
-        unregisterButton.setBounds(75, 150, 100, 25);
-        unRegPanel.add(unregisterButton);
-        
-  		
-        
-        //MainMenu Frame
-      	mmFrame = new JFrame("Main Menu");
-      	mmFrame.setBounds(100, 100, 300, 250);
-      	mmFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      	
-      	//login panel
-  		mmPanel = new JPanel();
-  		mmPanel.setLayout(null);
-  		mmPanel.setBackground(Color.lightGray);
-  		mmFrame.add(mmPanel);
-    
+		mainFrame.setTitle("Rollerball");
+		mainFrame.setBounds(200, 200, 770, 550);
+		mainFrame.setSize(1000,500);
+
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.getContentPane().setLayout(new GridLayout(1, 0, 0, 0));
+		mainFrame.setResizable(false);
+		mainFrame.addWindowListener(new ExitWindow());
+
+		mainPane = new JPanel(new GridLayout(1,1));
+		mainPane.setBackground(SystemColor.inactiveCaptionBorder);
+		mainPane.setBackground(Color.lightGray);
+
+
+		//Unregister Frame
+		unRegFrame = new JFrame("Unregister");
+		unRegFrame.setBounds(100, 100, 300, 250);
+		unRegFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		//Unregister panel
+		unRegPanel = new JPanel();
+		unRegPanel.setLayout(null);
+		unRegPanel.setBackground(Color.lightGray);
+		unRegFrame.add(unRegPanel);
+
+		//label for email
+		JLabel emailLabel = new JLabel("Email");
+		emailLabel.setBounds(10, 100, 80, 25);
+		unRegPanel.add(emailLabel);
+
+		//Email Field
+		emailField = new JTextField();
+		emailField.setBounds(100, 100, 160, 25);
+		emailField.addKeyListener(new EnterPressed());
+		unRegPanel.add(emailField);
+
+		//Unregister Button on Unregister panel
+		unregisterButton = new JButton("Unregister");
+		unregisterButton.addActionListener(new unregisterListener());
+		unregisterButton.setBounds(75, 150, 100, 25);
+		unRegPanel.add(unregisterButton);
+
+
+
+		//MainMenu Frame
+		mmFrame = new JFrame("Main Menu");
+		mmFrame.setBounds(100, 100, 300, 250);
+		mmFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		//login panel
+		mmPanel = new JPanel();
+		mmPanel.setLayout(null);
+		mmPanel.setBackground(Color.lightGray);
+		mmFrame.add(mmPanel);
+
 		loginMMButton = new JButton("Login");
 		loginMMButton.setToolTipText("Make sure information in all fields is correct");
 		loginMMButton.addActionListener(new loginMMListener());
 		loginMMButton.setBounds(80, 10, 125, 25);
 		mmPanel.add(loginMMButton);
-		
+
 		registerMMButton = new JButton("Register");
 		registerMMButton.setToolTipText("Make sure information in all fields is correct");
 		registerMMButton.addActionListener(new registerListener());
 		registerMMButton.setBounds(80, 60, 125, 25);
 		mmPanel.add(registerMMButton);
-	
+
 		inviteButton = new JButton("Create Game");
-	    inviteButton.setEnabled(true);
-	    inviteButton.addActionListener(new inviteListener());
-	    inviteButton.setBounds(80, 110, 125, 25);
-	    mmPanel.add(inviteButton);
-	    inviteButton.setEnabled(false);
-  		
-        //login frame
-	   	loginFrame = new JFrame("Login");
-	   	loginFrame.setBounds(100, 100, 300, 250);
-	   	loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-         
-        //login panel
+		inviteButton.setEnabled(true);
+		inviteButton.addActionListener(new inviteListener());
+		inviteButton.setBounds(80, 110, 125, 25);
+		mmPanel.add(inviteButton);
+		inviteButton.setEnabled(false);
+
+		//login frame
+		loginFrame = new JFrame("Login");
+		loginFrame.setBounds(100, 100, 300, 250);
+		loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		//login panel
 		loginPanel = new JPanel();
 		loginPanel.setLayout(null);
 		loginPanel.setBackground(Color.lightGray);
 		loginFrame.add(loginPanel);
-       
-       //Label for user field
-       JLabel userLabel = new JLabel("User");
-       userLabel.setBounds(10, 70, 80, 25);
-       loginPanel.add(userLabel);
-       
-       //User field on login panel
-       userField = new JTextField();
-       userField.setBounds(100, 70, 160, 25);
-       userField.addKeyListener(new EnterPressed());
-       loginPanel.add(userField);
 
-       //label for password
-       JLabel passLabel = new JLabel("Password");
-       passLabel.setBounds(10, 100, 80, 25);
-       loginPanel.add(passLabel);
-       
-       //Pasword Field
-       passField = new JTextField();
-       passField.setBounds(100, 100, 160, 25);
-       passField.addKeyListener(new EnterPressed());
-       loginPanel.add(passField);
-       
-       //Login Button on login panel
-       loginButton = new JButton("Login");
-       loginButton.setToolTipText("Make sure information in all fields is correct");
-       loginButton.addActionListener(new loginListener());
-       loginButton.setBounds(75, 150, 100, 25);
-       loginPanel.add(loginButton);
-       
-       
-       registerButton = new JButton("Register");
-       registerButton.setToolTipText("Make sure information in all fields is correct");
-       registerButton.addActionListener(new registerListener());
-       registerButton.setBounds(180, 150, 100, 25);
-       loginPanel.add(registerButton);
-        
-       
-       //rollerboard panel
-       this.rollBoard = Board.createStandardBoard();
-       this.boardPanel = new BoardPanel();
-       this.boardPanel.setBounds(140, 450, 530, 45);
-	
-		
+		//Label for user field
+		JLabel userLabel = new JLabel("User");
+		userLabel.setBounds(10, 70, 80, 25);
+		loginPanel.add(userLabel);
+
+		//User field on login panel
+		userField = new JTextField();
+		userField.setBounds(100, 70, 160, 25);
+		userField.addKeyListener(new EnterPressed());
+		loginPanel.add(userField);
+
+		//label for password
+		JLabel passLabel = new JLabel("Password");
+		passLabel.setBounds(10, 100, 80, 25);
+		loginPanel.add(passLabel);
+
+		//Pasword Field
+		passField = new JTextField();
+		passField.setBounds(100, 100, 160, 25);
+		passField.addKeyListener(new EnterPressed());
+		loginPanel.add(passField);
+
+		//Login Button on login panel
+		loginButton = new JButton("Login");
+		loginButton.setToolTipText("Make sure information in all fields is correct");
+		loginButton.addActionListener(new loginListener());
+		loginButton.setBounds(75, 150, 100, 25);
+		loginPanel.add(loginButton);
+
+
+		registerButton = new JButton("Register");
+		registerButton.setToolTipText("Make sure information in all fields is correct");
+		registerButton.addActionListener(new registerListener());
+		registerButton.setBounds(180, 150, 100, 25);
+		loginPanel.add(registerButton);
+
+
+		//rollerboard panel
+		this.rollBoard = Board.createStandardBoard();
+		this.boardPanel = new BoardPanel();
+		this.boardPanel.setBounds(140, 450, 530, 45);
+
+
 		left = new JLayeredPane();
-        mainPane.setBackground(SystemColor.inactiveCaptionBorder);
-        mainPane.setBackground(Color.lightGray);
-        mainFrame.getContentPane().add(mainPane);
+		mainPane.setBackground(SystemColor.inactiveCaptionBorder);
+		mainPane.setBackground(Color.lightGray);
+		mainFrame.getContentPane().add(mainPane);
 
-        /*
+		/*
 		logoffButton = new JButton("Logoff");
         logoffButton.setToolTipText("Say Good bye :)");
         logoffButton.setEnabled(false);
         //logoffButton.addActionListener(new logoffListener());
         logoffButton.setBounds(10, 5, 115, 25);
         left.add(logoffButton);
-        
-        
+
+
         inviteButton = new JButton("Invite Player");
         inviteButton.setEnabled(false);
         inviteButton.addActionListener(new inviteListener());
         inviteButton.setBounds(245, 5, 115, 25);
         left.add(inviteButton);
-        */
-        quitButton = new JButton("Quit Game");
-        quitButton.setEnabled(false);
-        quitButton.addActionListener(new quitListener());
-        quitButton.setBounds(365, 5, 115, 25);
-        left.add(quitButton);
-        quitButton.setVisible(true);
+		 */
+		quitButton = new JButton("Quit Game");
+		quitButton.setEnabled(false);
+		quitButton.addActionListener(new quitListener());
+		quitButton.setBounds(365, 5, 115, 25);
+		left.add(quitButton);
+		quitButton.setVisible(true);
 
-        //Pane to show users 
-        JScrollPane statusScrollPane = new JScrollPane();
-        statusScrollPane.setBounds(5, 33, 130, 350);
-        left.add(statusScrollPane);
-        
-        //Area to show users
-        statusArea = new JTextArea();
-        statusScrollPane.setViewportView(statusArea);
-        statusArea.setEditable(false);
-        statusArea.setFont(new Font("Arial", Font.PLAIN, 15));
-        statusArea.setBackground(Color.lightGray);
-        
-        
-        //Pane for main message feed
-        JScrollPane textBoxScrollPane = new JScrollPane();
-        textBoxScrollPane.setBounds(140, 33, 355, 350);
-        left.add(textBoxScrollPane);
-        
-        //Textbox for main message feed
-        textBox = new JTextArea();
-        textBox.setFont(new Font("Dialog", Font.PLAIN, 17));       
-        textBoxScrollPane.setViewportView(textBox);
-        textBox.setEditable(false);
-        textBox.setBackground(Color.lightGray);
-        
-        //message feild for typing messages
-        messageField = new JTextField();
-        messageField.setEnabled(false);
-        messageField.setBounds(10, 400, 350, 45);
-        //messageField.addKeyListener(new EnterPressed());
-        left.add(messageField);
-        
-        //button to send messages
-        sendButton = new JButton("Send");
-        sendButton.setName("Send");
-        sendButton.setToolTipText("Send message");
-        sendButton.setEnabled(false);
-        //sendButton.addActionListener(new sendAction());
-        sendButton.setBounds(365, 400, 115, 25);
-        left.add(sendButton);
-		
-        right = boardPanel;
+		//Pane to show users 
+		JScrollPane statusScrollPane = new JScrollPane();
+		statusScrollPane.setBounds(5, 33, 130, 350);
+		left.add(statusScrollPane);
+
+		//Area to show users
+		statusArea = new JTextArea();
+		statusScrollPane.setViewportView(statusArea);
+		statusArea.setEditable(false);
+		statusArea.setFont(new Font("Arial", Font.PLAIN, 15));
+		statusArea.setBackground(Color.lightGray);
+
+
+		//Pane for main message feed
+		JScrollPane textBoxScrollPane = new JScrollPane();
+		textBoxScrollPane.setBounds(140, 33, 355, 350);
+		left.add(textBoxScrollPane);
+
+		//Textbox for main message feed
+		textBox = new JTextArea();
+		textBox.setFont(new Font("Dialog", Font.PLAIN, 17));       
+		textBoxScrollPane.setViewportView(textBox);
+		textBox.setEditable(false);
+		textBox.setBackground(Color.lightGray);
+
+		//message feild for typing messages
+		messageField = new JTextField();
+		messageField.setEnabled(false);
+		messageField.setBounds(10, 400, 350, 45);
+		//messageField.addKeyListener(new EnterPressed());
+		left.add(messageField);
+
+		//button to send messages
+		sendButton = new JButton("Send");
+		sendButton.setName("Send");
+		sendButton.setToolTipText("Send message");
+		sendButton.setEnabled(false);
+		//sendButton.addActionListener(new sendAction());
+		sendButton.setBounds(365, 400, 115, 25);
+		left.add(sendButton);
+
+		right = boardPanel;
 		mainPane.add(left);
 		mainPane.add(right);
 		mainFrame.getContentPane().add(mainPane);
@@ -459,16 +459,16 @@ public class ClientTable implements RollIF {
 						else
 						{
 							destinationTile = rollBoard.getTile(tileID);
-							
+
 							Move move = Move.FactoryMove.createMove(rollBoard, tilePieceIsOn.getTileCoord(), destinationTile.getTileCoord());
 							MoveTransition trans;
 							try {
 								Board tempBoard = rollBoard;
 								trans = tempBoard.currentPlayer().movePlayer(move);
-							
-							if(trans.getStatus().isDone())
-							{
-								/*
+
+								if(trans.getStatus().isDone())
+								{
+									/*
 								if(rollBoard.currentPlayer.equals(rollBoard.white))
 								{
 									roll.handleMessageFromClientUI("white," + tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
@@ -477,23 +477,23 @@ public class ClientTable implements RollIF {
 								{
 									roll.handleMessageFromClientUI("black," +tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
 								}
-								*/	
-								roll.handleMessageFromClientUI(tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
-								rollBoard = trans.getBoard();
-							}
-							else
-							{
-								System.out.println("THAT MOVE IS NOT VALID FOR THE CHOSEN PIECE. REFER TO RULE BOOK AND TRY AGAIN\n");
-							}
+									 */	
+									roll.handleMessageFromClientUI(tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
+									rollBoard = trans.getBoard();
+								}
+								else
+								{
+									System.out.println("THAT MOVE IS NOT VALID FOR THE CHOSEN PIECE. REFER TO RULE BOOK AND TRY AGAIN\n");
+								}
 							} catch (Exception e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
-							
-					}//end else if
+
+						}//end else if
+					}
+
 				}
-				
-			}
 
 				@Override
 				public void mousePressed(MouseEvent e) {
@@ -525,21 +525,19 @@ public class ClientTable implements RollIF {
 
 			validate();
 		}
-		
+
 		private void highlightMoves(Board board)
 		{
 			System.out.println("FFFFFFFFFFFFFFFFFFFFFF");
-			if(true)
+
+			for (Move m : currentMoves(board))
 			{
-				for (Move m : currentMoves(board))
+				if(m.getDestCoordinate() == this.tileID)
 				{
-					if(m.getDestCoordinate() == this.tileID)
-					{
-						try{
-							add(new JLabel(new ImageIcon(ImageIO.read(new File("pictures/highlightMove.png")))));
-						}catch(Exception e){
-							e.printStackTrace();
-						}
+					try{
+						add(new JLabel(new ImageIcon(ImageIO.read(new File("pictures/highlightMove.png")))));
+					}catch(Exception e){
+						e.printStackTrace();
 					}
 				}
 			}
@@ -630,9 +628,9 @@ public class ClientTable implements RollIF {
 	}
 	public static void main(String[] args) throws Exception
 	{
-	
+
 		Board board = Board.createStandardBoard();
-		
+
 		ClientTable table = new ClientTable();
 	}
 
@@ -641,72 +639,72 @@ public class ClientTable implements RollIF {
 	{
 		colorLabel = new JLabel(message);
 		colorLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
-        colorLabel.setBounds(130, 7, 120, 21);
+		colorLabel.setBounds(130, 7, 120, 21);
 		left.add(colorLabel);
 		colorLabel.setVisible(true);
 	}
-	
-	
+
+
 	public void displayInvite(String userID) 
 	{
 		opponent = userID;
 		System.out.println(opponent);
-		
+
 		//login frame
-	   	receiveFrame = new JFrame("Login");
-	   	receiveFrame.setBounds(100, 100, 300, 250);
-	   	receiveFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-         
-        //login panel
+		receiveFrame = new JFrame("Login");
+		receiveFrame.setBounds(100, 100, 300, 250);
+		receiveFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		//login panel
 		receivePanel = new JPanel();
 		receivePanel.setLayout(null);
 		receivePanel.setBackground(Color.lightGray);
 		receiveFrame.add(receivePanel);
-       
-       //Label for user field
-       JLabel userLabel = new JLabel("Invite From: " + opponent);
-       userLabel.setBounds(10, 70, 200, 25);
-       receivePanel.add(userLabel);
-       
-       //Login Button on login panel
-       JButton acceptButton = new JButton("Accept");
-       //acceptButton.setToolTipText("Make sure information in all fields is correct");
-       acceptButton.addActionListener(new acceptListener());;
-       acceptButton.setBounds(75, 150, 100, 25);
-       receivePanel.add(acceptButton);
-       
-       JButton declineButton = new JButton("Decline");
-      // declineButton.setToolTipText("Make sure information in all fields is correct");
-       declineButton.addActionListener(new declineListener());
-       declineButton.setBounds(180, 150, 100, 25);
-       receivePanel.add(declineButton);
-       
-       receiveFrame.setVisible(true);
+
+		//Label for user field
+		JLabel userLabel = new JLabel("Invite From: " + opponent);
+		userLabel.setBounds(10, 70, 200, 25);
+		receivePanel.add(userLabel);
+
+		//Login Button on login panel
+		JButton acceptButton = new JButton("Accept");
+		//acceptButton.setToolTipText("Make sure information in all fields is correct");
+		acceptButton.addActionListener(new acceptListener());;
+		acceptButton.setBounds(75, 150, 100, 25);
+		receivePanel.add(acceptButton);
+
+		JButton declineButton = new JButton("Decline");
+		// declineButton.setToolTipText("Make sure information in all fields is correct");
+		declineButton.addActionListener(new declineListener());
+		declineButton.setBounds(180, 150, 100, 25);
+		receivePanel.add(declineButton);
+
+		receiveFrame.setVisible(true);
 	}
-	
+
 	public void displayBoard(int curCoord, int endCoord)
 	{
 		Move move = Move.FactoryMove.createMove(rollBoard, curCoord, endCoord);
-		
+
 		MoveTransition trans;
-		
+
 		try {
 			trans = rollBoard.currentPlayer().movePlayer(move);
-		
-		if(trans.getStatus().isDone())
-		{
-			rollBoard = trans.getBoard();
-			//TODO add the move to a log for debugging
-		}
-		tilePieceIsOn = null;
-		destinationTile = null;
-		movedByPlayer = null;
-		
+
+			if(trans.getStatus().isDone())
+			{
+				rollBoard = trans.getBoard();
+				//TODO add the move to a log for debugging
+			}
+			tilePieceIsOn = null;
+			destinationTile = null;
+			movedByPlayer = null;
+
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		SwingUtilities.invokeLater(new Runnable()
 		{
 			@Override
@@ -717,11 +715,11 @@ public class ClientTable implements RollIF {
 			}
 		});
 	}
-	
+
 	@Override
 	public void display(Object message) 
 	{
-		
+
 		if(message instanceof String)
 		{
 			if(message.toString().contains("login"))
@@ -734,7 +732,7 @@ public class ClientTable implements RollIF {
 			{
 				List<String> items = Arrays.asList(((String) message).split(","));
 				String user =items.get(1);
-				
+
 				displayInvite(user);
 			}
 			else if(message.toString().contains("decline"))
@@ -776,164 +774,164 @@ public class ClientTable implements RollIF {
 			updateUsers((ArrayList<String>) message);
 		}
 	}
-	
-	 private class ExitWindow implements WindowListener 
-	    {
-	        public void windowActivated(WindowEvent event) 
-	        {
-	        	
-	        }
 
-	        public void windowClosing(WindowEvent event)
-	        {
-	        	//client.sendM("#logoff");
-	        }
+	private class ExitWindow implements WindowListener 
+	{
+		public void windowActivated(WindowEvent event) 
+		{
 
-	        public void windowDeactivated(WindowEvent event) 
-	        {
-	        	
-	        }
+		}
 
-	        public void windowDeiconified(WindowEvent event) 
-	        {
-	        	
-	        }
+		public void windowClosing(WindowEvent event)
+		{
+			//client.sendM("#logoff");
+		}
 
-	        public void windowIconified(WindowEvent event) 
-	        {
-	        	
-	        }
+		public void windowDeactivated(WindowEvent event) 
+		{
 
-	        public void windowOpened(WindowEvent event) 
-	        {
-	        	
-	        }
+		}
 
-	        public void windowClosed(WindowEvent e) 
-	        {
-	        	
-	        }
-	    }
-	
-	  private class EnterPressed implements KeyListener 
-	    {
+		public void windowDeiconified(WindowEvent event) 
+		{
 
-	        public void keyPressed(KeyEvent hitEnter) 
-	        {
+		}
 
-	        }
-	        
-	        public void keyReleased(KeyEvent hitEnter) 
-	        {
-	            
-	            if (hitEnter.getSource().equals(userField)) 
-	            {
-	                if (hitEnter.getKeyCode() == KeyEvent.VK_ENTER) 
-	                {
-	                    passField.requestFocus();
-	                }
-	            }
-	            else if (hitEnter.getSource().equals(passField)) 
-	            {
-	                if (hitEnter.getKeyCode() == KeyEvent.VK_ENTER) 
-	                {
-	                    loginButton.doClick();
-	                }
-	            }
-	        }
-	        public void keyTyped(KeyEvent hitEnter) {
+		public void windowIconified(WindowEvent event) 
+		{
 
-	        }
-	    }
-	 
+		}
+
+		public void windowOpened(WindowEvent event) 
+		{
+
+		}
+
+		public void windowClosed(WindowEvent e) 
+		{
+
+		}
+	}
+
+	private class EnterPressed implements KeyListener 
+	{
+
+		public void keyPressed(KeyEvent hitEnter) 
+		{
+
+		}
+
+		public void keyReleased(KeyEvent hitEnter) 
+		{
+
+			if (hitEnter.getSource().equals(userField)) 
+			{
+				if (hitEnter.getKeyCode() == KeyEvent.VK_ENTER) 
+				{
+					passField.requestFocus();
+				}
+			}
+			else if (hitEnter.getSource().equals(passField)) 
+			{
+				if (hitEnter.getKeyCode() == KeyEvent.VK_ENTER) 
+				{
+					loginButton.doClick();
+				}
+			}
+		}
+		public void keyTyped(KeyEvent hitEnter) {
+
+		}
+	}
+
 	//updates the status area with online users and their status
-	    public void updateUsers(ArrayList<String> users) 
-	    {
-	        statusArea.setText("");
-	        
-	        this.users = users;
-	        
-	        for (int i = 0; i < users.size(); i++) 
-	        {
-	            statusArea.append( users.get(i)+"\n");
-	        }
-	    }
-	  
-	  private class loginMMListener implements ActionListener 
-	  {
-	        public void actionPerformed(ActionEvent event) 
-	        {   
-	        	String loginMMText = loginMMButton.getText();
-	        	
-	        	
-	        	
-	        	 if (loginMMText.equals("Login"))
-	             {
-	        		 	loginMMButton.setText("Logoff");
-	        			mmFrame.setVisible(false);
-	    	        	loginFrame.setVisible(true);
-	    	        	registerMMButton.setText("Unregister");
-	    	        	inviteButton.setEnabled(true);
-	             }
-	        	 
-	        	 //open login window
-	        	 else if(loginMMText.equals("Logoff"))
-	        	 {
-	        		 inviteButton.setEnabled(false);
-	        		 loginMMButton.setText("Login"); 
-	        		 loginFrame.setVisible(false);
-	        		 stopTimer();
-	        		 roll.quit();
-	        		 registerMMButton.setText("Register");
-	        	 }
-	        }
-	  }
-	    
-	    
-	  private class loginListener implements ActionListener 
-	    {
-	        public void actionPerformed(ActionEvent event) 
-	        {
-	        	final Config con = new Config();
+	public void updateUsers(ArrayList<String> users) 
+	{
+		statusArea.setText("");
 
-	            if (userField.getBackground().equals(Color.red)) 
-	            {
-	                userField.setBackground(Color.white);
-	            }
+		this.users = users;
 
-	            if (passField.getBackground().equals(Color.red)) 
-	            {
-	                passField.setBackground(Color.white);
-	            }
+		for (int i = 0; i < users.size(); i++) 
+		{
+			statusArea.append( users.get(i)+"\n");
+		}
+	}
 
-	            System.out.println(userField.getText());
-	            System.out.println(passField.getText());
-	            String userID = userField.getText();
-	            String password = passField.getText();
+	private class loginMMListener implements ActionListener 
+	{
+		public void actionPerformed(ActionEvent event) 
+		{   
+			String loginMMText = loginMMButton.getText();
 
-	            if(con.userExists(userID,password))
-				{
-					//TODO   Allow user to proceed to start game
-	            	try {
-						roll = new Rollerball(userID,"localhost", 5555, ClientTable.this);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					System.out.println("you're logged in");
-					//loginFrame.setVisible(false);
-					ServerRequests();//start sending requests to server
-					//inviteButton.setEnabled(true);
-					mmFrame.setVisible(true);
-		        	loginFrame.setVisible(false);
+
+
+			if (loginMMText.equals("Login"))
+			{
+				loginMMButton.setText("Logoff");
+				mmFrame.setVisible(false);
+				loginFrame.setVisible(true);
+				registerMMButton.setText("Unregister");
+				inviteButton.setEnabled(true);
+			}
+
+			//open login window
+			else if(loginMMText.equals("Logoff"))
+			{
+				inviteButton.setEnabled(false);
+				loginMMButton.setText("Login"); 
+				loginFrame.setVisible(false);
+				stopTimer();
+				roll.quit();
+				registerMMButton.setText("Register");
+			}
+		}
+	}
+
+
+	private class loginListener implements ActionListener 
+	{
+		public void actionPerformed(ActionEvent event) 
+		{
+			final Config con = new Config();
+
+			if (userField.getBackground().equals(Color.red)) 
+			{
+				userField.setBackground(Color.white);
+			}
+
+			if (passField.getBackground().equals(Color.red)) 
+			{
+				passField.setBackground(Color.white);
+			}
+
+			System.out.println(userField.getText());
+			System.out.println(passField.getText());
+			String userID = userField.getText();
+			String password = passField.getText();
+
+			if(con.userExists(userID,password))
+			{
+				//TODO   Allow user to proceed to start game
+				try {
+					roll = new Rollerball(userID,"localhost", 5555, ClientTable.this);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				else
-				{
-					JOptionPane.showMessageDialog(loginFrame, "This user does not exist. Register?");
-				}
-	       
-	            
-	            /*
+				System.out.println("you're logged in");
+				//loginFrame.setVisible(false);
+				ServerRequests();//start sending requests to server
+				//inviteButton.setEnabled(true);
+				mmFrame.setVisible(true);
+				loginFrame.setVisible(false);
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(loginFrame, "This user does not exist. Register?");
+			}
+
+
+			/*
 	            //hides login window and enables all components on GUI
 	            loginFrame.setVisible(false);
 	            loginButton.setEnabled(false);
@@ -948,184 +946,184 @@ public class ClientTable implements RollIF {
 	            passField.setEnabled(false);
 	            hostField.setEnabled(false);
 	            portField.setEnabled(false);*/
-	           
-	            
-	        }
 
-	    }
-	  
-	  private class registerListener implements ActionListener 
-	    {
-		  
-	        public void actionPerformed(ActionEvent event) 
-	        {
-	        	String registerMMText = registerMMButton.getText();
-	        	
-	        	if(registerMMText.equals("Register"))
-	        	{
-	        		Register register = new Register();
-					register.frame.setVisible(true);
-	        	}
-	        	else
-	        	{
-	        		unRegFrame.setVisible(true);
-	        		mmFrame.setVisible(false);
-	        	}
-					
+
+		}
+
+	}
+
+	private class registerListener implements ActionListener 
+	{
+
+		public void actionPerformed(ActionEvent event) 
+		{
+			String registerMMText = registerMMButton.getText();
+
+			if(registerMMText.equals("Register"))
+			{
+				Register register = new Register();
+				register.frame.setVisible(true);
 			}
-	    }
-	  
-	  private class unregisterListener implements ActionListener 
-	    {
-		  public void actionPerformed(ActionEvent event) 
-	        {
-			  final Config con = new Config();
-			  
-			  String email = emailField.getText();
-			  con.removeUser(email);
-			  unRegFrame.setVisible(false);
-			  mmFrame.setVisible(true);
-			  loginMMButton.doClick();
-			  
-			  
-	        }
-	    }
-	  
-	  private class acceptListener implements ActionListener 
-	    {
-		  
-	        public void actionPerformed(ActionEvent event) 
-	        {
-				roll.handleMessageFromClientUI("#accept,"+opponent);
-				receiveFrame.setVisible(false);
-				quitButton.setVisible(true);
-				quitButton.setEnabled(true);
-			    
-			    try {
-					rollBoard = Board.createStandardBoard();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
-
-					boardPanel.drawBoard(rollBoard);
+			else
+			{
+				unRegFrame.setVisible(true);
 				mmFrame.setVisible(false);
-			    mainFrame.setVisible(true);
 			}
-	    }
-	  
-	  	private class declineListener implements ActionListener 
-	    {
-		  
-	        public void actionPerformed(ActionEvent event) 
-	        {
-				roll.handleMessageFromClientUI("#decline,"+opponent);
-				opponent = null;
-				receiveFrame.setVisible(false);
-				
+
+		}
+	}
+
+	private class unregisterListener implements ActionListener 
+	{
+		public void actionPerformed(ActionEvent event) 
+		{
+			final Config con = new Config();
+
+			String email = emailField.getText();
+			con.removeUser(email);
+			unRegFrame.setVisible(false);
+			mmFrame.setVisible(true);
+			loginMMButton.doClick();
+
+
+		}
+	}
+
+	private class acceptListener implements ActionListener 
+	{
+
+		public void actionPerformed(ActionEvent event) 
+		{
+			roll.handleMessageFromClientUI("#accept,"+opponent);
+			receiveFrame.setVisible(false);
+			quitButton.setVisible(true);
+			quitButton.setEnabled(true);
+
+			try {
+				rollBoard = Board.createStandardBoard();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+
+			boardPanel.drawBoard(rollBoard);
+			mmFrame.setVisible(false);
+			mainFrame.setVisible(true);
+		}
+	}
+
+	private class declineListener implements ActionListener 
+	{
+
+		public void actionPerformed(ActionEvent event) 
+		{
+			roll.handleMessageFromClientUI("#decline,"+opponent);
+			opponent = null;
+			receiveFrame.setVisible(false);
+
+		}
+	} 
+
+	private class quitListener implements ActionListener 
+	{
+
+		public void actionPerformed(ActionEvent event) 
+		{
+			roll.handleMessageFromClientUI("#quit,"+opponent);
+			opponent = null;
+			mainFrame.setVisible(false);
+			mmFrame.setVisible(true);
+		}
+	} 
+
+	private class inviteListener implements ActionListener 
+	{
+
+		public void actionPerformed(ActionEvent event) 
+		{
+
+			//login frame
+			inviteFrame = new JFrame("Invite Player");
+			inviteFrame.setBounds(100, 100, 300, 250);
+			inviteFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+			//login panel
+			invitePanel = new JPanel();
+			invitePanel.setLayout(null);
+			invitePanel.setBackground(Color.lightGray);
+			inviteFrame.add(invitePanel);
+
+			//Label for user field
+			JLabel userLabel = new JLabel("User");
+			userLabel.setBounds(10, 70, 80, 25);
+			invitePanel.add(userLabel);
+
+
+			userList = new JComboBox();
+			userList.setEnabled(false);
+			userList.setModel(new DefaultComboBoxModel(users.toArray()));
+			userList.addItemListener(new UserListListener());
+			userList.setBounds(100, 70, 160, 25);
+			userList.setBackground(Color.WHITE);
+			invitePanel.add(userList); 
+			userList.setEnabled(true);
+			inviteFrame.setVisible(true);
+			mmFrame.setVisible(false);
+		}
+	}  
+
+	private class ConnectionChecker implements ActionListener 
+	{
+		public void actionPerformed(ActionEvent event) 
+		{
+			if (!roll.isConnected()) 
+			{
+				quitButton.doClick();
 			}
-	    } 
-	  	
-	  	private class quitListener implements ActionListener 
-	    {
-		  
-	        public void actionPerformed(ActionEvent event) 
-	        {
-				roll.handleMessageFromClientUI("#quit,"+opponent);
-				opponent = null;
-				mainFrame.setVisible(false);
+		}
+	}
+
+	private class RequestOnlineUsers implements ActionListener 
+	{
+		public void actionPerformed(ActionEvent event) 
+		{
+			//System.out.println("userList Request");
+			roll.handleMessageFromClientUI(("#userList"));
+		}
+	}
+
+	private void ServerRequests() 
+	{
+
+		timer = new Timer(1000, new ConnectionChecker());
+		timer.setInitialDelay(1000);
+		timer.setDelay(1000);
+		timer.addActionListener(new RequestOnlineUsers());   
+		timer.start();
+	}
+
+	private void stopTimer() 
+	{
+		timer.stop();
+		timer = null;
+	}
+
+	//handles invite users
+	private class UserListListener implements ItemListener 
+	{
+		public void itemStateChanged(ItemEvent event) 
+		{
+			if (event.getStateChange() == ItemEvent.SELECTED) 
+			{
+				String user = (String)userList.getSelectedItem();
+
+				//System.out.println("#invite," + user);
+				roll.handleMessageFromClientUI("#invite," + user);
+				inviteFrame.setVisible(false);
 				mmFrame.setVisible(true);
 			}
-	    } 
-	  
-	  private class inviteListener implements ActionListener 
-	    {
-		  
-	        public void actionPerformed(ActionEvent event) 
-	        {
-	        	
-	        	 //login frame
-	    	   	inviteFrame = new JFrame("Invite Player");
-	    	   	inviteFrame.setBounds(100, 100, 300, 250);
-	    	   	inviteFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	             
-	            //login panel
-	    	   	invitePanel = new JPanel();
-	    	   	invitePanel.setLayout(null);
-	    	   	invitePanel.setBackground(Color.lightGray);
-	    	   	inviteFrame.add(invitePanel);
-	           
-	           //Label for user field
-	           JLabel userLabel = new JLabel("User");
-	           userLabel.setBounds(10, 70, 80, 25);
-	           invitePanel.add(userLabel);
-	           
-	           
-	           userList = new JComboBox();
-	           userList.setEnabled(false);
-	           userList.setModel(new DefaultComboBoxModel(users.toArray()));
-	           userList.addItemListener(new UserListListener());
-	           userList.setBounds(100, 70, 160, 25);
-	           userList.setBackground(Color.WHITE);
-	           invitePanel.add(userList); 
-	           userList.setEnabled(true);
-	           inviteFrame.setVisible(true);
-	           mmFrame.setVisible(false);
-			}
-	    }  
-	  
-	  private class ConnectionChecker implements ActionListener 
-	    {
-	        public void actionPerformed(ActionEvent event) 
-	        {
-	            if (!roll.isConnected()) 
-	            {
-	                quitButton.doClick();
-	            }
-	        }
-	    }
-	  
-	  private class RequestOnlineUsers implements ActionListener 
-	    {
-	        public void actionPerformed(ActionEvent event) 
-	        {
-	        	//System.out.println("userList Request");
-	            roll.handleMessageFromClientUI(("#userList"));
-	        }
-	    }
-	  
-	  private void ServerRequests() 
-	    {
-
-	        timer = new Timer(1000, new ConnectionChecker());
-	        timer.setInitialDelay(1000);
-	        timer.setDelay(1000);
-	        timer.addActionListener(new RequestOnlineUsers());   
-	        timer.start();
-	    }
-	  
-	  private void stopTimer() 
-	    {
-	        timer.stop();
-	        timer = null;
-	    }
-	  
-	  //handles invite users
-	    private class UserListListener implements ItemListener 
-	    {
-	    	 public void itemStateChanged(ItemEvent event) 
-	         {
-	             if (event.getStateChange() == ItemEvent.SELECTED) 
-	             {
-	                 String user = (String)userList.getSelectedItem();
-	                 
-	                 //System.out.println("#invite," + user);
-	                 roll.handleMessageFromClientUI("#invite," + user);
-	                 inviteFrame.setVisible(false);
-	                 mmFrame.setVisible(true);
-	             }
-	         }
-	   }
+		}
+	}
 }
 
 

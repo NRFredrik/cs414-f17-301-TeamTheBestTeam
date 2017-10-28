@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -442,6 +444,15 @@ public class ClientTable implements RollIF {
 							{
 								tilePieceIsOn = null;
 							}
+							SwingUtilities.invokeLater(new Runnable()
+							{
+								@Override
+								public void run()
+								{
+									//roll.handleMessageFromClientUI(rollBoard);
+									boardPanel.drawBoard(rollBoard);
+								}
+							});
 						}
 						//there's a piece so lets move it
 						//TODO need move implementation
@@ -514,6 +525,34 @@ public class ClientTable implements RollIF {
 
 			validate();
 		}
+		
+		private void highlightMoves(Board board)
+		{
+			System.out.println("FFFFFFFFFFFFFFFFFFFFFF");
+			if(true)
+			{
+				for (Move m : currentMoves(board))
+				{
+					if(m.getDestCoordinate() == this.tileID)
+					{
+						try{
+							add(new JLabel(new ImageIcon(ImageIO.read(new File("pictures/highlightMove.png")))));
+						}catch(Exception e){
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+
+		private Collection<Move> currentMoves(Board board) 
+		{
+			if(movedByPlayer != null  && movedByPlayer.getPieceAssociation() == board.currentPlayer().getAlliance())
+			{
+				return movedByPlayer.calculateLegalMoves(board);
+			}
+			return Collections.emptyList();
+		}
 
 		//TODO will need to update this once we make highlighting legal moves functionality
 		public void drawTile(Board rollBoard) 
@@ -522,6 +561,7 @@ public class ClientTable implements RollIF {
 			setTilesIcon(rollBoard);
 			validate();
 			repaint();
+			highlightMoves(rollBoard);
 		}
 
 		private void setTilesIcon(final Board board)

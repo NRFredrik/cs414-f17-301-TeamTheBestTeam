@@ -75,28 +75,7 @@ public class King extends Piece {
 		return BoardUtilities.FIRST_COLUMN[currentPosition] && (candidateOffset == 8 || candidateOffset == 1 || candidateOffset == -6);
 	}
 
-	//POSSIBLY CAN REMOVE TWO OF THESE AND THEY ARE UNFINISHED
-	//flags to make sure you are not moving off the board
-	@SuppressWarnings("unused")
-	private static boolean isOuterRingQuadrantOneExclusion(final int currentPosition, final int candidateOffset){
-		return BoardUtilities.OUTER_RING[currentPosition] && BoardUtilities.QUADRANT_ONE.contains(currentPosition);
-	}
-
-	@SuppressWarnings("unused")
-	private static boolean isInnerRingQuadrantOneExclusion(final int currentPosition, final int candidateOffset){
-		return BoardUtilities.INNER_RING[currentPosition] && BoardUtilities.QUADRANT_ONE.contains(currentPosition);
-	}
-
-	@SuppressWarnings("unused")
-	private static boolean isOuterRingQuadrantTwoExclusion(final int currentPosition, final int candidateOffset){
-		return BoardUtilities.OUTER_RING[currentPosition] && BoardUtilities.QUADRANT_TWO.contains(currentPosition);
-	}
-
-	@SuppressWarnings("unused")
-	private static boolean isInnerRingQuadrantTwoExclusion(final int currentPosition, final int candidateOffset){
-		return BoardUtilities.INNER_RING[currentPosition] && BoardUtilities.QUADRANT_TWO.contains(currentPosition);
-	}
-
+	
 	@Override
 	public String toString()
 	{

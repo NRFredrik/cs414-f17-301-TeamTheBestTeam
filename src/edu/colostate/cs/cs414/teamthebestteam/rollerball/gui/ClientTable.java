@@ -528,7 +528,7 @@ public class ClientTable implements RollIF {
 
 		private void highlightMoves(Board board)
 		{
-			System.out.println("FFFFFFFFFFFFFFFFFFFFFF");
+			//System.out.println("FFFFFFFFFFFFFFFFFFFFFF");
 
 			for (Move m : currentMoves(board))
 			{

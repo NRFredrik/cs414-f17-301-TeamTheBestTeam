@@ -34,7 +34,7 @@ public abstract class Move {
 
 		// go through incoming players pieces
 		// place all of the non moved pieces on the new board
-		for (Piece p : this.board.currentPlayer().getActivePieces()) {
+		for (final Piece p : this.board.currentPlayer().getActivePieces()) {
 			// TODO need equals method for pieces
 			if (!this.movedPiece.equals(p)) {
 				builder.setPiece(p);
@@ -42,7 +42,7 @@ public abstract class Move {
 		}
 
 		// go through other players pieces and set them on board
-		for (Piece p : this.board.currentPlayer().getOpponent().getActivePieces()) {
+		for (final Piece p : this.board.currentPlayer().getOpponent().getActivePieces()) {
 			builder.setPiece(p);
 		}
 
@@ -127,7 +127,7 @@ public abstract class Move {
 			super(bord, movedPiece, destinationCoordinate, capturedPiece);
 			// TODO Auto-generated constructor stub
 		}
-	}
+	}		
 
 	/**
 	 * sub class that will define a pooh trash move
@@ -148,7 +148,7 @@ public abstract class Move {
 			throw new RuntimeException("Do not construct me");
 		}
 
-		public static Move createMove(final Board bord, final int coordinate, final int destinationCoordinate) {
+		public static Move createMove(final Board board, final int coordinate, final int destinationCoordinate) {
 			for (Move m : board.getAllLegalMoves()) {
 				if (m.getCurrentCoordinate() == coordinate && m.getDestCoordinate() == destinationCoordinate) {
 					return m;

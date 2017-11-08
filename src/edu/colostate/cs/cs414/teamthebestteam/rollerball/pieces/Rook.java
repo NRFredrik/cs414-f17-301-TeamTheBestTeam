@@ -62,7 +62,6 @@ public class Rook extends Piece{
 			
 			//check for backwards move
 			if (this.Q1.contains(this.piecePosition) && candidateOffset == -1 && !backwards) {
-				System.out.println("check 1rook");
 				backwards = true;
 
 				candidateDestinationCoordinate += candidateOffset;
@@ -103,11 +102,10 @@ public class Rook extends Piece{
 						if (this.pieceAlliance != pieceAlliance) {
 							// need board, piece, destination tile, and piece
 							// that is being captured
-							System.out.println("ATTACK!!!!!");
 							legalMove.add(new Move.CaptureMove(board, this, candidateDestinationCoordinate,
 									pieceAtDestination));
 						}
-						break; // break when we encounter an occupied tile
+						continue; // break when we encounter an occupied tile
 					}
 				} // end if isValidTileCoordinate
 				continue;
@@ -116,7 +114,6 @@ public class Rook extends Piece{
 
 			//check quad 2
 			if (this.Q2.contains(this.piecePosition) && candidateOffset == -7 && !backwards) {
-				System.out.println("check 2rook");
 				backwards = true;
 
 				candidateDestinationCoordinate += candidateOffset;
@@ -157,11 +154,10 @@ public class Rook extends Piece{
 						if (this.pieceAlliance != pieceAlliance) {
 							// need board, piece, destination tile, and piece
 							// that is being captured
-							System.out.println("ATTACK!!!!!");
 							legalMove.add(new Move.CaptureMove(board, this, candidateDestinationCoordinate,
 									pieceAtDestination));
 						}
-						break; // break when we encounter an occupied tile
+						continue; // break when we encounter an occupied tile
 					}
 				} // end if isValidTileCoordinate
 				continue;
@@ -169,7 +165,6 @@ public class Rook extends Piece{
 			}
 			//check quad 3
 			if (this.Q3.contains(this.piecePosition) && candidateOffset == 1 && !backwards) {
-				System.out.println("check 3rook");
 				backwards = true;
 
 				candidateDestinationCoordinate += candidateOffset;
@@ -210,11 +205,10 @@ public class Rook extends Piece{
 						if (this.pieceAlliance != pieceAlliance) {
 							// need board, piece, destination tile, and piece
 							// that is being captured
-							System.out.println("ATTACK!!!!!");
 							legalMove.add(new Move.CaptureMove(board, this, candidateDestinationCoordinate,
 									pieceAtDestination));
 						}
-						break; // break when we encounter an occupied tile
+						continue; // break when we encounter an occupied tile
 					}
 				} // end if isValidTileCoordinate
 				continue;
@@ -223,7 +217,6 @@ public class Rook extends Piece{
 			
 			//check quad 4
 			if (this.Q4.contains(this.piecePosition) && candidateOffset == 7 && !backwards) {
-				System.out.println("check 4rook");
 				backwards = true;
 
 				candidateDestinationCoordinate += candidateOffset;
@@ -264,11 +257,11 @@ public class Rook extends Piece{
 						if (this.pieceAlliance != pieceAlliance) {
 							// need board, piece, destination tile, and piece
 							// that is being captured
-							System.out.println("ATTACK!!!!!");
+							//System.out.println("ATTACK!!!!!");
 							legalMove.add(new Move.CaptureMove(board, this, candidateDestinationCoordinate,
 									pieceAtDestination));
 						}
-						break; // break when we encounter an occupied tile
+						continue; // break when we encounter an occupied tile
 					}
 				} // end if isValidTileCoordinate
 				continue;
@@ -277,13 +270,14 @@ public class Rook extends Piece{
 			//while coordinate is still in bounds
 			while(BoardUtilities.isValidTileCoordinate(candidateDestinationCoordinate))
 			{
-				
-
+				if (isColumnExclusion(candidateOffset, candidateDestinationCoordinate)) {
+                    break;
+                }
 				//add offset and check if new destination is valid
 				candidateDestinationCoordinate += candidateOffset;
 				// REBOUNDING
 				// If quadrant one rebound tile == 6
-				if (BoardUtilities.QUADRANT_ONE.contains(this.piecePosition) && candidateDestinationCoordinate == 6) {
+				if (BoardUtilities.QUADRANT_ONE.contains(this.piecePosition) && candidateDestinationCoordinate == 6 && !board.getTile(candidateDestinationCoordinate).isTileOccupided()) {
 					int tempCandidateDestinationCoordinate = 6;
 					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
 
@@ -341,7 +335,7 @@ public class Rook extends Piece{
 					} // end while isValidTileCoordinate
 				}//end Q1 rebound
 				// If quadrant two rebound tile == 48
-				if (BoardUtilities.QUADRANT_TWO.contains(this.piecePosition) && candidateDestinationCoordinate == 48) {
+				if (BoardUtilities.QUADRANT_TWO.contains(this.piecePosition) && candidateDestinationCoordinate == 48 && !board.getTile(candidateDestinationCoordinate).isTileOccupided()) {
 					int tempCandidateDestinationCoordinate = 48;
 					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
 
@@ -399,7 +393,7 @@ public class Rook extends Piece{
 					} // end while isValidTileCoordinate
 				}//end Q2 rebound
 				// If quadrant three rebound tile == 42
-				if (BoardUtilities.QUADRANT_THREE.contains(this.piecePosition) && candidateDestinationCoordinate == 42) {
+				if (BoardUtilities.QUADRANT_THREE.contains(this.piecePosition) && candidateDestinationCoordinate == 42 && !board.getTile(candidateDestinationCoordinate).isTileOccupided()) {
 					int tempCandidateDestinationCoordinate = 42;
 					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
 
@@ -457,7 +451,7 @@ public class Rook extends Piece{
 					} // end while isValidTileCoordinate
 				}//end Q3 rebound
 				// If quadrant four rebound tile == 0
-				if (BoardUtilities.QUADRANT_FOUR.contains(this.piecePosition) && candidateDestinationCoordinate == 0) {
+				if (BoardUtilities.QUADRANT_FOUR.contains(this.piecePosition) && candidateDestinationCoordinate == 0 && !board.getTile(candidateDestinationCoordinate).isTileOccupided()) {
 					int tempCandidateDestinationCoordinate = 0;
 					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
 
@@ -566,5 +560,10 @@ public class Rook extends Piece{
 	public Piece movePiece(Move move) 
 	{
 		return new Rook(move.getDestCoordinate(), move.getMovedPiece().getPieceAssociation());
+	}
+	
+	private static boolean isColumnExclusion(final int currentCandidate, final int candidateDestinationCoordinate) {
+		return (BoardUtilities.FIRST_COLUMN[candidateDestinationCoordinate] && (currentCandidate == -1))
+				|| (BoardUtilities.LAST_COLUMN[candidateDestinationCoordinate] && (currentCandidate == 1));
 	}
 }

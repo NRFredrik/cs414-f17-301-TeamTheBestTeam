@@ -20,7 +20,7 @@ public class Config {
 	{
 		try {
 			String connURL = "jdbc:mysql://localhost:3306/rollerball?useSSL=false";
-			this.conn = DriverManager.getConnection(connURL, "root", "mysqlchamp");
+			this.conn = DriverManager.getConnection(connURL, "root", "password");
 			stmt = conn.createStatement();
 		} catch (SQLException e) {
 			e.printStackTrace();

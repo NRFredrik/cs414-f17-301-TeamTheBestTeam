@@ -126,11 +126,14 @@ public abstract class Player {
 	//return true if king is in check and has no escape moves
 	public boolean isCheckMate()
 	{
+		if(this.isInCheck && !hasEscape()){
+			System.out.println("Checkmate?");
+		}
 		return this.isInCheck && !hasEscape();
 	}
 	
 	//Current player is not in check yet and does not have any escape moves
-	public boolean isStale()
+	public boolean isStaleMate()
 	{
 		return !this.isInCheck && !hasEscape();
 	}

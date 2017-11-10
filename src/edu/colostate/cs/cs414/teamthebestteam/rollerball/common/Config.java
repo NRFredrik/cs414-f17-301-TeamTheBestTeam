@@ -6,6 +6,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
@@ -14,6 +18,9 @@ public class Config {
 	Connection conn;
 	Statement stmt;
 	ResultSet result;
+	//-----------
+	ResultSet result2;
+	//------------
 	int res;
 	
 	public Config()
@@ -151,4 +158,175 @@ public class Config {
 		}
 		return false;
 	}
+	
+	
+	/*
+	 * Create game record:
+	 * this function will add game in progress record to the database
+	 * there are no winner or loser yet since the game is in progress. Therefore, winner and loser are set to NULL
+	 * the game status is set to in progress
+	 * @param gameCreator
+	 * @param gameOpponent
+	 * 
+	 */
+	
+	public boolean createGameRecord(String gameCreator, String gameOpponent){
+
+		String status = "inProgress";
+		
+		//formatting the date to match the datetime format in mysql database
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date curDate = new Date();
+		String startDate = dateFormat.format(curDate);
+		
+		//insert the record into the database
+		String addRecord = "INSERT INTO record " + "VALUES (NULL,'"+gameCreator+"','"+gameOpponent+"','"+status+"','"+startDate+"', NULL,'"+"ladji"+"',NULL)";
+		
+		//System.out.println("*********addRecord: "+addRecord);
+		
+		try {
+			int effected = stmt.executeUpdate(addRecord);
+			//if there were rows affected that means record was added
+			if(effected != 0)
+			{
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	
+		return false;
+	}
+	
+	
+	
+	
+	
+	/*
+	 * get a particular user game history
+	 * 	@param user
+	 * return a ArrayList of the user game history
+	 */
+	
+	public ArrayList<String> getUserGameHistory(String user) 
+	{
+		// create an array list
+	    ArrayList<String> userGameHistoryList = new ArrayList<String>();
+		int counter = 0;
+		String opponent = "";
+		String startDate ="";
+		String endDate ="";
+		String winner ="";
+		String loser ="";
+		String status ="";
+		
+		String gameHistory ="";
+
+//*************************This get executed if the user created a game*********************************
+		//execute query
+		try {
+			 result = stmt.executeQuery("select opponent,startDate,endDate,winner,loser,status,creator from record where creator = '"+ user + "';");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			
+			while(result.next())
+			{
+				opponent = result.getString("opponent");
+				//System.out.println("*****************Opponent: "+ opponent);
+				
+	
+				startDate = result.getString("startDate");
+				//System.out.println("*****************startDate: "+ startDate);
+				
+				endDate = result.getString("endDate");
+				//System.out.println("*****************endDate: "+ endDate);
+
+				winner = result.getString("winner");
+				//System.out.println("*****************winner: "+ winner);
+				
+				loser = result.getString("loser");
+				//System.out.println("*****************loser: "+ loser);
+
+				status = result.getString("status");
+				//System.out.println("*****************status: "+ status);
+				
+				gameHistory = opponent+";"+startDate+";"+endDate+";"+winner+";"+loser+";"+status;
+				//System.out.println("****************gameHistory: "+gameHistory);
+				
+				userGameHistoryList.add(counter,gameHistory);
+				
+				counter++;
+			}
+			
+			
+		} 
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+//*************************This get executed if the user is an opponent of a game*********************************
+		
+		//execute query
+			try {
+				 result2 = stmt.executeQuery("select creator,startDate,endDate,winner,loser,status from record where opponent = '"+ user + "';");
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		
+		
+		
+		try {
+			
+			while(result2.next())
+			{
+				opponent = result2.getString("creator");
+				//System.out.println("*****************Opponent: "+ opponent);
+				
+	
+				startDate = result2.getString("startDate");
+				//System.out.println("*****************startDate: "+ startDate);
+				
+				endDate = result2.getString("endDate");
+				//System.out.println("*****************endDate: "+ endDate);
+
+				winner = result2.getString("winner");
+				//System.out.println("*****************winner: "+ winner);
+				
+				loser = result2.getString("loser");
+				//System.out.println("*****************loser: "+ loser);
+
+				status = result2.getString("status");
+				//System.out.println("*****************status: "+ status);
+				
+				gameHistory = opponent+";"+startDate+";"+endDate+";"+winner+";"+loser+";"+status;
+				//System.out.println("****************gameHistory: "+gameHistory);
+				
+				userGameHistoryList.add(counter,gameHistory);
+				
+				counter++;
+			}
+			
+			
+		} 
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return userGameHistoryList;  
+	}
+	
+	
+	
+	
+	
+	
+	
 }
+

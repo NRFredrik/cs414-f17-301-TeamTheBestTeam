@@ -87,6 +87,10 @@ public class ClientTable implements RollIF {
 	private JPanel loginPanel;
 	private JFrame inviteFrame;
 	private JPanel invitePanel;
+//****************************
+	private JFrame viewProfileFrame;
+	private JPanel viewProfilePanel;
+//******************************
 	private JFrame receiveFrame;
 	private JPanel receivePanel;
 
@@ -98,6 +102,9 @@ public class ClientTable implements RollIF {
 	private JButton loginMMButton;
 	private JButton registerMMButton;
 	private JButton inviteButton;
+	//***********************
+	private JButton viewProfileButton;
+	//************************
 
 	private JTextField messageField;
 	private JTextField userField;
@@ -115,9 +122,19 @@ public class ClientTable implements RollIF {
 	private JTextArea statusArea;
 	private JComboBox userList;
 	private ArrayList<String> users;
+	//change?
 	private String opponent;
+	private String gameOpponent;
+	private String gameCreator;
+	private String user;
 	private JPanel right;
-
+	final Config con = new Config();
+	
+	
+	
+	
+	
+	
 	public ClientTable()throws Exception
 	{
 
@@ -168,7 +185,7 @@ public class ClientTable implements RollIF {
 
 		//MainMenu Frame
 		mmFrame = new JFrame("Main Menu");
-		mmFrame.setBounds(100, 100, 300, 250);
+		mmFrame.setBounds(100, 100, 400, 400);
 		mmFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		//login panel
@@ -195,10 +212,16 @@ public class ClientTable implements RollIF {
 		inviteButton.setBounds(80, 110, 125, 25);
 		mmPanel.add(inviteButton);
 		inviteButton.setEnabled(false);
-
+//***********************************
+		viewProfileButton = new JButton("View Profile");
+		viewProfileButton.addActionListener(new viewProfileListener());
+		viewProfileButton.setBounds(80, 160, 125, 25);
+		mmPanel.add(viewProfileButton);
+		viewProfileButton.setEnabled(false);
+//*********************************		
 		//login frame
 		loginFrame = new JFrame("Login");
-		loginFrame.setBounds(100, 100, 300, 250);
+		loginFrame.setBounds(100, 100, 400, 400);
 		loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		//login panel
@@ -528,7 +551,7 @@ public class ClientTable implements RollIF {
 
 		private void highlightMoves(Board board)
 		{
-			//System.out.println("FFFFFFFFFFFFFFFFFFFFFF");
+			System.out.println("FFFFFFFFFFFFFFFFFFFFFF");
 
 			for (Move m : currentMoves(board))
 			{
@@ -650,6 +673,7 @@ public class ClientTable implements RollIF {
 		opponent = userID;
 		System.out.println(opponent);
 
+
 		//login frame
 		receiveFrame = new JFrame("Login");
 		receiveFrame.setBounds(100, 100, 300, 250);
@@ -673,6 +697,10 @@ public class ClientTable implements RollIF {
 		acceptButton.setBounds(75, 150, 100, 25);
 		receivePanel.add(acceptButton);
 
+
+		
+		
+		
 		JButton declineButton = new JButton("Decline");
 		// declineButton.setToolTipText("Make sure information in all fields is correct");
 		declineButton.addActionListener(new declineListener());
@@ -872,6 +900,9 @@ public class ClientTable implements RollIF {
 				loginFrame.setVisible(true);
 				registerMMButton.setText("Unregister");
 				inviteButton.setEnabled(true);
+//*****************
+				viewProfileButton.setEnabled(true);
+//****************
 			}
 
 			//open login window
@@ -892,7 +923,7 @@ public class ClientTable implements RollIF {
 	{
 		public void actionPerformed(ActionEvent event) 
 		{
-			final Config con = new Config();
+			
 
 			if (userField.getBackground().equals(Color.red)) 
 			{
@@ -907,6 +938,7 @@ public class ClientTable implements RollIF {
 			System.out.println(userField.getText());
 			System.out.println(passField.getText());
 			String userID = userField.getText();
+			user = userID;
 			String password = passField.getText();
 
 			if(con.userExists(userID,password))
@@ -1006,6 +1038,19 @@ public class ClientTable implements RollIF {
 				e.printStackTrace();
 			} 
 
+
+			
+			//***********creating game record***************
+			gameCreator = opponent;
+			gameOpponent = user;
+			//System.out.println("***********Game Creator/White: " + gameCreator);
+			//System.out.println("***********Game Acceptor/Black: " + gameOpponent);
+			con.createGameRecord(gameCreator, gameOpponent);
+			
+			//*************************************************
+			
+			
+			
 			boardPanel.drawBoard(rollBoard);
 			mmFrame.setVisible(false);
 			mainFrame.setVisible(true);
@@ -1035,6 +1080,211 @@ public class ClientTable implements RollIF {
 			mmFrame.setVisible(true);
 		}
 	} 
+	
+//***********************************************
+	
+	private class viewProfileListener implements ActionListener 
+	{
+
+		public void actionPerformed(ActionEvent event) 
+		{
+			
+				
+				//login frame
+				viewProfileFrame = new JFrame("Profile");
+				viewProfileFrame.setBounds(100, 100, 400, 400);
+				viewProfileFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+				//login panel
+				viewProfilePanel = new JPanel();
+				viewProfilePanel.setLayout(null);
+				viewProfilePanel.setBackground(Color.lightGray);
+				viewProfileFrame.add(viewProfilePanel);
+				
+				//informations to add to the profile page
+				
+				//add the current username
+				JLabel userLabel = new JLabel("Username:");
+				userLabel.setBounds(10, 10, 80, 25);
+				viewProfilePanel.add(userLabel);
+				
+				JLabel username = new JLabel(user);
+				username.setBounds(100, 10, 80, 25);
+				viewProfilePanel.add(username);
+				
+				//add the total win-loss-draw for the user
+				int winCount = 0;
+				int lossCount = 0;
+				int tieCount = 0;
+				
+				JLabel totalRecordLabel = new JLabel("W-L-T:");
+				totalRecordLabel.setBounds(300, 10, 80, 25);
+				viewProfilePanel.add(totalRecordLabel);
+				
+				
+
+				
+				//add user game history to the frame
+				int x_axis = 10;
+				int x_axis2 = 40;
+				int x_axis3 = 100;
+				
+				int y_axis = 40;
+				
+				
+				
+				ArrayList<String> userGameHistoryList = new ArrayList<String>();
+				userGameHistoryList = con.getUserGameHistory(user);
+				
+				for(int i=0; i<userGameHistoryList.size(); i++){
+					//System.out.println("**********userGameHistoryList["+i+"]: "+userGameHistoryList.get(i));
+					String temp = userGameHistoryList.get(i);
+					String parts[] = temp.split(";");
+					
+					String opponent = parts[0];
+					//System.out.println("**************opponent: "+opponent);
+					
+					String startDate = parts[1];
+					//System.out.println("**************startDate: "+startDate);
+
+					String endDate =parts[2];
+					//System.out.println("**************endDate: "+endDate);
+
+					String winner =parts[3];
+					//System.out.println("**************winner: "+winner);
+
+					String loser =parts[4];
+					//System.out.println("**************loser: "+loser);
+
+					String status = parts[5];
+					//System.out.println("**************status: "+status);
+					
+					
+					y_axis += 10;
+					
+					//---------add opponent
+					JLabel opponentLabel = new JLabel("Opponent:");
+					opponentLabel.setBounds(x_axis, y_axis, 80, 25);
+					viewProfilePanel.add(opponentLabel);
+					
+					
+					JLabel retrievedOpponent = new JLabel(opponent);
+					retrievedOpponent.setBounds(x_axis3, y_axis, 80, 25);
+					viewProfilePanel.add(retrievedOpponent);
+				
+					//-------------
+					y_axis += 40; //increment the the y axis so you dont't write on top of the previous stuffs
+					
+					//------------add game status
+					JLabel statusLabel = new JLabel("Game Status:");
+					statusLabel.setBounds(x_axis2, y_axis, 80, 25);
+					viewProfilePanel.add(statusLabel);
+					
+					JLabel retrievedStatus = new JLabel(status);
+					retrievedStatus.setBounds(140, y_axis, 150, 25);
+					viewProfilePanel.add(retrievedStatus);
+					
+					//-----------------------
+					
+					y_axis += 40;
+					
+					//---------add start date
+					JLabel startDateLabel = new JLabel("Start Date:");
+					startDateLabel.setBounds(x_axis2, y_axis, 80, 25);
+					viewProfilePanel.add(startDateLabel);
+					
+					JLabel retrievedStartDate = new JLabel(startDate);
+					retrievedStartDate.setBounds(140, y_axis, 150, 25);
+					viewProfilePanel.add(retrievedStartDate);
+					
+					//-----------------------------------
+					
+					y_axis += 40;
+					
+					//-----------add end date
+					JLabel endDateLabel = new JLabel("End Date:");
+					endDateLabel.setBounds(x_axis2, y_axis, 80, 25);
+					viewProfilePanel.add(endDateLabel);
+					
+					JLabel retrievedEndDate = new JLabel(endDate);
+					retrievedEndDate.setBounds(140, y_axis, 150, 25);
+					viewProfilePanel.add(retrievedEndDate);
+					
+					//-------------
+					y_axis += 40;
+					
+					//----------add winner or loser 
+					if(winner.equals(user)){
+						winCount ++;
+						
+						JLabel winnerLabel = new JLabel("Result:");
+						winnerLabel.setBounds(x_axis2, y_axis, 80, 25);
+						viewProfilePanel.add(winnerLabel);
+						
+						JLabel retrievedWinner = new JLabel("winner!");
+						retrievedWinner.setBounds(140, y_axis, 150, 25);
+						viewProfilePanel.add(retrievedWinner);
+
+					}
+					if(loser.equals(user)){
+						lossCount ++;
+						
+						JLabel loserLabel = new JLabel("Result:");
+						loserLabel.setBounds(x_axis2, y_axis, 80, 25);
+						viewProfilePanel.add(loserLabel);
+						
+						JLabel retrievedLoser = new JLabel("loser!");
+						retrievedLoser.setBounds(140, y_axis, 150, 25);
+						viewProfilePanel.add(retrievedLoser);
+
+					}
+					
+					//-------------------
+					
+					y_axis += 90;
+					
+					
+				}
+				
+				
+				//-------------add the total win-loss-draw values for the user
+				//System.out.println("**********************winCount: "+winCount);
+				//System.out.println("**********************lossCount: "+lossCount);
+				
+				JLabel win = new JLabel(Integer.toString(winCount));
+				win.setBounds(360, 10, 40, 25);
+				viewProfilePanel.add(win);
+				
+				//----add a dash in between
+				JLabel dash = new JLabel("-");
+				dash.setBounds(370, 10, 40, 25);
+				viewProfilePanel.add(dash);
+				//-----
+				
+				JLabel loss = new JLabel(Integer.toString(lossCount));
+				loss.setBounds(380, 10, 40, 25);
+				viewProfilePanel.add(loss);
+				
+				//----add a dash in between
+				JLabel dash2 = new JLabel("-");
+				dash2.setBounds(390, 10, 40, 25);
+				viewProfilePanel.add(dash2);
+				//-----
+				
+				JLabel tie = new JLabel(Integer.toString(tieCount));
+				tie.setBounds(400, 10, 40, 25);
+				viewProfilePanel.add(tie);
+				
+				
+				//takes you to the profile page
+				viewProfileFrame.setVisible(true);
+				mmFrame.setVisible(false);
+			
+		}
+		
+	}
+
+//****************************************************
 
 	private class inviteListener implements ActionListener 
 	{
@@ -1125,6 +1375,7 @@ public class ClientTable implements RollIF {
 		}
 	}
 }
+
 
 
 

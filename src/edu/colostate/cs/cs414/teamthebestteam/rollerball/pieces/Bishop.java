@@ -403,7 +403,10 @@ public class Bishop extends Piece {
 						&& !board.getTile(candidateDestinationCoordinate).isTileOccupided()) {
 					int tempCandidateDestinationCoordinate = candidateDestinationCoordinate;
 					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
-
+						if (isFirstColumnExclusion(-6, tempCandidateDestinationCoordinate)
+								|| isSeventhColumnExclusion(-6, tempCandidateDestinationCoordinate)) {
+							break;
+						}
 						// add offset and check if new destination is valid
 						tempCandidateDestinationCoordinate += -6;// upward
 																	// diagonal
@@ -468,7 +471,10 @@ public class Bishop extends Piece {
 						&& !board.getTile(candidateDestinationCoordinate).isTileOccupided()) {
 					int tempCandidateDestinationCoordinate = candidateDestinationCoordinate;
 					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
-
+						if (isFirstColumnExclusion(8, tempCandidateDestinationCoordinate)
+								|| isSeventhColumnExclusion(8, tempCandidateDestinationCoordinate)) {
+							break;
+						}
 						// add offset and check if new destination is valid
 						tempCandidateDestinationCoordinate += 8;// downward
 																// diagonal
@@ -533,7 +539,10 @@ public class Bishop extends Piece {
 						&& !board.getTile(candidateDestinationCoordinate).isTileOccupided()) {
 					int tempCandidateDestinationCoordinate = candidateDestinationCoordinate;
 					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
-
+						if (isFirstColumnExclusion(8, tempCandidateDestinationCoordinate)
+								|| isSeventhColumnExclusion(8, tempCandidateDestinationCoordinate)) {
+							break;
+						}
 						// add offset and check if new destination is valid
 						tempCandidateDestinationCoordinate += 8;// downward
 																// diagonal
@@ -598,7 +607,10 @@ public class Bishop extends Piece {
 						&& !board.getTile(candidateDestinationCoordinate).isTileOccupided()) {
 					int tempCandidateDestinationCoordinate = candidateDestinationCoordinate;
 					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
-
+						if (isFirstColumnExclusion(6, tempCandidateDestinationCoordinate)
+								|| isSeventhColumnExclusion(6, tempCandidateDestinationCoordinate)) {
+							break;
+						}
 						// add offset and check if new destination is valid
 						tempCandidateDestinationCoordinate += 6;// downward
 																// diagonal
@@ -663,7 +675,10 @@ public class Bishop extends Piece {
 						&& !board.getTile(candidateDestinationCoordinate).isTileOccupided()) {
 					int tempCandidateDestinationCoordinate = candidateDestinationCoordinate;
 					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
-
+						if (isFirstColumnExclusion(6, tempCandidateDestinationCoordinate)
+								|| isSeventhColumnExclusion(6, tempCandidateDestinationCoordinate)) {
+							break;
+						}
 						// add offset and check if new destination is valid
 						tempCandidateDestinationCoordinate += 6;// downward
 																// diagonal
@@ -728,7 +743,10 @@ public class Bishop extends Piece {
 						&& !board.getTile(candidateDestinationCoordinate).isTileOccupided()) {
 					int tempCandidateDestinationCoordinate = candidateDestinationCoordinate;
 					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
-
+						if (isFirstColumnExclusion(-8, tempCandidateDestinationCoordinate)
+								|| isSeventhColumnExclusion(-8, tempCandidateDestinationCoordinate)) {
+							break;
+						}
 						// add offset and check if new destination is valid
 						tempCandidateDestinationCoordinate += -8;// upward
 																	// diagonal
@@ -793,7 +811,10 @@ public class Bishop extends Piece {
 						&& !board.getTile(candidateDestinationCoordinate).isTileOccupided()) {
 					int tempCandidateDestinationCoordinate = candidateDestinationCoordinate;
 					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
-
+						if (isFirstColumnExclusion(-8, tempCandidateDestinationCoordinate)
+								|| isSeventhColumnExclusion(-8, tempCandidateDestinationCoordinate)) {
+							break;
+						}
 						// add offset and check if new destination is valid
 						tempCandidateDestinationCoordinate += -8;// upward
 																	// diagonal
@@ -858,7 +879,10 @@ public class Bishop extends Piece {
 						&& !board.getTile(candidateDestinationCoordinate).isTileOccupided()) {
 					int tempCandidateDestinationCoordinate = candidateDestinationCoordinate;
 					while (BoardUtilities.isValidTileCoordinate(tempCandidateDestinationCoordinate)) {
-
+						if (isFirstColumnExclusion(-6, tempCandidateDestinationCoordinate)
+								|| isSeventhColumnExclusion(-6, tempCandidateDestinationCoordinate)) {
+							break;
+						}
 						// add offset and check if new destination is valid
 						tempCandidateDestinationCoordinate += -6;// upward
 																	// diagonal

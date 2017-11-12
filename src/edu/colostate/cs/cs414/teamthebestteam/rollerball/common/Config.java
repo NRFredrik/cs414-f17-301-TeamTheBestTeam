@@ -159,6 +159,31 @@ public class Config {
 		return false;
 	}
 	
+	public boolean userExistsEmail(String email, String password)
+	{
+		String query = "Select nick_name,password from users where email = '"+email+"';"; //returns user and hashed password
+		try {
+			result = stmt.executeQuery(query);
+			while(result.next())
+			{
+				//check to see if password user entered matches password in database
+				String hashedPass = "";
+				try {
+					hashedPass = HashPassword.hashPassword(password); //get has of password that was entered in login
+					System.out.println(hashedPass);
+				} catch (NoSuchAlgorithmException e) {
+					e.printStackTrace();
+				}
+				if(hashedPass.equals(result.getObject("password")))
+				{
+					return true; //true if user exists and password matches
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 	
 	/*
 	 * Create game record:
@@ -169,6 +194,118 @@ public class Config {
 	 * @param gameOpponent
 	 * 
 	 */
+	
+	public ArrayList<String> populateUserList()
+	{
+		ArrayList<String> userList = new ArrayList<String>();
+		String userQuery = "select * from users;";
+		try {
+			result = stmt.executeQuery(userQuery);
+			while(result.next())
+			{
+				userList.add(result.getString("nick_name"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+		return userList;
+	}
+	
+	
+	public boolean addInvite(String sender, String reciever) 
+	{
+		boolean sendInvite = false;
+		
+		ArrayList<String> userList = new ArrayList<String>();
+		String userQuery = "select * from invites WHERE `reciever`='"+reciever+"' AND `status` = 'pending' AND `sender` = '"+sender+"';";
+		try {
+			result = stmt.executeQuery(userQuery);
+			while(result.next())
+			{
+				userList.add(result.getString("sender"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+		
+		if(userList.size() < 1)
+		{
+			sendInvite = true;
+		}
+		
+		if(sendInvite)
+		{
+			String addInvite = "INSERT INTO invites " + "VALUES (NULL,'"+sender+"','"+reciever+"',NULL , 'pending')";
+			//insert the user into the database
+			try {
+				int effected = stmt.executeUpdate(addInvite);
+				//if there were rows affected that means user was added
+				if(effected != 0)
+				{
+					return true;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
+	public boolean acceptInviteDB(String sender, String reciever) 
+	{
+	
+		String updateInvite = "UPDATE invites SET `status` = 'accepted' WHERE `reciever`='"+reciever+"' AND `sender` = '"+sender+"';";
+		System.out.println(updateInvite);
+		
+		//insert the user into the database
+		try {
+			int effected = stmt.executeUpdate(updateInvite);
+			//if there were rows affected that means user was added
+			if(effected != 0)
+			{
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	public boolean declineInviteDB(String sender, String reciever) 
+	{
+	
+		String updateInvite = "UPDATE invites SET `status` = 'declined' WHERE `reciever`='"+reciever+"' AND `sender` = '"+sender+"';";
+		//insert the user into the database
+		try {
+			int effected = stmt.executeUpdate(updateInvite);
+			//if there were rows affected that means user was added
+			if(effected != 0)
+			{
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	public ArrayList<String> populateInviteList(String reciever)
+	{
+		ArrayList<String> userList = new ArrayList<String>();
+		String userQuery = "select * from invites WHERE `reciever`='"+reciever+"' AND `status` = 'pending';";
+		try {
+			result = stmt.executeQuery(userQuery);
+			while(result.next())
+			{
+				userList.add(result.getString("sender"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+		return userList;
+	}
 	
 	public boolean createGameRecord(String gameCreator, String gameOpponent){
 

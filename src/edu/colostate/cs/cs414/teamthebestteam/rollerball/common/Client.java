@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 //test
-public class Rollerball extends AbstractClient 
+public class Client extends AbstractClient 
 {
-	RollIF clientUI;
+	ClientInterface clientUI;
 	
-	public Rollerball(String userID, String host, int port, RollIF clientUI) throws IOException 
+	public Client(String userID, String host, int port, ClientInterface clientUI) throws IOException 
 	{	
 		super(host, port); // Call the superclass constructor
 		this.clientUI = clientUI;

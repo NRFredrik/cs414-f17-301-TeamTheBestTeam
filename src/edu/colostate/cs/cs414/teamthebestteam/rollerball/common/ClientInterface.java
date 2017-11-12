@@ -12,7 +12,7 @@ package edu.colostate.cs.cs414.teamthebestteam.rollerball.common;
  * @author Dr Timothy C. Lethbridge
  * @version July 2000
  */
-public interface RollIF{
+public interface ClientInterface{
   /**
    * Method that when overriden is used to display objects onto
    * a UI.

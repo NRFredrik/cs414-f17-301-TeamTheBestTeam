@@ -317,7 +317,7 @@ public class Config {
 		String startDate = dateFormat.format(curDate);
 		
 		//insert the record into the database
-		String addRecord = "INSERT INTO record " + "VALUES (NULL,'"+gameCreator+"','"+gameOpponent+"','"+status+"','"+startDate+"', NULL,'" + "', NULL,'"+"',NULL)";
+		String addRecord = "INSERT INTO record " + "VALUES (NULL,'"+gameCreator+"','"+gameOpponent+"','"+status+"','"+startDate+"', NULL,'"+"ladji"+"',NULL)";
 		
 		//System.out.println("*********addRecord: "+addRecord);
 		

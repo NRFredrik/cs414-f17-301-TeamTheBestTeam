@@ -19,7 +19,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import edu.colostate.cs.cs414.teamthebestteam.rollerball.common.Rollerball;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.common.Client;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Board;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.BoardUtilities;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Move;
@@ -62,8 +62,8 @@ public class Table {
 	{
 
 		
-		//create the new 600 by 600 frame with the name Rollerball
-		this.gameFrame = new JFrame("Rollerball");
+		//create the new 600 by 600 frame with the name Client
+		this.gameFrame = new JFrame("Client");
 		this.gameFrame.setLayout(new BorderLayout());
 		this.gameFrame.setSize(OUTER_DIMENSION);
 		JMenuBar menuBar = new JMenuBar();
@@ -237,7 +237,7 @@ public class Table {
 							@Override
 							public void run()
 							{
-								//roll.handleMessageFromClientUI(rollBoard);
+								//client.handleMessageFromClientUI(rollBoard);
 								boardPanel.drawBoard(rollBoard);
 							}
 						});

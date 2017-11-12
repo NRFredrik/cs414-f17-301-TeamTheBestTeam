@@ -6,6 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.BorderLayout;
+
 import javax.swing.SwingConstants;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -14,12 +15,14 @@ import edu.colostate.cs.cs414.teamthebestteam.rollerball.common.Config;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.common.HashPassword;
 
 import java.awt.Color;
+
 import javax.swing.JTextPane;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.AbstractAction;
+
 import java.awt.event.ActionEvent;
 import java.security.NoSuchAlgorithmException;
 
@@ -32,6 +35,7 @@ public class Register {
 	private JTextField typeUsername;
 	private JTextField typeEmail;
 	private JPasswordField typePassword;
+	private JPasswordField typePasswordFinal;
 	private final Action action = new SwingAction();
 
 	/**
@@ -63,8 +67,14 @@ public class Register {
 	private void initialize() {
 		frame = new JFrame();
 		frame.getContentPane().setBackground(Color.WHITE);
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setBounds(100, 100, 450, 450);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+
+		    }
+		});
 		frame.getContentPane().setLayout(null);
 		
 		JLabel username = new JLabel("username");
@@ -77,14 +87,19 @@ public class Register {
 		email.setBounds(30, 89, 73, 16);
 		frame.getContentPane().add(email);
 		
-		JLabel password = new JLabel("password");
-		password.setForeground(Color.RED);
-		password.setBounds(30, 147, 73, 16);
-		frame.getContentPane().add(password);
+		JLabel passwordTest = new JLabel("password");
+		passwordTest.setForeground(Color.RED);
+		passwordTest.setBounds(30, 150, 73, 16);
+		frame.getContentPane().add(passwordTest);
 		
+		JLabel passwordFinal = new JLabel("re-enter password");
+		passwordFinal.setForeground(Color.RED);
+		passwordFinal.setBounds(30, 207, 200, 16);
+		frame.getContentPane().add(passwordFinal);
+
 		JTextPane title = new JTextPane();
 		title.setBackground(Color.WHITE);
-		title.setText("Register For Rollerball");
+		title.setText("Register For Client");
 		title.setBounds(30, 6, 143, 16);
 		frame.getContentPane().add(title);
 		
@@ -93,13 +108,12 @@ public class Register {
 		btn_create_account.setForeground(Color.BLACK);
 		btn_create_account.setBackground(Color.RED);
 		btn_create_account.setOpaque(true);
-		btn_create_account.setBounds(30, 227, 200, 29);
+		btn_create_account.setBounds(30, 300, 200, 29);
 		frame.getContentPane().add(btn_create_account);
 		
 		typeUsername = new JTextField();
 		typeUsername.setToolTipText("Enter your desired screen name");
 		typeUsername.setForeground(Color.LIGHT_GRAY);
-		typeUsername.setText("Type username");
 		typeUsername.setBounds(30, 51, 200, 26);
 		frame.getContentPane().add(typeUsername);
 		typeUsername.setColumns(10);
@@ -107,7 +121,6 @@ public class Register {
 		typeEmail = new JTextField();
 		typeEmail.setToolTipText("Enter a unique email");
 		typeEmail.setForeground(Color.LIGHT_GRAY);
-		typeEmail.setText("Type email");
 		typeEmail.setColumns(10);
 		typeEmail.setBounds(30, 109, 200, 26);
 		frame.getContentPane().add(typeEmail);
@@ -117,6 +130,11 @@ public class Register {
 		typePassword.setBounds(30, 175, 200, 26);
 		frame.getContentPane().add(typePassword);
 		
+		typePasswordFinal = new JPasswordField();
+		typePasswordFinal.setToolTipText("Type password");
+		typePasswordFinal.setBounds(30, 225, 200, 26);
+		frame.getContentPane().add(typePasswordFinal);
+
 		JLabel image = new JLabel("");
 		ImageIcon img = new ImageIcon("pictures/rollerball"+ ".PNG");
 		image.setIcon(img);
@@ -131,51 +149,60 @@ public class Register {
 		}
 		public void actionPerformed(ActionEvent e) {
 			
-			boolean isValid = false;
-			//check to see if email is unique
-			while(isValid == false)
+			if(typePasswordFinal.getText().equals(typePassword.getText()))
 			{
-				String mail = typeEmail.getText(); //holds current email address entered
-				Config con =  new Config();
-				if(!con.isUniqueEmail(mail))
+				boolean isValid = false;
+				//check to see if email is unique
+				while(isValid == false)
 				{
-					//Alert user to enter unique email
-					System.out.println("email is not unique");
-				}//end of if
-				else
-				{
-					//TODO get specifications from professor how long password needs to be 
-					//TODO check password length and other properties
-					String hashedPass = "";
-					//salt password
-					HashPassword hash = new HashPassword();
-					try {
-						hashedPass = hash.hashPassword(typePassword.getText()); //holds hashed version of password
-					} catch (NoSuchAlgorithmException e1) {
-						e1.printStackTrace();
+					String mail = typeEmail.getText(); //holds current email address entered
+					Config con =  new Config();
+					if(!con.isUniqueEmail(mail))
+					{
+						//Alert user to enter unique email
+						System.out.println("email is not unique");
+					}//end of if
+					else
+					{
+						
+							//TODO get specifications from professor how long password needs to be 
+							//TODO check password length and other properties
+							String hashedPass = "";
+							//salt password
+							HashPassword hash = new HashPassword();
+							try {
+								hashedPass = hash.hashPassword(typePasswordFinal.getText()); //holds hashed version of password
+							} catch (NoSuchAlgorithmException e1) {
+								e1.printStackTrace();
+							}
+							String uname = typeUsername.getText();
+							
+							/**
+							 * store user in database with name and salted password
+							 * if result is true, user should be in database
+							 */
+							boolean addedUser = con.addNewUser(uname, mail, hashedPass);
+							
+							//break out of while loop
+							isValid = true;
+							
+							//indicator telling user they registered and now need to login
+							JOptionPane.showMessageDialog(null,"You have Successfully registered. Please login now");
+							
+							/**
+							 * redirect to login page
+							 */
+							//Login login = new Login();
+							//login.frame.setVisible(true);
+							frame.setVisible(false);
+						}
 					}
-					String uname = typeUsername.getText();
-					
-					/**
-					 * store user in database with name and salted password
-					 * if result is true, user should be in database
-					 */
-					boolean addedUser = con.addNewUser(uname, mail, hashedPass);
-					
-					//break out of while loop
-					isValid = true;
-					
-					//indicator telling user they registered and now need to login
-					JOptionPane.showMessageDialog(null,"You have Successfully registered. Please login now");
-					
-					/**
-					 * redirect to login page
-					 */
-					//Login login = new Login();
-					//login.frame.setVisible(true);
-					frame.setVisible(false);
 				}
-			}//end while
+			
+			else
+			{
+				System.out.println("passwords do not match");
+			}
 		}//end actionPerformed
 	}//end SwingAction class
 }

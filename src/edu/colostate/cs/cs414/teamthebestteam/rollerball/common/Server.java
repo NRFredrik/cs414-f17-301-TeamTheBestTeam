@@ -17,28 +17,26 @@ import java.util.List;
 
 public class Server extends AbstractServer 
 {
+	
 	// Class variables *************************************************
 	final public static int DEFAULT_PORT = 5555;
 	Board board;
 	static Table table;
-	//String turn;
+	Config con = new Config();
+	ArrayList<String> userList;
+	
 	
 	protected boolean isClosed;
 	// Constructors ****************************************************
 	public Server(int port) {
 		super(port);
 		this.isClosed = false;
-		//turn = "white";
+		//System.out.println(userList);
 	}
 
 
 	public void handleMessageFromClient(Object message, ConnectionToClient client) 
 	{
-
-		
-		//System.out.println(client.getInfo("color"));
-		//System.out.println(turn);
-		
 		
 		if(((String)message).contains("#login"))
 		{
@@ -49,14 +47,15 @@ public class Server extends AbstractServer
 		}
 		else if(((String)message).contains("#userList"))
 		{
-			
-			ArrayList<String> userList = userList(client);
-			msgToCli(userList, client);
+			userList = con.populateUserList();
+
+			ArrayList<String> tmpList = userList;
+			tmpList.add(0, "User List");
+			tmpList.remove(client.getInfo("userID"));
+			msgToCli(tmpList, client);
 		}
 		else if(((String)message).contains("#invite"))
 		{
-			
-
 			List<String> items = Arrays.asList(((String) message).split(","));
 			String userID =items.get(1);
 			invite(client,userID);
@@ -88,22 +87,6 @@ public class Server extends AbstractServer
 			{
 				move(client,(String)message);
 			}
-			//move(client,(String)message);
-			/*
-			if(client.getInfo("color").equals(turn))
-			{
-				//System.out.println("Server Recieved");
-				this.sendToAllClients((String)message);
-				
-				if(client.getInfo("color").equals("white"))
-				{
-					turn= "black";
-				}
-				else
-				{
-					turn="white";
-				}
-			}*/	
 		}		
 	}
 
@@ -272,26 +255,17 @@ public class Server extends AbstractServer
 
 	}
 	
-	protected void invite(ConnectionToClient sendingClient, String userID) 
+	protected void invite(ConnectionToClient sendingClient, String recieverUserID) 
 	{
 		
-		
-		Thread[] clientThreadList = getClientConnections();
-		
-		for (int i = 0; i < clientThreadList.length; i++) 
+		if(userList.contains(recieverUserID))
 		{
-			//System.out.println(((ConnectionToClient) clientThreadList[i]).getInfo("userID"));
-			
-			if(((ConnectionToClient) clientThreadList[i]).getInfo("userID").equals(userID))
-			{
-				msgToCli("invite," + sendingClient.getInfo("userID"),(ConnectionToClient)clientThreadList[i]);
-				
-				//System.out.println("invite," + sendingClient.getInfo("userID"));
-			}
-			
+			con.addInvite((String)sendingClient.getInfo("userID"), recieverUserID);
 		}
-			
+		else
+		{
 		
+		}
 	}
 	
 	protected void move(ConnectionToClient sendingClient, String move) 
@@ -408,27 +382,6 @@ public class Server extends AbstractServer
 			e.printStackTrace();
 		}
 	}
-	
-	
-	protected ArrayList<String> userList(ConnectionToClient client) 
-	{
-		
-		ArrayList<String> users = new ArrayList<String>();
-		users.add("Users");
-		
-			Thread[] clientThreadList = getClientConnections();
-			
-			for (int i = 0; i < clientThreadList.length; i++) 
-			{
-				if(!(((String) ((ConnectionToClient) clientThreadList[i]).getInfo("userID")).equals(client.getInfo("userID"))))
-				{
-					String user = ((String) ((ConnectionToClient) clientThreadList[i]).getInfo("userID"));
-					//System.out.println(user);
-					users.add(user);
-				}
-			}
-		return users;
-	}	
 
 	/**
 	 * This method is responsible for the creation of the server instance (there

@@ -58,7 +58,7 @@ public class Login {
 		frame.getContentPane().setLayout(null);
 		
 		JTextPane title = new JTextPane();
-		title.setText("Login To Play Rollerball");
+		title.setText("Login To Play Client");
 		title.setBounds(6, 6, 438, 31);
 		title.setBackground(new Color(255,199,148));
 		frame.getContentPane().add(title);

@@ -33,6 +33,7 @@ import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.BoardUtilitie
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Move;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Tile;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Piece;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Piece.PieceType;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.player.MoveTransition;
 
 import javax.imageio.ImageIO;
@@ -492,6 +493,35 @@ public class ClientGUI implements ClientInterface {
 									//Send Move to server
 									client.handleMessageFromClientUI(tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
 									rollBoard = trans.getBoard();
+									//check white pieces King to see if he landed on opposing Kings starting tile
+									//if so, GAME OVER
+									for(Piece p : trans.getBoard().getWhitePieces())
+									{
+										if(p.getPieceType().equals(PieceType.King))
+										{
+											if(p.getPiecePosition() == 10)
+											{
+												JOptionPane.showMessageDialog(null, "GAME OVER. WHITE TEAM WINS");
+												System.out.println("GAME OVER. WHITE TEAM WINS");
+												
+												//Update the record to database and increment the win count
+												String update = "UPDATE `Rollerball`.`record` SET `winner`='WhitePlayer' WHERE `recordID`='17'";
+											}
+										}
+									}
+									for(Piece p : trans.getBoard().getBlackPieces())
+									{
+										if(p.getPieceType().equals(PieceType.King))
+										{
+											if(p.getPiecePosition() == 38)
+											{
+												JOptionPane.showMessageDialog(null, "GAME OVER. BLACK TEAM WINS");
+												System.out.println("GAME OVER. BLACK TEAM WINS");
+												//Update the record to database and increment the win count
+												String update = "UPDATE `Rollerball`.`record` SET `winner`='BlackPlayer' WHERE `recordID`='17'";
+											}
+										}
+									}
 								}
 								else
 								{

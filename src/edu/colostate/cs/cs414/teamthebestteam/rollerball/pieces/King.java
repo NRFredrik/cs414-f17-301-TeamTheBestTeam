@@ -32,7 +32,10 @@ public class King extends Piece {
 
 				//don't want to do any of this if we are in corner cases
 				if(isFirstColumnExclusion(this.piecePosition, currentCandidate) || isLastColumnExclusion(this.piecePosition, currentCandidate)){
-					continue;
+					if(currentCandidate == 1)
+					{
+						continue;
+					}
 				}
 
 				// check if tile is occupied

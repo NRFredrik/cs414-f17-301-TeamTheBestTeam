@@ -108,10 +108,15 @@ public class Pawn extends Piece{
 
 		if(quadrant == 1)
 		{
-			if(column == 0)
+			if(column == 0 && idOfTile != 6)
 			{
 				coords.add(8);
 				coords.add(1);
+			}
+			else if(idOfTile == 6)
+			{
+				coords.add(7);
+				coords.add(6);
 			}
 			else
 			{
@@ -127,6 +132,11 @@ public class Pawn extends Piece{
 			{
 				coords.add(-8);
 				coords.add(-1);
+			}
+			else if(idOfTile == 42)
+			{
+				coords.add(-7);
+				coords.add(-6);
 			}
 			else
 			{
@@ -164,7 +174,7 @@ public class Pawn extends Piece{
 			else 
 			{
 				coords.add(-7);
-				coords.add(-8);
+				coords.add(-6);
 			}
 		}
 		return coords;

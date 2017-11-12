@@ -16,7 +16,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 public class Config {
 	
 	Connection conn;
-	Statement stmt;
+	static Statement stmt;
 	ResultSet result;
 	//-----------
 	ResultSet result2;
@@ -27,7 +27,7 @@ public class Config {
 	{
 		try {
 			String connURL = "jdbc:mysql://localhost:3306/rollerball?useSSL=false";
-			this.conn = DriverManager.getConnection(connURL, "root", "password");
+			this.conn = DriverManager.getConnection(connURL, "root", "mysqlchamp");
 			stmt = conn.createStatement();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -307,7 +307,8 @@ public class Config {
 		return userList;
 	}
 	
-	public boolean createGameRecord(String gameCreator, String gameOpponent){
+	public boolean createGameRecord(String gameCreator, String gameOpponent)
+	{
 
 		String status = "inProgress";
 		
@@ -337,6 +338,87 @@ public class Config {
 	
 	
 	
+	public int  getGameRecordID(String gameCreator, String gameOpponent)
+	{
+		//insert the record into the database
+		String getID = "Select recordID from record WHERE `creator`='"+gameCreator+"' AND `opponent`='"+gameOpponent+"' AND `status` = 'inProgress';";
+		System.out.println(getID);
+		try {
+			result = stmt.executeQuery(getID);
+			//if there were rows affected that means record was added
+			} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		int recordID = 0;
+		try {
+			while(result.next())
+			{
+				recordID = result.getInt(1);
+			}
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("recordID: "+ recordID);
+		
+		return recordID;
+	}
+	
+	public boolean finishGameRecord(String gameCreator, String gameOpponent)
+	{
+
+		String updateInvite = "UPDATE record SET `status` = 'finished', `winner`='"+gameCreator+"', `loser`='"+gameOpponent+"' WHERE `creator`='"+gameCreator+"' AND `opponent` = '"+gameOpponent+"';";
+		
+		//insert the user into the database
+		try {
+			int effected = stmt.executeUpdate(updateInvite);
+			//if there were rows affected that means user was added
+			if(effected != 0)
+			{
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	public static boolean saveState(String query)
+	{
+		try {
+			int effected = stmt.executeUpdate(query);
+			//if there were rows affected that means record was added
+			if(effected != 0)
+			{
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	
+		return false;
+	}
+	
+	
+	
+	public String retrievePiece(String query, String piece)
+	{
+		try {
+			result = stmt.executeQuery(query);
+			while(result.next())
+			{
+				return result.getString(piece);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+		return "";
+	}
 	
 	
 	/*
@@ -459,11 +541,70 @@ public class Config {
 		return userGameHistoryList;  
 	}
 	
-	
-	
-	
-	
-	
-	
+	//insert save into db, return the id
+		public void insertSavedGame(String gameID, String gameBoard, String turn) {
+			if(turn.equals("white")) {
+				turn = "black";
+			}
+			else if(turn.equals("black"))
+			{
+				turn ="white";
+			}
+			String saveStmnt = "UPDATE saves SET game = '"+gameBoard+"',turn = '"+turn+"' WHERE savesId ="+gameID+";";
+			//insert the user into the database
+			//System.out.println("UPDATED GAME: " + gameID);
+			try {
+				int effected = stmt.executeUpdate(saveStmnt);
+				//if there were rows affected that means user was added
+				
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			
+		}
+		
+		//insert save into db, return the id
+		public String insertFirstSavedGame(String inviter, String opponent, int status, String turn, int isFirst) {
+			//System.out.println("IM BROKEN");
+
+			String gameID=""; //verifiy?
+			//System.out.println("IM BROKEN");
+			String saveStmnt = "INSERT INTO saves " + "VALUES (NULL,'"+inviter+"','"+opponent+"','"+"0"+"','"+status+"','"+turn+"','"+isFirst+"');";
+			//insert the user into the database
+			System.out.println(saveStmnt);
+			try {
+				//System.out.println("INSERT");
+				int insert = stmt.executeUpdate(saveStmnt);
+				//System.out.println("INSERT: " + insert);
+				//if there were rows affected that means user was added
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			//System.out.println("GETTING GAME BACK");
+			//Now get back the game I
+			ResultSet getGame;
+			try {
+				//System.out.println("INVITER: " + inviter);
+				
+				getGame = stmt.executeQuery("SELECT savesId FROM saves WHERE inviter = '"+ inviter+"' AND opponent = '"+opponent+"' AND isNew='1';");
+				while(getGame.next()) {
+					gameID = getGame.getString("savesId");
+				}
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return gameID;
+			
+			
+		}			
 }
+
+
 

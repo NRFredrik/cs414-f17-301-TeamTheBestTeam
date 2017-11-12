@@ -1,5 +1,6 @@
 package edu.colostate.cs.cs414.teamthebestteam.rollerball.common;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Board;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Game;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gui.Table;
 
 import java.io.BufferedReader;
@@ -24,6 +25,7 @@ public class Server extends AbstractServer
 	static Table table;
 	Config con = new Config();
 	ArrayList<String> userList;
+	Game game;
 	
 	
 	protected boolean isClosed;
@@ -80,16 +82,50 @@ public class Server extends AbstractServer
 			String userID =items.get(1);
 			quitGame(client,userID);
 		}
+		else if(((String)message).contains("#save"))
+		{
+			List<String> items = Arrays.asList(((String)message).split(","));
+			String save = items.get(1);
+			saveGame(client,save);
+		}
+		/*
+		 else if(((String)message).contains("#join"))
+		{
+			currrentgamestate = con.getcurrentgamestate(opponnent)
+		
+			msgToCli(currentgamestate,client);
+		}
+		 */
 		else
 		{
-			
 			if((boolean) client.getInfo("turn"))
 			{
 				move(client,(String)message);
+							
 			}
 		}		
 	}
 
+	
+	protected int saveGame(ConnectionToClient sendingClient, String savedGame) 
+	{
+		//save game in DB, return gameID
+		Config conf = new Config();
+		String gameId = (String) sendingClient.getInfo("gameId");
+		String turn = "";
+		if(sendingClient.getInfo("turn").equals(true))
+		{
+			//then its black
+			turn = "black";
+			
+		}
+		else {
+			turn = "white";
+		}
+		conf.insertSavedGame(gameId,savedGame, turn);
+		
+		return 0;
+	}
 
 	protected void serverStarted() {
 		System.out.println("Server listening for connections on port " + getPort());
@@ -220,32 +256,6 @@ public class Server extends AbstractServer
 	{
 		client.setInfo("userID", userID);
 		
-		/*
-		Thread[] clientThreadList = getClientConnections();
-		if(clientThreadList.length == 1)
-		{
-			//System.out.println("color sent");
-			//client.setInfo("color", "white");
-			client.setInfo("userID", userID);
-			msgToCli("login," + userID+ ": White", client);
-		}
-		else if(clientThreadList.length == 2)
-		{
-			//client.setInfo("color", "black");
-			client.setInfo("userID", userID);
-			msgToCli("login," + userID+ ": Black", client);
-		}
-		else
-		{
-			try {
-				msgToCli("quit",client);
-				client.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		*/
 	}
 
 	protected void logoff(String userID) 
@@ -294,6 +304,7 @@ public class Server extends AbstractServer
 	protected void accept(ConnectionToClient sendingClient, String userID) 
 	{
 		System.out.println("start");
+		Config conf = new Config();
 		ConnectionToClient startingClient =null;
 		
 		Thread[] clientThreadList = getClientConnections();
@@ -306,18 +317,30 @@ public class Server extends AbstractServer
 			}
 		}
 		
+System.out.println("SETTING INFO CLIENT");
+		
 		startingClient.setInfo("opponent",sendingClient.getInfo("userID"));
 		startingClient.setInfo("color", "white");
 		startingClient.setInfo("turn", true);
 		msgToCli("login,Your Color: White", startingClient);
 		
+		System.out.println("SETTING INFO SENDINGGGGGG");
 		
 		sendingClient.setInfo("opponent",userID);
 		sendingClient.setInfo("color", "black");
 		sendingClient.setInfo("turn", false);
 		msgToCli("login,Your Color: Black", sendingClient);
-		
+		System.out.println("NAME: " + (String)startingClient.getInfo("opponent") + " USERID: " + userID );
+		System.out.println("INVITER: " + (String)startingClient.getInfo("userID") + "OPPON: " + (String)sendingClient.getInfo("userID"));
+		game = new Game((String)sendingClient.getInfo("userID"),userID,1); //creator,opponent,status = 1 (in prog)
+		System.out.println("DATABSE CALL");
+		String newGameID = conf.insertFirstSavedGame((String)startingClient.getInfo("userID"), (String)sendingClient.getInfo("userID"), 1,"white",1); //inviter,opp,status,turn,isnew
+		System.out.println("GOT NEWGAMEID: " + newGameID);
+		startingClient.setInfo("gameId", newGameID);
+		sendingClient.setInfo("gameId", newGameID);
+		System.out.println("sending name: " + sendingClient.getInfo("gameId") + " userUD" + userID );
 		msgToCli("start",startingClient);
+		
 		
 	}
 	

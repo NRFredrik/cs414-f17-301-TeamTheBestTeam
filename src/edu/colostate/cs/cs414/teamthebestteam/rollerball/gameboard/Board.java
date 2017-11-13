@@ -17,6 +17,7 @@ import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Bishop;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.King;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Pawn;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Piece;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Piece.PieceType;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Rook;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.player.BlackPlayer;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.player.Player;
@@ -232,6 +233,122 @@ public class Board {
 	public Iterable<Move> getAllLegalMoves() {
 		Iterable<Move> obj =  Iterables.unmodifiableIterable(Iterables.concat(this.white.getLegalMoves(), this.black.getLegalMoves()));
 		return obj;
+	}
+	public final List<Tile> getGameBoard(){
+		return this.gameBoard;
+	}
+	
+	public String breakDownBoard(Board board) {
+		System.out.println("BREAKDOWN BOARD");
+		List<Tile> tiles = board.getGameBoard();
+		int [] boardList = new int[49];
+		//System.out.println("INVITER:  " + creator + " ACCEPTOR" + opponent);
+		for(Tile t: tiles) {
+			if(t.isTileOccupided())
+			{
+				int idNum = 0;
+				System.out.println("GAME BOARD " + t.getTileCoord() + " " + t.isTileOccupided() + " " +
+						t.getPiece().getPieceAssociation() + " " + t.getPiece()); //DELETE!!!
+				 
+				
+				if(t.getPiece().getColor().isWhite()) {
+					idNum = getPieceId(t.getPiece().getPieceType());
+				}
+				else { //its black so add 4 to it
+					idNum = 4 + getPieceId(t.getPiece().getPieceType());
+				}
+				
+				System.out.println("coord" + t.getTileCoord() + " idNum " + idNum);
+				boardList[t.getTileCoord()] = idNum;
+			}
+		}
+		StringBuilder sb = new StringBuilder();
+		
+		System.out.println("PRRRRRRRRINT");
+		for(int i = 0 ; i < boardList.length; i++)
+		{
+		
+			sb.append(boardList[i]);
+			
+		}
+	return sb.toString();	
+	}
+	
+	public Board rebuildBoard(String serialBoard) throws Exception {
+		
+		int numArr[] = stringArrayToIntArray(serialBoard);
+		Builder builder = new Builder();
+		for(int i=0; i < numArr.length;i++) {
+			System.out.println(numArr[i]);
+			Piece newPiece = getPiecefromNum(numArr[i],i);
+			if(newPiece != null) {
+				builder.setPiece(getPiecefromNum(numArr[i],i));
+			}
+			
+			
+			
+		}
+
+		return builder.build();
+	}
+	 private Piece getPiecefromNum(int piece, int position) {
+		 Piece newPiece;
+		 switch(piece) {
+			case 1:
+				///builder.setPiece(new Rook(2, Alliance.BLACK));
+				newPiece = new Pawn(position,Alliance.WHITE);
+				break;
+			case 2:
+				newPiece = new Bishop(position,Alliance.WHITE);
+				break;
+			case 3:
+				newPiece = new Rook(position,Alliance.WHITE);
+				break;
+			case 4:
+				newPiece = new King(position,Alliance.WHITE);
+				break;
+			case 5:
+				newPiece = new Pawn(position,Alliance.BLACK);
+				break;
+			case 6:
+				newPiece = new Bishop(position,Alliance.BLACK);
+				break;
+			case 7:
+				newPiece = new Rook(position,Alliance.BLACK);
+				break;
+			case 8:
+				newPiece = new King(position,Alliance.BLACK);
+				break;
+			default:
+				return null;
+			
+			
+			}
+		 return newPiece;
+	 }
+	
+		private  int[] stringArrayToIntArray(String intString) {
+		    String[] intStringSplit = intString.split(" "); //Split by spaces
+		    int[] result = new int[intStringSplit.length]; //Used to store our ints
+
+		    for (int i = 0; i < intStringSplit.length; i++) {
+		        //parse and store each value into int[] to be returned
+		        result[i] = Integer.parseInt(intStringSplit[i]); 
+		    }
+		    return result;
+		}
+	
+
+	private int getPieceId(PieceType pieceType) {
+		String type = pieceType.toString();
+		switch(type) {
+		case "pawn": return 1;
+		case "bishop":return 2;
+		case "rook": return 3;
+		case "king": return 4;
+		default: return 0;
+		}
+		
 	}
 	
 	

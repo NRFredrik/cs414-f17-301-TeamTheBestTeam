@@ -1,4 +1,4 @@
-package edu.colostate.cs.cs414.teamthebestteam.rollerball.gui;
+package edu.colostate.cs.cs414.teamthebestteam.rollerball.UI;
 
 import java.awt.EventQueue;
 

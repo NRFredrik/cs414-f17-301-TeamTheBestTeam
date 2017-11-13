@@ -1,7 +1,7 @@
 package edu.colostate.cs.cs414.teamthebestteam.rollerball.common;
+//import edu.colostate.cs.cs414.teamthebestteam.rollerball.UI.Table;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Board;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Game;
-import edu.colostate.cs.cs414.teamthebestteam.rollerball.gui.Table;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -22,7 +22,7 @@ public class Server extends AbstractServer
 	// Class variables *************************************************
 	final public static int DEFAULT_PORT = 5555;
 	Board board;
-	static Table table;
+	//static Table table;
 	Config con = new Config();
 	ArrayList<String> userList;
 	Game game;
@@ -98,7 +98,7 @@ public class Server extends AbstractServer
 			//FIX!?!?
 			String currentgamestate = con.getSelectedGame(gameId);
 			System.out.println("OPPONENET?!??!!: " + gameId);
-			joinGame(client, gameId,userid);
+			//joinGame(client, gameId,userid);
 			msgToCli(currentgamestate,client);
 		}
 		else
@@ -112,72 +112,24 @@ public class Server extends AbstractServer
 		}		
 	}
 	
-	protected void joinGame(ConnectionToClient sendingClient, String gameId, String opponentUserID)
+	protected void joinGame(ConnectionToClient joiningClient, String gameId)
 	{
-		/*//tell server to look for opponent to the gameid
-		ConnectionToClient opposingClient =null;
-		System.out.println("JOIN GAME@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-		System.out.println("WHO ARE YOU?" + sendingClient.getInfo("userId"));
-		
-		Thread[] clientThreadList = getClientConnections();
-		
-		for (int i = 0; i < clientThreadList.length; i++) 
-		{
-			
-			if(((ConnectionToClient) clientThreadList[i]).getInfo("userID").equals(sendingClient.getInfo("opponent")))
-			{
-				
-				opposingClient = (ConnectionToClient)clientThreadList[i];
-				System.out.println("YOU FOUND THE OPPOSING PLAYER" + opposingClient.toString());
-				System.out.println("YOU ARE BOTH ON!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*****#&#$*#&$#(*$#($*$");
-				System.out.println("OPPOSINGCLIENT FOUND with oppoent:" + opposingClient.getInfo("opponent"));
-			}
-			
-		}
-		if(opposingClient==null) {
-			System.out.println("COULD NOT FIND PLAYER");
-		}
-		//
-		//msgToCli(move,sendingClient);*/
-		
-		System.out.println("start");
+		/*
 		Config conf = new Config();
 		ConnectionToClient startingClient =null;
 		
-		Thread[] clientThreadList = getClientConnections();
+		String opponentUserID;
+		String color;
+		String turn;
 		
-		for (int i = 0; i < clientThreadList.length; i++) 
-		{
-			if(((ConnectionToClient) clientThreadList[i]).getInfo("userID").equals(opponentUserID))
-			{
-				startingClient = (ConnectionToClient)clientThreadList[i];
-			}
-		}
-		
-		System.out.println("SETTING INFO CLIENT");
-		
-		startingClient.setInfo("opponent",sendingClient.getInfo("userID"));
-		//startingClient.setInfo("color", "white");
-		//startingClient.setInfo("turn", true);
 		msgToCli("login,Your Color: White", startingClient);
-		System.out.println("STARTINGCLIENT OPPONENT: " + startingClient.getInfo("opponent"));
-		System.out.println("SETTING INFO SENDINGGGGGG");
 		
-		sendingClient.setInfo("opponent",opponentUserID);
-		System.out.println("SENDING CLIENT OPPONENT: " + sendingClient.getInfo("opponent"));
-		//sendingClient.setInfo("color", "black");
-		//sendingClient.setInfo("turn", false);
-		msgToCli("login,Your Color: Black", sendingClient);
-		System.out.println("NAME: " + (String)startingClient.getInfo("opponent") + " USERID: " + opponentUserID );
-		System.out.println("INVITER: " + (String)startingClient.getInfo("userID") + "OPPON: " + (String)sendingClient.getInfo("userID"));
-		game = new Game((String)sendingClient.getInfo("userID"),opponentUserID,1); //creator,opponent,status = 1 (in prog)
-		System.out.println("DATABSE CALL");
-		String newGameID = conf.insertFirstSavedGame((String)startingClient.getInfo("userID"), (String)sendingClient.getInfo("userID"), 1,"white",1); //inviter,opp,status,turn,isnew
-		System.out.println("GOT NEWGAMEID: " + newGameID);
-		startingClient.setInfo("gameId", newGameID);
-		sendingClient.setInfo("gameId", newGameID);
-		System.out.println("sending name: " + sendingClient.getInfo("gameId") + " userUD" + opponentUserID );
-		msgToCli("start",startingClient);
+		joiningClient.setInfo("opponent",opponentUserID);
+		msgToCli("login,Your Color: Black", joiningClient);
+		game = new Game((String)joiningClient.getInfo("userID"),opponentUserID,1); //creator,opponent,status = 1 (in prog)
+		String newGameID = conf.insertFirstSavedGame((String)startingClient.getInfo("userID"), (String)joiningClient.getInfo("userID"), 1,"white",1); //inviter,opp,status,turn,isnew
+		joiningClient.setInfo("gameId", newGameID);
+		*/
 		
 		
 	}
@@ -424,7 +376,7 @@ public class Server extends AbstractServer
 		startingClient.setInfo("gameId", newGameID);
 		sendingClient.setInfo("gameId", newGameID);
 		System.out.println("sending name: " + sendingClient.getInfo("gameId") + " userUD" + userID );
-		msgToCli("start",startingClient);
+		msgToCli("start,"+userID,startingClient);
 		
 		
 	}

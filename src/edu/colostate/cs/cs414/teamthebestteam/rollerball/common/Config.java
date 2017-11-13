@@ -307,7 +307,7 @@ public class Config {
 		return userList;
 	}
 	
-	public boolean createGameRecord(String gameCreator, String gameOpponent)
+	public String createGameRecord(String gameCreator, String gameOpponent)
 	{
 
 		String status = "inProgress";
@@ -318,22 +318,25 @@ public class Config {
 		String startDate = dateFormat.format(curDate);
 		
 		//insert the record into the database
-		String addRecord = "INSERT INTO record " + "VALUES (NULL,'"+gameCreator+"','"+gameOpponent+"','"+status+"','"+startDate+"', NULL,'"+"ladji"+"',NULL)";
+		String addRecord = "INSERT INTO record " + "VALUES (NULL,'"+gameCreator+"','"+gameOpponent+"','"+status+"','"+startDate+"', NULL,NULL,NULL);";
 		
-		//System.out.println("*********addRecord: "+addRecord);
+		System.out.println("*********addRecord: "+addRecord);
 		
 		try {
 			int effected = stmt.executeUpdate(addRecord);
 			//if there were rows affected that means record was added
+			
 			if(effected != 0)
 			{
-				return true;
+				return startDate;
 			}
+			
+			return startDate;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	
-		return false;
+		return startDate;
 	}
 	
 	
@@ -733,6 +736,58 @@ public class Config {
 			
 		return false;
 		
+		
+	}
+	
+	public void updateWinLossRecord(String query){
+		try {
+			int effected = stmt.executeUpdate(query);
+			//if there were rows affected that means user was added			
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public String getOpponent(String gameId) {
+		String getBoard = "SELECT opponent FROM record WHERE savesId = "+gameId+";";
+		System.out.println("GETTING BOARD" + gameId);
+		System.out.println(getBoard);
+		ResultSet rs;
+		String serialBoard="";
+		try {
+			
+			rs = stmt.executeQuery(getBoard);
+			if(rs.next()) {
+				serialBoard = rs.getString("turn");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return serialBoard;
+	}
+	
+	public int getRecordId(String date){
+		System.out.println("d: " + date);
+		String getrecord = "SELECT recordID FROM record WHERE startDate='"+date+"';";
+		System.out.println(getrecord);
+		ResultSet rs;
+		int state = 0;
+		try {
+			
+			rs = stmt.executeQuery(getrecord);
+			if(rs.next()) {
+				state = rs.getInt("recordID");
+				return state;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
 		
 	}
 	

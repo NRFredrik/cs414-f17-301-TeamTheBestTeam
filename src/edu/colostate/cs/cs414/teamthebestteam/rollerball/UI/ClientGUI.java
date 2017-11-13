@@ -1,4 +1,4 @@
-package edu.colostate.cs.cs414.teamthebestteam.rollerball.gui;
+package edu.colostate.cs.cs414.teamthebestteam.rollerball.UI;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -152,6 +152,9 @@ public class ClientGUI implements ClientInterface {
 	private String currentOpponent;
 	private String gameOpponent;
 	private String gameCreator;
+	private String oppo;
+	private String findDate;
+	//private String gameLoser;
 	private String thisUserID;
 	private String gameId;
 	final Config con = new Config();
@@ -524,7 +527,7 @@ public class ClientGUI implements ClientInterface {
 										client.handleMessageFromClientUI("#save,"+ boardString);
 										//check white pieces King to see if he landed on opposing Kings starting tile
 										//if so, GAME OVER
-									
+									int temp  = con.getRecordId(findDate);
 									for(Piece p : trans.getBoard().getWhitePieces())
 									{
 										if(p.getPieceType().equals(PieceType.King))
@@ -533,9 +536,15 @@ public class ClientGUI implements ClientInterface {
 											{
 												JOptionPane.showMessageDialog(null, "GAME OVER. WHITE TEAM WINS");
 												System.out.println("GAME OVER. WHITE TEAM WINS");
-												
+												int recordId = con.getRecordId(findDate);
+												System.out.println("reiD: " + recordId);
 												//Update the record to database and increment the win count
-												String update = "UPDATE `Rollerball`.`record` SET `winner`='WhitePlayer' WHERE `recordID`='17'";
+												String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + currentOpponent + "' WHERE `recordID`='"+recordId+"'";
+												System.out.println(updateWinner);
+												String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ oppo+"' WHERE `recordID`='"+recordId+"'";
+												System.out.println(updateLoser);
+												con.updateWinLossRecord(updateWinner);												
+												con.updateWinLossRecord(updateLoser);
 											}
 										}
 									}
@@ -548,7 +557,10 @@ public class ClientGUI implements ClientInterface {
 												JOptionPane.showMessageDialog(null, "GAME OVER. BLACK TEAM WINS");
 												System.out.println("GAME OVER. BLACK TEAM WINS");
 												//Update the record to database and increment the win count
-												String update = "UPDATE `Rollerball`.`record` SET `winner`='BlackPlayer' WHERE `recordID`='17'";
+												String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + gameOpponent + "' WHERE `recordID`='"+gameId+"'";
+												String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ gameCreator +"' WHERE `recordID`='"+gameId+"'";
+												con.updateWinLossRecord(updateWinner);
+												con.updateWinLossRecord(updateLoser);
 											}
 										}
 									}
@@ -719,6 +731,7 @@ public class ClientGUI implements ClientInterface {
 	public void displayInvite(String userID) 
 	{
 		currentOpponent = userID;
+		oppo = userID;
 		System.out.println(currentOpponent);
 
 
@@ -795,9 +808,12 @@ public class ClientGUI implements ClientInterface {
 			}
 			else if(message.toString().contains("start"))
 			{
+				
+				List<String> items = Arrays.asList(((String) message).split(","));
 				mmFrame.setVisible(false);
 				quitButton.setVisible(true);
 				quitButton.setEnabled(true);
+				currentOpponent = items.get(1);
 				//int recordID = con.getGameRecordID(thisUserID, currentOpponent);
 				//runningGame = recordID;
 				try {
@@ -813,24 +829,10 @@ public class ClientGUI implements ClientInterface {
 			else if(message.toString().contains("quit"))
 			{
 				JOptionPane.showMessageDialog(loginFrame, "Your opponent has quit!");
-				//System.out.println("quit");
-				//currentOpponent = null;
-				//gameFrame.setVisible(false);
-				//mmFrame.setVisible(true);
 			}
-			else
-			{
-				//rollerboard= board.desirialize(serverBoard);
-				
-				/*SwingUtilities.invokeLater(new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						boardPanel.drawBoard(rollBoard);
-					}
-				});*/
-				
+
+			else{
+
 				List<String> items = Arrays.asList(((String) message).split(","));
 				int curCoord =Integer.parseInt(items.get(0));
 				int endCoord =Integer.parseInt(items.get(1));
@@ -1243,6 +1245,7 @@ public class ClientGUI implements ClientInterface {
 		{
 			String userID = userField.getText();
 			thisUserID = userID;
+			
 			String password = passField.getText();
 
 			//if user exists, log them in
@@ -1312,8 +1315,10 @@ public class ClientGUI implements ClientInterface {
 			
 			gameCreator = currentOpponent;
 			gameOpponent = thisUserID;
-			con.createGameRecord(gameCreator, gameOpponent);
+			findDate = con.createGameRecord(gameCreator, gameOpponent);
+			//System.out.println(x);
 			con.acceptInviteDB(currentOpponent, thisUserID);
+			
 			
 			quitButton.setVisible(true);
 			quitButton.setEnabled(true);
@@ -1495,7 +1500,7 @@ public class ClientGUI implements ClientInterface {
 		{
 			public void actionPerformed(ActionEvent event) 
 			{
-				currentOpponent = gameList.getSelectedValue().toString();
+				//currentOpponent = gameList.getSelectedValue().toString();
 				
 				System.out.println("JOIN LISTENER OPPOENET: " + gameId);
 				System.out.println("thisUserID: " + thisUserID);
@@ -1588,7 +1593,7 @@ public class ClientGUI implements ClientInterface {
 			if (event.getStateChange() == ItemEvent.SELECTED) 
 			{
 				String user = (String)userList.getSelectedItem();
-
+				oppo = user;
 				//System.out.println("#invite," + user);
 				client.handleMessageFromClientUI("#invite," + user);
 				createGameFrame.setVisible(false);

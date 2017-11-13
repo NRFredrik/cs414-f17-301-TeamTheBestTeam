@@ -33,8 +33,8 @@ import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.BoardUtilitie
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Move;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.gameboard.Tile;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Piece;
-import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Piece.PieceType;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.player.MoveTransition;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Piece.PieceType;
 
 import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
@@ -87,6 +87,7 @@ public class ClientGUI implements ClientInterface {
 	private JButton createGameButton;
 	private JButton viewProfileButton;
 	private JButton invitesButton;
+	private JButton viewGamesButton;
 	
 	//Game Frame objects
 	private JFrame gameFrame;
@@ -114,6 +115,14 @@ public class ClientGUI implements ClientInterface {
 	private JButton declineButton;
 	JList<String> userInviteList;
 	private ArrayList<String> userInvites;
+	
+	//View Game Frame objects viewGame
+	private JFrame viewGameFrame;
+	private JPanel viewGamePanel;
+	private JButton joinButton;
+	private JButton forfeitButton;
+	JList<String> gameList;
+	private ArrayList<String> gameArray;
 
 	//View Profile Frame Objects
 	private JFrame viewProfileFrame;
@@ -144,7 +153,10 @@ public class ClientGUI implements ClientInterface {
 	private String gameOpponent;
 	private String gameCreator;
 	private String thisUserID;
+	private String gameId;
 	final Config con = new Config();
+	
+	//int runningGame;
 	
 	public ClientGUI()throws Exception
 	{
@@ -191,6 +203,12 @@ public class ClientGUI implements ClientInterface {
 		viewProfileButton.setBounds(80, 210, 125, 25);
 		mmPanel.add(viewProfileButton);
 		viewProfileButton.setEnabled(false);
+		
+		viewGamesButton = new JButton("View Games");
+		viewGamesButton.addActionListener(new viewGamesListener());
+		viewGamesButton.setBounds(80, 260, 125, 25);
+		mmPanel.add(viewGamesButton);
+		viewGamesButton.setEnabled(false);
 
 //*****************INITIALIZE UNREGISTER FRAME COMPONENTS***********************		
 		//Unregister Frame
@@ -442,7 +460,7 @@ public class ClientGUI implements ClientInterface {
 				@Override
 				public void mouseClicked(MouseEvent e) 
 				{
-
+					
 					//cancel all selections out. Means player changed mind 
 					if(SwingUtilities.isRightMouseButton(e))
 					{
@@ -480,6 +498,7 @@ public class ClientGUI implements ClientInterface {
 						//TODO need move implementation
 						else
 						{
+							
 							destinationTile = rollBoard.getTile(tileID);
 
 							Move move = Move.FactoryMove.createMove(rollBoard, tilePieceIsOn.getTileCoord(), destinationTile.getTileCoord());
@@ -490,11 +509,22 @@ public class ClientGUI implements ClientInterface {
 
 								if(trans.getStatus().isDone())
 								{
-									//Send Move to server
-									client.handleMessageFromClientUI(tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
-									rollBoard = trans.getBoard();
-									//check white pieces King to see if he landed on opposing Kings starting tile
-									//if so, GAME OVER
+									
+									
+										System.out.println("YOU DUN MOVED");
+										//Send Move to server
+										client.handleMessageFromClientUI(tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
+										System.out.println("MAKE BOARD");
+										rollBoard = trans.getBoard();
+										//race condition?!?
+										System.out.println("JUST WANT TO SAVE");
+										//now save the board
+										String boardString = rollBoard.breakDownBoard(rollBoard);
+										System.out.println("SERIALIZED BOARD" + boardString);
+										client.handleMessageFromClientUI("#save,"+ boardString);
+										//check white pieces King to see if he landed on opposing Kings starting tile
+										//if so, GAME OVER
+									
 									for(Piece p : trans.getBoard().getWhitePieces())
 									{
 										if(p.getPieceType().equals(PieceType.King))
@@ -707,6 +737,7 @@ public class ClientGUI implements ClientInterface {
 	//Takes coordinates sent by server and rebuilds it into new board
 	public void displayBoard(int curCoord, int endCoord)
 	{
+		System.out.println("IN DISPALY COORD");
 		Move move = Move.FactoryMove.createMove(rollBoard, curCoord, endCoord);
 
 		MoveTransition trans;
@@ -733,7 +764,6 @@ public class ClientGUI implements ClientInterface {
 			@Override
 			public void run()
 			{
-				//client.handleMessageFromClientUI(rollBoard);
 				boardPanel.drawBoard(rollBoard);
 			}
 		});
@@ -768,7 +798,10 @@ public class ClientGUI implements ClientInterface {
 				mmFrame.setVisible(false);
 				quitButton.setVisible(true);
 				quitButton.setEnabled(true);
+				//int recordID = con.getGameRecordID(thisUserID, currentOpponent);
+				//runningGame = recordID;
 				try {
+					//rollBoard = Board.createSavedBoard(runningGame);
 					rollBoard = Board.createStandardBoard();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -780,17 +813,28 @@ public class ClientGUI implements ClientInterface {
 			else if(message.toString().contains("quit"))
 			{
 				JOptionPane.showMessageDialog(loginFrame, "Your opponent has quit!");
-				System.out.println("quit");
-				currentOpponent = null;
-				gameFrame.setVisible(false);
-				mmFrame.setVisible(true);
+				//System.out.println("quit");
+				//currentOpponent = null;
+				//gameFrame.setVisible(false);
+				//mmFrame.setVisible(true);
 			}
 			else
 			{
+				//rollerboard= board.desirialize(serverBoard);
+				
+				/*SwingUtilities.invokeLater(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						boardPanel.drawBoard(rollBoard);
+					}
+				});*/
+				
 				List<String> items = Arrays.asList(((String) message).split(","));
 				int curCoord =Integer.parseInt(items.get(0));
 				int endCoord =Integer.parseInt(items.get(1));
-				displayBoard(curCoord,endCoord);
+				displayBoard(curCoord,endCoord);				
 			}
 		}
 		else
@@ -823,6 +867,7 @@ public class ClientGUI implements ClientInterface {
 				createGameButton.setEnabled(true);
 				invitesButton.setEnabled(true);
 				viewProfileButton.setEnabled(true);
+				viewGamesButton.setEnabled(true);
 			}
 
 			//open login window
@@ -835,31 +880,11 @@ public class ClientGUI implements ClientInterface {
 				client.quit();
 				registerMMButton.setText("Register");
 				viewProfileButton.setEnabled(false);
+				viewGamesButton.setEnabled(false);
 			}
 		}
 	}
 	
-	//Register listener for register button on main Menu
-	private class registerListener implements ActionListener 
-	{
-
-		public void actionPerformed(ActionEvent event) 
-		{
-			String registerMMText = registerMMButton.getText();
-
-			if(registerMMText.equals("Register"))
-			{
-				Register register = new Register();
-				register.frame.setVisible(true);
-			}
-			else
-			{
-				unRegFrame.setVisible(true);
-				mmFrame.setVisible(false);
-			}
-
-		}
-	}
 	private class profileSelectionListener implements ActionListener 
 	{
 		public void actionPerformed(ActionEvent event) 
@@ -880,7 +905,7 @@ public class ClientGUI implements ClientInterface {
 			profileSelectionPanel.setLayout(null);
 			profileSelectionPanel.setBackground(Color.lightGray);
 			profileSelectionFrame.add(profileSelectionPanel);
-
+	
 			//Label for user field
 			JLabel userLabel = new JLabel("User");
 			userLabel.setBounds(10, 70, 80, 25);
@@ -904,8 +929,28 @@ public class ClientGUI implements ClientInterface {
 			
 		}
 	}
-	
-	
+
+	//Register listener for register button on main Menu
+	private class registerListener implements ActionListener 
+	{
+
+		public void actionPerformed(ActionEvent event) 
+		{
+			String registerMMText = registerMMButton.getText();
+
+			if(registerMMText.equals("Register"))
+			{
+				Register register = new Register();
+				register.frame.setVisible(true);
+			}
+			else
+			{
+				unRegFrame.setVisible(true);
+				mmFrame.setVisible(false);
+			}
+
+		}
+	}
 	private class viewProfileListener implements ItemListener 
 	{
 		@Override
@@ -1260,13 +1305,21 @@ public class ClientGUI implements ClientInterface {
 	private class acceptListener implements ActionListener 
 	{
 		public void actionPerformed(ActionEvent event) 
-		{
+		{	
+			
 			client.handleMessageFromClientUI("#accept,"+currentOpponent);
 			inviteFrame.setVisible(false);
+			
+			gameCreator = currentOpponent;
+			gameOpponent = thisUserID;
+			con.createGameRecord(gameCreator, gameOpponent);
+			con.acceptInviteDB(currentOpponent, thisUserID);
+			
 			quitButton.setVisible(true);
 			quitButton.setEnabled(true);
 
 			try {
+				//rollBoard = Board.createSavedBoard(runningGame);
 				rollBoard = Board.createStandardBoard();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -1276,15 +1329,13 @@ public class ClientGUI implements ClientInterface {
 			//***********creating game record***************
 			gameCreator = currentOpponent;
 			gameOpponent = thisUserID;
-			//System.out.println("***********Game Creator/White: " + gameCreator);
-			//System.out.println("***********Game Acceptor/Black: " + gameOpponent);
 			con.createGameRecord(gameCreator, gameOpponent);
 			con.acceptInviteDB(currentOpponent, thisUserID);
-			//*************************************************
 
 			boardPanel.drawBoard(rollBoard);
 			mmFrame.setVisible(false);
 			gameFrame.setVisible(true);
+		
 		}
 	}
 
@@ -1367,8 +1418,125 @@ public class ClientGUI implements ClientInterface {
 		    	acceptButton.setEnabled(true);
 		    	declineButton.setEnabled(true);
 		    }
-		  }
-	} 
+		 }
+	}
+	
+	//handles inviting user
+		private class viewGamesListener implements ActionListener 
+		{
+			public void actionPerformed(ActionEvent event) 
+			{
+				//gameArray = con.populateActiveGameList(thisUserID);
+				gameArray = con.getCurrentGames(thisUserID);
+				//login frame
+				viewGameFrame = new JFrame("Invites");
+				viewGameFrame.setBounds(100, 100, 300, 250);
+				viewGameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				viewGameFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+				    @Override
+				    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				        mmFrame.setVisible(true);
+				    }
+				});
+				//login panel
+				viewGamePanel = new JPanel();
+				viewGamePanel.setLayout(null);
+				viewGamePanel.setBackground(Color.lightGray);
+				viewGameFrame.add(viewGamePanel);
+				
+				gameList = new JList(gameArray.toArray());
+				gameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				gameList.setLayoutOrientation(JList.VERTICAL);
+				gameList.addListSelectionListener(new gameListSelectionHandler());
+				
+				JScrollPane listScroller = new JScrollPane(gameList);
+				
+				
+				listScroller.setVisible(true);
+				listScroller.setEnabled(true);
+				listScroller.setBounds(10, 10, 250, 100);
+				viewGamePanel.add(listScroller); 
+				
+				
+				joinButton = new JButton("Join");
+				joinButton.addActionListener(new joinListener());;
+				joinButton.setBounds(60, 150, 100, 25);
+				joinButton.setEnabled(false);
+				viewGamePanel.add(joinButton);
+				
+
+				forfeitButton = new JButton("Forfeit");
+				forfeitButton.addActionListener(new forfeitListener());
+				forfeitButton.setBounds(165, 150, 100, 25);
+				forfeitButton.setEnabled(false);
+				viewGamePanel.add(forfeitButton);
+
+				
+				viewGameFrame.setVisible(true);
+				mmFrame.setVisible(false);
+			}
+			
+			//handles selecting a user to invite on the invite frame
+			class gameListSelectionHandler implements ListSelectionListener 
+			{
+				@Override
+			    public void valueChanged(ListSelectionEvent event)
+			    {
+			    	gameId= gameList.getSelectedValue().toString();
+			    	System.out.println("CURRENT OPPONENT SELECTED: " + gameId);
+			    	joinButton.setEnabled(true);
+			    	forfeitButton.setEnabled(true);
+			    }
+			 }
+		}
+		
+		//decline button listener on invite frame
+		private class joinListener implements ActionListener 
+		{
+			public void actionPerformed(ActionEvent event) 
+			{
+				currentOpponent = gameList.getSelectedValue().toString();
+				
+				System.out.println("JOIN LISTENER OPPOENET: " + gameId);
+				System.out.println("thisUserID: " + thisUserID);
+				client.handleMessageFromClientUI("#join,"+ gameId+","+currentOpponent);
+				viewGameFrame.setVisible(false);
+				quitButton.setVisible(true);
+				quitButton.setEnabled(true);
+				//get board
+				String serialBoard = con.getSelectedGame(gameId);
+				String turn = con.getSelectedGamesTurn(gameId);
+				System.out.println("IM IN JOINLISTENER");
+				try {//if serialboard = 0 just createnewboard
+					rollBoard = Board.rebuildBoard(serialBoard,turn);
+					
+					//rollBoard = Board.createStandardBoard();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+				System.out.println("AFTER ROLLBAORDM IN JOINRELISTENER");
+				//gameCreator = currentOpponent;
+				//gameOpponent = thisUserID;
+				
+				
+				boardPanel.drawBoard(rollBoard);
+				mmFrame.setVisible(false);
+				gameFrame.setVisible(true);
+
+			}
+		} 
+		
+		//forfeit button listener on invite frame
+		private class forfeitListener implements ActionListener 
+		{
+			public void actionPerformed(ActionEvent event) 
+			{
+				gameCreator = currentOpponent;
+				gameOpponent = thisUserID;
+				con.finishGameRecord(gameCreator, gameOpponent);
+			}
+		} 
 
 	//************************************************************************
 	//************************************************************************
@@ -1382,6 +1550,9 @@ public class ClientGUI implements ClientInterface {
 
 		public void actionPerformed(ActionEvent event) 
 		{
+			System.out.println("QUITTER OF GAMEID: " + gameId);
+			con.setSaveStatusOff(gameId);
+			System.out.println("YOU QUITTTTTT");
 			client.handleMessageFromClientUI("#quit,"+currentOpponent);
 			currentOpponent = null;
 			gameFrame.setVisible(false);
@@ -1429,11 +1600,10 @@ public class ClientGUI implements ClientInterface {
 	public static void main(String[] args) throws Exception
 	{
 
-		Board board = Board.createStandardBoard();
+		//Board board = Board.createSavedBoard();
 
 		ClientGUI table = new ClientGUI();
 	}
 
 }
-
 

@@ -115,6 +115,7 @@ public class ConnectionToClient extends Thread {
 	 *                if an I/O error occur when sending the message.
 	 */
 	final public void sendToClient(Object msg) throws IOException {
+		
 		if (clientSocket == null || output == null)
 			throw new SocketException("socket does not exist");
 

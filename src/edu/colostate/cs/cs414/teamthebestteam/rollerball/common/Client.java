@@ -26,7 +26,7 @@ public class Client extends AbstractClient
 	{
 		try 
 		{	
-			//System.out.println(message);
+			System.out.println("CLIENT:" + message);
 			sendToServer(message);
 		} catch (IOException error) 
 		{

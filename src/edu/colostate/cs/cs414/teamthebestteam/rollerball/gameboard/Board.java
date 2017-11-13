@@ -17,6 +17,7 @@ import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Bishop;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.King;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Pawn;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Piece;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Piece.PieceType;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.pieces.Rook;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.player.BlackPlayer;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.player.Player;
@@ -54,6 +55,15 @@ public class Board {
 		this.black = new BlackPlayer(this, whiteStandardLegalMove, blackStandardLegalMove);
 
 		//TODO
+		if(builder.nextMoveMaker == null) {
+			System.out.println("builder NEXT MOVE MAKER NULLLLLLLLLLLLLLLLLLLLLLLLLL");
+		}
+		if(this.white == null) {
+			System.out.println("WHITE NULL");
+		}
+		if(this.black == null) {
+			System.out.println("BLACK NULL");
+		}
 		this.currentPlayer = builder.nextMoveMaker.playersTurn(this.white,this.black);
 		System.out.println("TURN: "+ this.currentPlayer.getAlliance() + " player's turn to go\n");
 		//accept();
@@ -190,6 +200,15 @@ public class Board {
 			this.boardConfig.put(piece.getPiecePosition(), piece);
 			return this;
 		}
+		
+		public Builder setMoveMakerString(String color) {
+			if(color.equals("white")) {
+				return setMoveMaker(Alliance.WHITE);
+			}
+			else {
+				return setMoveMaker(Alliance.BLACK);
+			}
+		}
 
 		//setting property of the current builder and returning it back to where ever it was called from
 		public Builder setMoveMaker(final Alliance nextMoveMaker)
@@ -232,6 +251,119 @@ public class Board {
 	public Iterable<Move> getAllLegalMoves() {
 		Iterable<Move> obj =  Iterables.unmodifiableIterable(Iterables.concat(this.white.getLegalMoves(), this.black.getLegalMoves()));
 		return obj;
+	}
+	public final List<Tile> getGameBoard(){
+		return this.gameBoard;
+	}
+	
+	public String breakDownBoard(Board board) {
+		System.out.println("BREAKDOWN BOARD");
+		List<Tile> tiles = board.getGameBoard();
+		int [] boardList = new int[49];
+		//System.out.println("INVITER:  " + creator + " ACCEPTOR" + opponent);
+		for(Tile t: tiles) {
+			if(t.isTileOccupided())
+			{
+				int idNum = 0;
+				System.out.println("GAME BOARD " + t.getTileCoord() + " " + t.isTileOccupided() + " " +
+						t.getPiece().getPieceAssociation() + " " + t.getPiece()); //DELETE!!!
+				 
+				
+				if(t.getPiece().getColor().isWhite()) {
+					idNum = getPieceId(t.getPiece().getPieceType());
+				}
+				else { //its black so add 4 to it
+					idNum = 4 + getPieceId(t.getPiece().getPieceType());
+				}
+				
+				System.out.println("coord" + t.getTileCoord() + " idNum " + idNum);
+				boardList[t.getTileCoord()] = idNum;
+			}
+		}
+		StringBuilder sb = new StringBuilder();
+		
+		System.out.println("PRRRRRRRRINT");
+		for(int i = 0 ; i < boardList.length; i++)
+		{
+		
+			sb.append(boardList[i]);
+			
+		}
+	return sb.toString();	
+	}
+	
+	public static Board rebuildBoard(String serialBoard,String turn) throws Exception {
+		
+		char cary[] = serialBoard.toCharArray();
+		Builder builder = new Builder();
+		for(int i=0; i < cary.length;i++) {
+			System.out.println(cary[i]);
+			Piece newPiece = getPiecefromNum(cary[i],i);
+			if(newPiece != null) {
+				builder.setPiece(getPiecefromNum(cary[i],i));
+				
+				builder.setMoveMakerString(turn);
+			}
+			
+			
+			
+		}
+
+		return builder.build();
+	}
+	 private static Piece getPiecefromNum(char piece, int position) {
+		 Piece newPiece;
+		 switch(piece) {
+			case '1':
+				///builder.setPiece(new Rook(2, Alliance.BLACK));
+				newPiece = new Pawn(position,Alliance.WHITE);
+				break;
+			case '2':
+				newPiece = new Bishop(position,Alliance.WHITE);
+				break;
+			case '3':
+				newPiece = new Rook(position,Alliance.WHITE);
+				break;
+			case '4':
+				newPiece = new King(position,Alliance.WHITE);
+				break;
+			case '5':
+				newPiece = new Pawn(position,Alliance.BLACK);
+				break;
+			case '6':
+				newPiece = new Bishop(position,Alliance.BLACK);
+				break;
+			case '7':
+				newPiece = new Rook(position,Alliance.BLACK);
+				break;
+			case '8':
+				newPiece = new King(position,Alliance.BLACK);
+				break;
+			default:
+				return null;
+			
+			
+			}
+		 return newPiece;
+	 }
+	
+		private static  char[] stringtoArray(String intString) {
+		    
+		    char ary[] = intString.toCharArray();
+		    return ary;
+		}
+	
+
+	private int getPieceId(PieceType pieceType) {
+		String type = pieceType.toString();
+		switch(type) {
+		case "pawn": return 1;
+		case "bishop":return 2;
+		case "rook": return 3;
+		case "king": return 4;
+		default: return 0;
+		}
+		
 	}
 	
 	

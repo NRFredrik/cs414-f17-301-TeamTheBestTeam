@@ -133,6 +133,11 @@ public abstract class AbstractClient implements Runnable {
 	 *                if an I/O error occurs when sending
 	 */
 	final public void sendToServer(Object msg) throws IOException {
+		System.out.println("ABSTRACT CLIENT: send ti server");
+		if(clientSocket == null)
+			System.out.println("CLIENT SOCK NULL");
+		if(output==null)
+			System.out.println("OUTPUT NULL");
 		if (clientSocket == null || output == null)
 			throw new SocketException("socket does not exist");
 

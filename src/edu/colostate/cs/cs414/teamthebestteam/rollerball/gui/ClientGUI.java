@@ -153,6 +153,7 @@ public class ClientGUI implements ClientInterface {
 	private String gameOpponent;
 	private String gameCreator;
 	private String thisUserID;
+	private String gameId;
 	final Config con = new Config();
 	
 	//int runningGame;
@@ -459,7 +460,7 @@ public class ClientGUI implements ClientInterface {
 				@Override
 				public void mouseClicked(MouseEvent e) 
 				{
-
+					
 					//cancel all selections out. Means player changed mind 
 					if(SwingUtilities.isRightMouseButton(e))
 					{
@@ -497,6 +498,7 @@ public class ClientGUI implements ClientInterface {
 						//TODO need move implementation
 						else
 						{
+							
 							destinationTile = rollBoard.getTile(tileID);
 
 							Move move = Move.FactoryMove.createMove(rollBoard, tilePieceIsOn.getTileCoord(), destinationTile.getTileCoord());
@@ -507,23 +509,22 @@ public class ClientGUI implements ClientInterface {
 
 								if(trans.getStatus().isDone())
 								{
-									//Send Move to server
-									client.handleMessageFromClientUI(tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
-									rollBoard = trans.getBoard();
-									if(rollBoard.equals(null)) {
-										System.out.println("BOARD IS NULL");
-									}
-									client.handleMessageFromClientUI(tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
-									rollBoard = trans.getBoard();
-									//race condition?!?
-								
-									//string board= breakdown
-								    //rollBoard.breakDownBoard(rollBoard);
-									String boardString = rollBoard.breakDownBoard(rollBoard);
-									System.out.println("SERIALIZED BOARD" + boardString);
-									client.handleMessageFromClientUI("#save,"+boardString);
-									//check white pieces King to see if he landed on opposing Kings starting tile
-									//if so, GAME OVER
+									
+									
+										System.out.println("YOU DUN MOVED");
+										//Send Move to server
+										client.handleMessageFromClientUI(tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
+										System.out.println("MAKE BOARD");
+										rollBoard = trans.getBoard();
+										//race condition?!?
+										System.out.println("JUST WANT TO SAVE");
+										//now save the board
+										String boardString = rollBoard.breakDownBoard(rollBoard);
+										System.out.println("SERIALIZED BOARD" + boardString);
+										client.handleMessageFromClientUI("#save,"+ boardString);
+										//check white pieces King to see if he landed on opposing Kings starting tile
+										//if so, GAME OVER
+									
 									for(Piece p : trans.getBoard().getWhitePieces())
 									{
 										if(p.getPieceType().equals(PieceType.King))
@@ -736,6 +737,7 @@ public class ClientGUI implements ClientInterface {
 	//Takes coordinates sent by server and rebuilds it into new board
 	public void displayBoard(int curCoord, int endCoord)
 	{
+		System.out.println("IN DISPALY COORD");
 		Move move = Move.FactoryMove.createMove(rollBoard, curCoord, endCoord);
 
 		MoveTransition trans;
@@ -811,10 +813,10 @@ public class ClientGUI implements ClientInterface {
 			else if(message.toString().contains("quit"))
 			{
 				JOptionPane.showMessageDialog(loginFrame, "Your opponent has quit!");
-				System.out.println("quit");
-				currentOpponent = null;
-				gameFrame.setVisible(false);
-				mmFrame.setVisible(true);
+				//System.out.println("quit");
+				//currentOpponent = null;
+				//gameFrame.setVisible(false);
+				//mmFrame.setVisible(true);
 			}
 			else
 			{
@@ -883,27 +885,6 @@ public class ClientGUI implements ClientInterface {
 		}
 	}
 	
-	//Register listener for register button on main Menu
-	private class registerListener implements ActionListener 
-	{
-
-		public void actionPerformed(ActionEvent event) 
-		{
-			String registerMMText = registerMMButton.getText();
-
-			if(registerMMText.equals("Register"))
-			{
-				Register register = new Register();
-				register.frame.setVisible(true);
-			}
-			else
-			{
-				unRegFrame.setVisible(true);
-				mmFrame.setVisible(false);
-			}
-
-		}
-	}
 	private class profileSelectionListener implements ActionListener 
 	{
 		public void actionPerformed(ActionEvent event) 
@@ -924,7 +905,7 @@ public class ClientGUI implements ClientInterface {
 			profileSelectionPanel.setLayout(null);
 			profileSelectionPanel.setBackground(Color.lightGray);
 			profileSelectionFrame.add(profileSelectionPanel);
-
+	
 			//Label for user field
 			JLabel userLabel = new JLabel("User");
 			userLabel.setBounds(10, 70, 80, 25);
@@ -948,8 +929,28 @@ public class ClientGUI implements ClientInterface {
 			
 		}
 	}
-	
-	
+
+	//Register listener for register button on main Menu
+	private class registerListener implements ActionListener 
+	{
+
+		public void actionPerformed(ActionEvent event) 
+		{
+			String registerMMText = registerMMButton.getText();
+
+			if(registerMMText.equals("Register"))
+			{
+				Register register = new Register();
+				register.frame.setVisible(true);
+			}
+			else
+			{
+				unRegFrame.setVisible(true);
+				mmFrame.setVisible(false);
+			}
+
+		}
+	}
 	private class viewProfileListener implements ItemListener 
 	{
 		@Override
@@ -1314,7 +1315,7 @@ public class ClientGUI implements ClientInterface {
 			con.createGameRecord(gameCreator, gameOpponent);
 			con.acceptInviteDB(currentOpponent, thisUserID);
 			
-			/*quitButton.setVisible(true);
+			quitButton.setVisible(true);
 			quitButton.setEnabled(true);
 
 			try {
@@ -1333,7 +1334,7 @@ public class ClientGUI implements ClientInterface {
 
 			boardPanel.drawBoard(rollBoard);
 			mmFrame.setVisible(false);
-			gameFrame.setVisible(true);*/
+			gameFrame.setVisible(true);
 		
 		}
 	}
@@ -1426,6 +1427,7 @@ public class ClientGUI implements ClientInterface {
 			public void actionPerformed(ActionEvent event) 
 			{
 				//gameArray = con.populateActiveGameList(thisUserID);
+				gameArray = con.getCurrentGames(thisUserID);
 				//login frame
 				viewGameFrame = new JFrame("Invites");
 				viewGameFrame.setBounds(100, 100, 300, 250);
@@ -1480,8 +1482,8 @@ public class ClientGUI implements ClientInterface {
 				@Override
 			    public void valueChanged(ListSelectionEvent event)
 			    {
-			    	currentOpponent= gameList.getSelectedValue().toString();
-			    	
+			    	gameId= gameList.getSelectedValue().toString();
+			    	System.out.println("CURRENT OPPONENT SELECTED: " + gameId);
 			    	joinButton.setEnabled(true);
 			    	forfeitButton.setEnabled(true);
 			    }
@@ -1493,20 +1495,30 @@ public class ClientGUI implements ClientInterface {
 		{
 			public void actionPerformed(ActionEvent event) 
 			{
-				//client.handleMessageFromClientUI("#join,"+currentOpponent);
+				currentOpponent = gameList.getSelectedValue().toString();
+				
+				System.out.println("JOIN LISTENER OPPOENET: " + gameId);
+				System.out.println("thisUserID: " + thisUserID);
+				client.handleMessageFromClientUI("#join,"+ gameId+","+currentOpponent);
 				viewGameFrame.setVisible(false);
 				quitButton.setVisible(true);
 				quitButton.setEnabled(true);
-
-				try {
-					//rollBoard = Board.createSavedBoard(runningGame);
-					rollBoard = Board.createStandardBoard();
+				//get board
+				String serialBoard = con.getSelectedGame(gameId);
+				String turn = con.getSelectedGamesTurn(gameId);
+				System.out.println("IM IN JOINLISTENER");
+				try {//if serialboard = 0 just createnewboard
+					rollBoard = Board.rebuildBoard(serialBoard,turn);
+					
+					//rollBoard = Board.createStandardBoard();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} 
-				gameCreator = currentOpponent;
-				gameOpponent = thisUserID;
+				System.out.println("AFTER ROLLBAORDM IN JOINRELISTENER");
+				//gameCreator = currentOpponent;
+				//gameOpponent = thisUserID;
+				
 				
 				boardPanel.drawBoard(rollBoard);
 				mmFrame.setVisible(false);
@@ -1538,6 +1550,9 @@ public class ClientGUI implements ClientInterface {
 
 		public void actionPerformed(ActionEvent event) 
 		{
+			System.out.println("QUITTER OF GAMEID: " + gameId);
+			con.setSaveStatusOff(gameId);
+			System.out.println("YOU QUITTTTTT");
 			client.handleMessageFromClientUI("#quit,"+currentOpponent);
 			currentOpponent = null;
 			gameFrame.setVisible(false);

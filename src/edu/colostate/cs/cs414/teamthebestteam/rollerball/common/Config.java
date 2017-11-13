@@ -543,14 +543,11 @@ public class Config {
 	
 	//insert save into db, return the id
 		public void insertSavedGame(String gameID, String gameBoard, String turn) {
-			if(turn.equals("white")) {
-				turn = "black";
-			}
-			else if(turn.equals("black"))
-			{
-				turn ="white";
-			}
-			String saveStmnt = "UPDATE saves SET game = '"+gameBoard+"',turn = '"+turn+"' WHERE savesId ="+gameID+";";
+			
+			System.out.println("TURN IS NOW" + turn);
+			
+			System.out.println("SETTING TURN TO : " + turn + " in DB");
+			String saveStmnt = "UPDATE saves SET game = '"+gameBoard+"',turn = '"+turn+"',isNew = 0 WHERE savesId ="+gameID+";";
 			//insert the user into the database
 			//System.out.println("UPDATED GAME: " + gameID);
 			try {
@@ -603,7 +600,160 @@ public class Config {
 			return gameID;
 			
 			
-		}			
+		}
+		
+		public ArrayList<String> getCurrentGames(String user) {
+			
+			String getGames = "SELECT savesId FROM saves WHERE inviter = '"+user+"' OR opponent = '"+user+"';";
+			ResultSet findGames;
+			System.out.println("QUERY: " + getGames);
+			ArrayList<String> activeGames = new ArrayList<String>();
+			try {
+				//System.out.println("INSERT");
+				findGames = stmt.executeQuery(getGames);
+				while(findGames.next()) {
+					String activeId = findGames.getString("savesId");
+					activeGames.add(activeId);
+					System.out.println("ADDED: " + activeId);
+				}
+				//System.out.println("INSERT: " + insert);
+				//if there were rows affected that means user was added
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return activeGames;
+		}
+
+	public String getSelectedGame(String gameId) {
+		
+		String getBoard = "SELECT game FROM saves WHERE savesId = "+gameId+";";
+		System.out.println("GETTING BOARD" + gameId);
+		System.out.println(getBoard);
+		ResultSet rs;
+		String serialBoard="";
+		try {
+			
+			rs = stmt.executeQuery(getBoard);
+			if(rs.next()) {
+				serialBoard = rs.getString("game");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return serialBoard;
+	}
+
+	public String getSelectedGamesTurn(String gameId) {
+		String getBoard = "SELECT turn FROM saves WHERE savesId = "+gameId+";";
+		System.out.println("GETTING BOARD" + gameId);
+		System.out.println(getBoard);
+		ResultSet rs;
+		String serialBoard="";
+		try {
+			
+			rs = stmt.executeQuery(getBoard);
+			if(rs.next()) {
+				serialBoard = rs.getString("turn");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return serialBoard;
+	}
+	//if client pressed quit change status
+	public void setSaveStatusOff(String gameId) {
+		String status = "UPDATE saves SET status = 0 WHERE savesId ='"+gameId+"';";
+		try {
+			int effected = stmt.executeUpdate(status);
+			//if there were rows affected that means user was added
+			
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public int getSavedStatus(String gameId) {
+		String getstate = "SELECT status FROM saves WHERE savesId='"+gameId+"';";
+		System.out.println("GET SAVE: "+ getstate);
+		ResultSet rs;
+		int state = 0;
+		try {
+			
+			rs = stmt.executeQuery(getstate);
+			if(rs.next()) {
+				state = rs.getInt("status");
+				System.out.println("BOARD STATUS: " + state);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return state;
+		
+	}
+	
+	public boolean isPlayerTurn(String gameId, String player) {
+		String statement = "SELECT inviter, turn FROM saves WHERE savesId='"+gameId+"';";
+		ResultSet rs;
+		String inviter="";
+		String turn="";
+		int state = 0;
+		try {
+			
+			rs = stmt.executeQuery(statement);
+			if(rs.next())
+			{
+				inviter = rs.getString("inviter");
+				turn = rs.getString("turn");
+				//System.out.println("*****************Opponent: "+ opponent);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(inviter.equals(player) && turn.equals("white")) {
+			return true;
+		}
+		else if((!inviter.equals(player)) && turn.equals("black" ))
+		{
+			return true;
+		}
+			
+			
+		return false;
+		
+		
+	}
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

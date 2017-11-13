@@ -55,6 +55,15 @@ public class Board {
 		this.black = new BlackPlayer(this, whiteStandardLegalMove, blackStandardLegalMove);
 
 		//TODO
+		if(builder.nextMoveMaker == null) {
+			System.out.println("builder NEXT MOVE MAKER NULLLLLLLLLLLLLLLLLLLLLLLLLL");
+		}
+		if(this.white == null) {
+			System.out.println("WHITE NULL");
+		}
+		if(this.black == null) {
+			System.out.println("BLACK NULL");
+		}
 		this.currentPlayer = builder.nextMoveMaker.playersTurn(this.white,this.black);
 		System.out.println("TURN: "+ this.currentPlayer.getAlliance() + " player's turn to go\n");
 		//accept();
@@ -191,6 +200,15 @@ public class Board {
 			this.boardConfig.put(piece.getPiecePosition(), piece);
 			return this;
 		}
+		
+		public Builder setMoveMakerString(String color) {
+			if(color.equals("white")) {
+				return setMoveMaker(Alliance.WHITE);
+			}
+			else {
+				return setMoveMaker(Alliance.BLACK);
+			}
+		}
 
 		//setting property of the current builder and returning it back to where ever it was called from
 		public Builder setMoveMaker(final Alliance nextMoveMaker)
@@ -274,15 +292,17 @@ public class Board {
 	return sb.toString();	
 	}
 	
-	public Board rebuildBoard(String serialBoard) throws Exception {
+	public static Board rebuildBoard(String serialBoard,String turn) throws Exception {
 		
-		int numArr[] = stringArrayToIntArray(serialBoard);
+		char cary[] = serialBoard.toCharArray();
 		Builder builder = new Builder();
-		for(int i=0; i < numArr.length;i++) {
-			System.out.println(numArr[i]);
-			Piece newPiece = getPiecefromNum(numArr[i],i);
+		for(int i=0; i < cary.length;i++) {
+			System.out.println(cary[i]);
+			Piece newPiece = getPiecefromNum(cary[i],i);
 			if(newPiece != null) {
-				builder.setPiece(getPiecefromNum(numArr[i],i));
+				builder.setPiece(getPiecefromNum(cary[i],i));
+				
+				builder.setMoveMakerString(turn);
 			}
 			
 			
@@ -291,32 +311,32 @@ public class Board {
 
 		return builder.build();
 	}
-	 private Piece getPiecefromNum(int piece, int position) {
+	 private static Piece getPiecefromNum(char piece, int position) {
 		 Piece newPiece;
 		 switch(piece) {
-			case 1:
+			case '1':
 				///builder.setPiece(new Rook(2, Alliance.BLACK));
 				newPiece = new Pawn(position,Alliance.WHITE);
 				break;
-			case 2:
+			case '2':
 				newPiece = new Bishop(position,Alliance.WHITE);
 				break;
-			case 3:
+			case '3':
 				newPiece = new Rook(position,Alliance.WHITE);
 				break;
-			case 4:
+			case '4':
 				newPiece = new King(position,Alliance.WHITE);
 				break;
-			case 5:
+			case '5':
 				newPiece = new Pawn(position,Alliance.BLACK);
 				break;
-			case 6:
+			case '6':
 				newPiece = new Bishop(position,Alliance.BLACK);
 				break;
-			case 7:
+			case '7':
 				newPiece = new Rook(position,Alliance.BLACK);
 				break;
-			case 8:
+			case '8':
 				newPiece = new King(position,Alliance.BLACK);
 				break;
 			default:
@@ -327,15 +347,10 @@ public class Board {
 		 return newPiece;
 	 }
 	
-		private  int[] stringArrayToIntArray(String intString) {
-		    String[] intStringSplit = intString.split(" "); //Split by spaces
-		    int[] result = new int[intStringSplit.length]; //Used to store our ints
-
-		    for (int i = 0; i < intStringSplit.length; i++) {
-		        //parse and store each value into int[] to be returned
-		        result[i] = Integer.parseInt(intStringSplit[i]); 
-		    }
-		    return result;
+		private static  char[] stringtoArray(String intString) {
+		    
+		    char ary[] = intString.toCharArray();
+		    return ary;
 		}
 	
 

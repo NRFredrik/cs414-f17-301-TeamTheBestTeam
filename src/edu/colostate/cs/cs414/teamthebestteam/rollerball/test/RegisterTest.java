@@ -13,8 +13,9 @@ import java.sql.SQLException;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.colostate.cs.cs414.teamthebestteam.rollerball.common.Config;
-import edu.colostate.cs.cs414.teamthebestteam.rollerball.common.HashPassword;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.application.manageuser.HashPassword;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.application.manageuser.ManageUser;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.technicalservice.databaseconnector.DatabaseConnection;
 
 public class RegisterTest {
 /**
@@ -23,7 +24,7 @@ public class RegisterTest {
 	Connection con;
 	Statement stmt;
 	ResultSet result;
-	Config conf;
+	ManageUser conf;
 	
 	@Before
 	public void initialize()
@@ -32,14 +33,9 @@ public class RegisterTest {
 		 * @author kb
 		 * establish a connection to database and setup a statement object
 		 */
-		try {
-			String connURL = "jdbc:mysql://localhost:3306/Rollerball?useSSL=false";
-			this.con = DriverManager.getConnection(connURL, "root", "password");
-			this.stmt = con.createStatement();
-			conf = new Config();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		
+			conf = new ManageUser(new DatabaseConnection());
+		
 	}
 	
 	/**

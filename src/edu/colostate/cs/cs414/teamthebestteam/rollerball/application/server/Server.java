@@ -34,7 +34,9 @@ public class Server extends AbstractServer
 	public Server(int port) {
 		super(port);
 		this.isClosed = false;
-		//System.out.println(userList);
+		
+		//MOVE TO FUTURE REGISTER MESSAGE
+		userList = conf.populateUserList();
 	}
 
 
@@ -50,19 +52,15 @@ public class Server extends AbstractServer
 		}
 		else if(((String)message).contains("#userList"))
 		{
-			userList = conf.populateUserList();
-
-			ArrayList<String> tmpList = userList;
-			tmpList.add(0, "User List");
-			tmpList.remove(client.getInfo("userID"));
-			msgToCli(tmpList, client);
+			msgToCli(userList, client);
 		}
 		else if(((String)message).contains("#invite"))
 		{
-			List<String> items = Arrays.asList(((String) message).split(","));
-			String userID =items.get(1);
-			invite(client,userID);
+			System.out.println("Invite Received by Server");
 			
+			List<String> items = Arrays.asList(((String) message).split(","));
+			String opponentID =items.get(1);
+			invite(client,opponentID);
 		}
 		else if(((String)message).contains("#accept"))
 		{
@@ -72,10 +70,12 @@ public class Server extends AbstractServer
 			accept(client,opponnentUserID);
 		}
 		else if(((String)message).contains("#decline"))
-		{
+		{		
 			List<String> items = Arrays.asList(((String) message).split(","));
-			String userID =items.get(1);
-			decline(client,userID);
+			String inviterID =items.get(1);
+			conf.declineInviteDB(inviterID, (String)client.getInfo("userID"));
+			
+			//decline(client,inviterID);
 		}
 		else if(((String)message).contains("#quit"))
 		{
@@ -302,9 +302,10 @@ public class Server extends AbstractServer
 	
 	protected void invite(ConnectionToClient sendingClient, String recieverUserID) 
 	{
-		
+		System.out.println(userList);
 		if(userList.contains(recieverUserID))
 		{
+			System.out.println("Invite Added To Database");
 			conf.addInvite((String)sendingClient.getInfo("userID"), recieverUserID);
 		}
 		else
@@ -389,7 +390,6 @@ public class Server extends AbstractServer
 
 	protected void msgToCli(Object msg, ConnectionToClient client) {
 		try {
-
 			client.sendToClient(msg);
 		} catch (IOException e) {
 			System.out.println("CLIENT DISCONNECTED FOLLOWING MESSAGE FAILED TO SEND: " + msg);

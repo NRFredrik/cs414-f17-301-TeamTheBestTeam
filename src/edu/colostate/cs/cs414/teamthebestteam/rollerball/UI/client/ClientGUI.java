@@ -746,7 +746,7 @@ public class ClientGUI implements ClientInterface {
 
 
 		//login frame
-		receiveFrame = new JFrame("Login");
+		receiveFrame = new JFrame("Invite");
 		receiveFrame.setBounds(100, 100, 300, 250);
 		receiveFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -792,39 +792,6 @@ public class ClientGUI implements ClientInterface {
 				boardPanel.drawBoard(rollBoard);
 			}
 		});
-		
-	
-		/*
-		Move move = Move.FactoryMove.createMove(rollBoard, curCoord, endCoord);
-
-		MoveTransition trans;
-
-		try {
-			trans = rollBoard.currentPlayer().movePlayer(move);
-
-			if(trans.getStatus().isDone())
-			{
-				rollBoard = trans.getBoard();
-				//TODO add the move to a log for debugging
-			}
-			tilePieceIsOn = null;
-			destinationTile = null;
-			movedByPlayer = null;
-
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				boardPanel.drawBoard(rollBoard);
-			}
-		});
-		*/
 	}
 
 	//handles all server messages
@@ -864,7 +831,7 @@ public class ClientGUI implements ClientInterface {
 				String userColor =items.get(2);
 				String turnColor = items.get(3);
 				boolean userTurn = Boolean.parseBoolean(items.get(4));
-				System.out.println(message);
+				//System.out.println(message);
 				
 				joinGame(gameState,userColor,turnColor,userTurn);
 			}
@@ -877,18 +844,18 @@ public class ClientGUI implements ClientInterface {
 				String userColor =items.get(3);
 				String turnColor = items.get(4);
 				boolean userTurn = Boolean.parseBoolean(items.get(5));
-				System.out.println(gameId+","+gameID);
+				//System.out.println(gameId+","+gameID);
 				
 				
 				//ONLY REDRAW BOARD IF IN THAT GAME
 				if(this.gameId.equals(gameID))
 				{
-					System.out.println("I AM GETTING MOVE REQUEST");
+					//System.out.println("I AM GETTING MOVE REQUEST");
 					displayBoard(gameState,userColor,turnColor,userTurn);
 				}
 				else
 				{
-					System.out.println("I AM GETTING MOVE REQUEST FOR GAME IM NOT IN");
+					//System.out.println("I AM GETTING MOVE REQUEST FOR GAME IM NOT IN");
 				}
 			}
 		}
@@ -1436,9 +1403,10 @@ public class ClientGUI implements ClientInterface {
 		{
 			client.handleMessageFromClientUI("#decline,"+currentOpponent);
 			currentOpponent = null;
-			receiveFrame.setVisible(false);
+			inviteFrame.setVisible(false);
+			mmFrame.setVisible(true);
 			
-			con.declineInviteDB(currentOpponent, thisUserID);
+			//con.declineInviteDB(currentOpponent, thisUserID);
 
 		}
 	} 
@@ -1633,6 +1601,9 @@ public class ClientGUI implements ClientInterface {
 		statusArea.setText("");
 
 		this.users = users;
+		
+		this.users.add(0, "User List");
+		this.users.remove(thisUserID);
 
 		for (int i = 0; i < users.size(); i++) 
 		{
@@ -1643,7 +1614,7 @@ public class ClientGUI implements ClientInterface {
 	
 	//************************************************************************
 	//************************************************************************
-	//BELOW SECTION IS RELATED TO CREATE GAME/INVITEUSER LISTENERS
+	//BELOW SECTION IS RELATED TO CREATE GAME/INVITE USER LISTENERS
 	//************************************************************************
 	//************************************************************************
 	
@@ -1654,6 +1625,7 @@ public class ClientGUI implements ClientInterface {
 		{
 			if (event.getStateChange() == ItemEvent.SELECTED) 
 			{
+				System.out.println("Invite Message Sent to Server");
 				String user = (String)userList.getSelectedItem();
 				oppo = user;
 				client.handleMessageFromClientUI("#invite," + user);

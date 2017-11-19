@@ -154,14 +154,13 @@ public class Register {
 			{
 				boolean isValid = false;
 				//check to see if email is unique
-				while(isValid == false)
-				{
 					String mail = typeEmail.getText(); //holds current email address entered
 					ManageUser con =  new ManageUser(new DatabaseConnection());
 					if(!con.isUniqueEmail(mail))
 					{
 						//Alert user to enter unique email
 						System.out.println("email is not unique");
+						JOptionPane.showMessageDialog(null, "email is not unique. Enter a unique email");
 					}//end of if
 					else
 					{
@@ -197,7 +196,6 @@ public class Register {
 							//login.frame.setVisible(true);
 							frame.setVisible(false);
 						}
-					}
 				}
 			
 			else

@@ -66,7 +66,7 @@ public class Pawn extends Piece{
 			//pass in board, current piece that we are on,
 			if(!candidateTile.isTileOccupided())
 			{
-				System.out.println(possibleDestinationCoordinate);
+				//System.out.println(possibleDestinationCoordinate);
 				legalMove.add(new Move.BasicMove(board, this, possibleDestinationCoordinate));
 			}
 

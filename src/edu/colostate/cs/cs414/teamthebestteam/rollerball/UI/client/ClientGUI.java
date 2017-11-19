@@ -96,7 +96,8 @@ public class ClientGUI implements ClientInterface {
 	private JPanel right;
 	private JLayeredPane left;
 	private JButton quitButton;
-	private JLabel colorLabel; 
+	private JLabel colorLabel;
+	private JLabel turnLabel;
 	private JTextArea statusArea;
 	private JTextField messageField;
 	private JPanel mainPane;
@@ -142,6 +143,7 @@ public class ClientGUI implements ClientInterface {
 	private JPanel createGamePanel;
 	private JComboBox<String> userList;
 	
+	
 	//Unregister Frame Objects
 	private JFrame unRegFrame;
 	private JPanel unRegPanel;
@@ -161,6 +163,7 @@ public class ClientGUI implements ClientInterface {
 	private String gameId;
 	final ManageUser con = new ManageUser(new DatabaseConnection());
 	
+	private boolean turn;
 	//int runningGame;
 	
 	public ClientGUI()throws Exception
@@ -321,6 +324,8 @@ public class ClientGUI implements ClientInterface {
 		gameFrame.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		    	turn = false;
+		    	gameId = "0";
 		        mmFrame.setVisible(true);
 		    }
 		});
@@ -360,7 +365,7 @@ public class ClientGUI implements ClientInterface {
 		statusArea.setFont(new Font("Arial", Font.PLAIN, 15));
 		statusArea.setBackground(Color.lightGray);
 
-		//Pane for main message feed
+		/*//Pane for main message feed
 		JScrollPane textBoxScrollPane = new JScrollPane();
 		textBoxScrollPane.setBounds(140, 33, 355, 350);
 		left.add(textBoxScrollPane);
@@ -370,7 +375,16 @@ public class ClientGUI implements ClientInterface {
 		textBox.setFont(new Font("Dialog", Font.PLAIN, 17));       
 		textBoxScrollPane.setViewportView(textBox);
 		textBox.setEditable(false);
-		textBox.setBackground(Color.lightGray);
+		textBox.setBackground(Color.lightGray);*/
+		
+		colorLabel = new JLabel();
+		colorLabel.setBounds(140, 33, 300, 100);
+		left.add(colorLabel);
+		
+		turnLabel = new JLabel();
+		turnLabel.setBounds(140, 100, 300, 100);
+		left.add(turnLabel);
+		
 
 		//message feild for typing messages
 		messageField = new JTextField();
@@ -465,118 +479,120 @@ public class ClientGUI implements ClientInterface {
 				@Override
 				public void mouseClicked(MouseEvent e) 
 				{
-					
-					//cancel all selections out. Means player changed mind 
-					if(SwingUtilities.isRightMouseButton(e))
-					{
-						tilePieceIsOn = null;
-						destinationTile = null;
-						movedByPlayer = null;
-						System.out.println("Right mouse button pressed, so select your source again");
-					}
-					//something was picked and is being moved (2nd click)
-					else if(SwingUtilities.isLeftMouseButton(e))
-					{
-						//player has not made source tile selection yet
-						if(tilePieceIsOn == null)
+					if(turn)
+					{						
+						//cancel all selections out. Means player changed mind 
+						if(SwingUtilities.isRightMouseButton(e))
 						{
-							//assign this tile to the source tile
-							tilePieceIsOn = rollBoard.getTile(tileID);
-							System.out.println("Source tile: "+ tilePieceIsOn.getTileCoord()+ " was selected");
-							movedByPlayer = tilePieceIsOn.getPiece();
-							//if there's no piece on tile
-							if(movedByPlayer == null)
-							{
-								tilePieceIsOn = null;
-							}
-							SwingUtilities.invokeLater(new Runnable()
-							{
-								@Override
-								public void run()
-								{
-									//client.handleMessageFromClientUI(rollBoard);
-									boardPanel.drawBoard(rollBoard);
-								}
-							});
+							tilePieceIsOn = null;
+							destinationTile = null;
+							movedByPlayer = null;
+							System.out.println("Right mouse button pressed, so select your source again");
 						}
-						//there's a piece so lets move it
-						//TODO need move implementation
-						else
+						//something was picked and is being moved (2nd click)
+						else if(SwingUtilities.isLeftMouseButton(e))
 						{
-							
-							destinationTile = rollBoard.getTile(tileID);
-
-							Move move = Move.FactoryMove.createMove(rollBoard, tilePieceIsOn.getTileCoord(), destinationTile.getTileCoord());
-							MoveTransition trans;
-							try {
-								Board tempBoard = rollBoard;
-								trans = tempBoard.currentPlayer().movePlayer(move);
-
-								if(trans.getStatus().isDone())
+							//player has not made source tile selection yet
+							if(tilePieceIsOn == null)
+							{
+								//assign this tile to the source tile
+								tilePieceIsOn = rollBoard.getTile(tileID);
+								//System.out.println("Source tile: "+ tilePieceIsOn.getTileCoord()+ " was selected");
+								movedByPlayer = tilePieceIsOn.getPiece();
+								//if there's no piece on tile
+								if(movedByPlayer == null)
 								{
-									
-									
-										System.out.println("YOU DUN MOVED");
-										//Send Move to server
-										client.handleMessageFromClientUI(tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
-										System.out.println("MAKE BOARD");
-										rollBoard = trans.getBoard();
-										//race condition?!?
-										System.out.println("JUST WANT TO SAVE");
-										//now save the board
-										String boardString = rollBoard.breakDownBoard(rollBoard);
-										System.out.println("SERIALIZED BOARD" + boardString);
-										client.handleMessageFromClientUI("#save,"+ boardString);
-										//check white pieces King to see if he landed on opposing Kings starting tile
-										//if so, GAME OVER
-									int temp  = con.getRecordId(findDate);
-									for(Piece p : trans.getBoard().getWhitePieces())
-									{
-										if(p.getPieceType().equals(PieceType.King))
-										{
-											if(p.getPiecePosition() == 10)
-											{
-												JOptionPane.showMessageDialog(null, "GAME OVER. WHITE TEAM WINS");
-												System.out.println("GAME OVER. WHITE TEAM WINS");
-												int recordId = con.getRecordId(findDate);
-												System.out.println("reiD: " + recordId);
-												//Update the record to database and increment the win count
-												String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + currentOpponent + "' WHERE `recordID`='"+recordId+"'";
-												System.out.println(updateWinner);
-												String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ oppo+"' WHERE `recordID`='"+recordId+"'";
-												System.out.println(updateLoser);
-												con.updateWinLossRecord(updateWinner);												
-												con.updateWinLossRecord(updateLoser);
-											}
-										}
-									}
-									for(Piece p : trans.getBoard().getBlackPieces())
-									{
-										if(p.getPieceType().equals(PieceType.King))
-										{
-											if(p.getPiecePosition() == 38)
-											{
-												JOptionPane.showMessageDialog(null, "GAME OVER. BLACK TEAM WINS");
-												System.out.println("GAME OVER. BLACK TEAM WINS");
-												//Update the record to database and increment the win count
-												String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + gameOpponent + "' WHERE `recordID`='"+gameId+"'";
-												String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ gameCreator +"' WHERE `recordID`='"+gameId+"'";
-												con.updateWinLossRecord(updateWinner);
-												con.updateWinLossRecord(updateLoser);
-											}
-										}
-									}
+									tilePieceIsOn = null;
 								}
-								else
+								SwingUtilities.invokeLater(new Runnable()
 								{
-									System.out.println("THAT MOVE IS NOT VALID FOR THE CHOSEN PIECE. REFER TO RULE BOOK AND TRY AGAIN\n");
-								}
-							} catch (Exception e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
+									@Override
+									public void run()
+									{
+										boardPanel.drawBoard(rollBoard);
+									}
+								});
 							}
-
-						}//end else if
+							//there's a piece so lets move it
+							else
+							{		
+								destinationTile = rollBoard.getTile(tileID);
+	
+								Move move = Move.FactoryMove.createMove(rollBoard, tilePieceIsOn.getTileCoord(), destinationTile.getTileCoord());
+								MoveTransition trans;
+								try {
+									Board tempBoard = rollBoard;
+									trans = tempBoard.currentPlayer().movePlayer(move);
+	
+									if(trans.getStatus().isDone())
+									{
+											//Send Move to server
+											//client.handleMessageFromClientUI(tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
+											
+											rollBoard = trans.getBoard();
+											//now save the board
+											String boardString = rollBoard.breakDownBoard(rollBoard);
+											client.handleMessageFromClientUI("#save,"+ boardString +"," + gameId);
+											
+											
+											////////////////////////////
+											//WIN GAME STUFF
+											//////////////////////////////////
+											//check white pieces King to see if he landed on opposing Kings starting tile
+											//if so, GAME OVER
+										int temp  = con.getRecordId(findDate);
+										for(Piece p : trans.getBoard().getWhitePieces())
+										{
+											if(p.getPieceType().equals(PieceType.King))
+											{
+												if(p.getPiecePosition() == 10)
+												{
+													JOptionPane.showMessageDialog(null, "GAME OVER. WHITE TEAM WINS");
+													System.out.println("GAME OVER. WHITE TEAM WINS");
+													int recordId = con.getRecordId(findDate);
+													System.out.println("reiD: " + recordId);
+													//Update the record to database and increment the win count
+													String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + currentOpponent + "' WHERE `recordID`='"+recordId+"'";
+													System.out.println(updateWinner);
+													String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ oppo+"' WHERE `recordID`='"+recordId+"'";
+													System.out.println(updateLoser);
+													con.updateWinLossRecord(updateWinner);												
+													con.updateWinLossRecord(updateLoser);
+												}
+											}
+										}
+										for(Piece p : trans.getBoard().getBlackPieces())
+										{
+											if(p.getPieceType().equals(PieceType.King))
+											{
+												if(p.getPiecePosition() == 38)
+												{
+													JOptionPane.showMessageDialog(null, "GAME OVER. BLACK TEAM WINS");
+													System.out.println("GAME OVER. BLACK TEAM WINS");
+													//Update the record to database and increment the win count
+													String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + gameOpponent + "' WHERE `recordID`='"+gameId+"'";
+													String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ gameCreator +"' WHERE `recordID`='"+gameId+"'";
+													con.updateWinLossRecord(updateWinner);
+													con.updateWinLossRecord(updateLoser);
+												}
+											}
+										}
+									}
+									else
+									{
+										System.out.println("THAT MOVE IS NOT VALID FOR THE CHOSEN PIECE. REFER TO RULE BOOK AND TRY AGAIN\n");
+									}
+								} catch (Exception e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+	
+							}//end else if
+						}
+					}
+					else
+					{
+						System.out.println("NOT YOUR TURN BUDDY");
 					}
 
 				}
@@ -718,15 +734,7 @@ public class ClientGUI implements ClientInterface {
 	//************************************************************************
 	//************************************************************************
 	
-	//Informs user of their color
-	public void displayColor(String message) 
-	{
-		colorLabel = new JLabel(message);
-		colorLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
-		colorLabel.setBounds(130, 7, 120, 21);
-		left.add(colorLabel);
-		colorLabel.setVisible(true);
-	}
+	
 
 	//NOT BEING USED RIGHT NOW
 	//WILL DISPLAY INVITE IF SENT ONE WHILE LOGGED IN
@@ -734,7 +742,7 @@ public class ClientGUI implements ClientInterface {
 	{
 		currentOpponent = userID;
 		oppo = userID;
-		System.out.println(currentOpponent);
+		//System.out.println(currentOpponent);
 
 
 		//login frame
@@ -750,9 +758,43 @@ public class ClientGUI implements ClientInterface {
 	}
 
 	//Takes coordinates sent by server and rebuilds it into new board
-	public void displayBoard(int curCoord, int endCoord)
+	public void displayBoard(String serializedBoard, String userColor,String turnColor, boolean turn)
 	{
-		System.out.println("IN DISPALY COORD");
+		
+		this.turn = turn;
+		
+		colorLabel.setText("YOUR COLOR: " +userColor);
+		if(turn == true)
+		{
+			turnLabel.setText("IT IS YOUR TURN");
+		}
+		else
+		{
+			turnLabel.setText("IT IS NOT YOUR TURN");
+		}
+		
+		//get board
+		try {
+			rollBoard = Board.rebuildBoard(serializedBoard,turnColor);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		tilePieceIsOn = null;
+		destinationTile = null;
+		movedByPlayer = null;
+		
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				boardPanel.drawBoard(rollBoard);
+			}
+		});
+		
+	
+		/*
 		Move move = Move.FactoryMove.createMove(rollBoard, curCoord, endCoord);
 
 		MoveTransition trans;
@@ -782,6 +824,7 @@ public class ClientGUI implements ClientInterface {
 				boardPanel.drawBoard(rollBoard);
 			}
 		});
+		*/
 	}
 
 	//handles all server messages
@@ -790,12 +833,10 @@ public class ClientGUI implements ClientInterface {
 	{
 		if(message instanceof String)
 		{
-			//
+			System.out.println("MESSAGE RECIEVED FROM SERVER: "+ (String)message);
 			if(message.toString().contains("login"))
 			{
-				List<String> items = Arrays.asList(((String) message).split(","));
-				String color =items.get(1);
-				displayColor(color);
+	
 			}
 			else if(message.toString().contains("invite"))
 			{
@@ -811,34 +852,44 @@ public class ClientGUI implements ClientInterface {
 			else if(message.toString().contains("start"))
 			{
 				
-				List<String> items = Arrays.asList(((String) message).split(","));
-				mmFrame.setVisible(false);
-				quitButton.setVisible(true);
-				quitButton.setEnabled(true);
-				currentOpponent = items.get(1);
-				//int recordID = con.getGameRecordID(thisUserID, currentOpponent);
-				//runningGame = recordID;
-				try {
-					//rollBoard = Board.createSavedBoard(runningGame);
-					rollBoard = Board.createStandardBoard();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}  
-				boardPanel.drawBoard(rollBoard);
-				gameFrame.setVisible(true);
 			}
 			else if(message.toString().contains("quit"))
 			{
 				JOptionPane.showMessageDialog(loginFrame, "Your opponent has quit!");
 			}
-
-			else{
-
+			else if(message.toString().contains("join"))
+			{
 				List<String> items = Arrays.asList(((String) message).split(","));
-				int curCoord =Integer.parseInt(items.get(0));
-				int endCoord =Integer.parseInt(items.get(1));
-				displayBoard(curCoord,endCoord);				
+				String gameState =items.get(1);
+				String userColor =items.get(2);
+				String turnColor = items.get(3);
+				boolean userTurn = Boolean.parseBoolean(items.get(4));
+				System.out.println(message);
+				
+				joinGame(gameState,userColor,turnColor,userTurn);
+			}
+			else if(message.toString().contains("move"))
+			{
+				List<String> items = Arrays.asList(((String) message).split(","));
+				
+				String gameID =items.get(1);
+				String gameState =items.get(2);
+				String userColor =items.get(3);
+				String turnColor = items.get(4);
+				boolean userTurn = Boolean.parseBoolean(items.get(5));
+				System.out.println(gameId+","+gameID);
+				
+				
+				//ONLY REDRAW BOARD IF IN THAT GAME
+				if(this.gameId.equals(gameID))
+				{
+					System.out.println("I AM GETTING MOVE REQUEST");
+					displayBoard(gameState,userColor,turnColor,userTurn);
+				}
+				else
+				{
+					System.out.println("I AM GETTING MOVE REQUEST FOR GAME IM NOT IN");
+				}
 			}
 		}
 		else
@@ -847,7 +898,50 @@ public class ClientGUI implements ClientInterface {
 		}
 	}
 
-	
+	public void joinGame(String serializedBoard, String userColor,String turnColor, boolean turn)
+	{
+		
+		viewGameFrame.setVisible(false);
+		quitButton.setVisible(true);
+		quitButton.setEnabled(true);
+		
+		this.turn = turn;
+		
+		colorLabel.setText("YOUR COLOR: " +userColor);
+		if(turn == true)
+		{
+			turnLabel.setText("IT IS YOUR TURN");
+		}
+		else
+		{
+			turnLabel.setText("IT IS NOT YOUR TURN");
+		}
+		
+		
+		//get board
+		try {
+			rollBoard = Board.rebuildBoard(serializedBoard,turnColor);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		tilePieceIsOn = null;
+		destinationTile = null;
+		movedByPlayer = null;
+		
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				boardPanel.drawBoard(rollBoard);
+			}
+		});
+		
+		
+		mmFrame.setVisible(false);
+		gameFrame.setVisible(true);
+	}
 
 	//************************************************************************
 	//************************************************************************
@@ -1247,6 +1341,7 @@ public class ClientGUI implements ClientInterface {
 		{
 			String userID = userField.getText();
 			thisUserID = userID;
+			gameId = "0";
 			
 			String password = passField.getText();
 
@@ -1258,7 +1353,7 @@ public class ClientGUI implements ClientInterface {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				System.out.println("you're logged in");
+				System.out.println("you're logged in as: "+thisUserID );
 				serverRequestUsers();
 				mmFrame.setVisible(true);
 				loginFrame.setVisible(false);
@@ -1311,9 +1406,12 @@ public class ClientGUI implements ClientInterface {
 	{
 		public void actionPerformed(ActionEvent event) 
 		{	
-			
+			//INFORM SERVER THAT INVITE HAS BEEN ACCPETED AND NEW GAME STATE SHOULD BE CREATED
+			currentOpponent= userInviteList.getSelectedValue().toString();
 			client.handleMessageFromClientUI("#accept,"+currentOpponent);
 			inviteFrame.setVisible(false);
+			mmFrame.setVisible(true);
+			
 			
 			gameCreator = currentOpponent;
 			gameOpponent = thisUserID;
@@ -1322,26 +1420,11 @@ public class ClientGUI implements ClientInterface {
 			con.acceptInviteDB(currentOpponent, thisUserID);
 			
 			
-			quitButton.setVisible(true);
-			quitButton.setEnabled(true);
-
-			try {
-				//rollBoard = Board.createSavedBoard(runningGame);
-				rollBoard = Board.createStandardBoard();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-
-			//***********creating game record***************
+	//***********creating game record***************
 			gameCreator = currentOpponent;
 			gameOpponent = thisUserID;
 			con.createGameRecord(gameCreator, gameOpponent);
 			con.acceptInviteDB(currentOpponent, thisUserID);
-
-			boardPanel.drawBoard(rollBoard);
-			mmFrame.setVisible(false);
-			gameFrame.setVisible(true);
 		
 		}
 	}
@@ -1490,7 +1573,6 @@ public class ClientGUI implements ClientInterface {
 			    public void valueChanged(ListSelectionEvent event)
 			    {
 			    	gameId= gameList.getSelectedValue().toString();
-			    	System.out.println("CURRENT OPPONENT SELECTED: " + gameId);
 			    	joinButton.setEnabled(true);
 			    	forfeitButton.setEnabled(true);
 			    }
@@ -1502,35 +1584,10 @@ public class ClientGUI implements ClientInterface {
 		{
 			public void actionPerformed(ActionEvent event) 
 			{
-				//currentOpponent = gameList.getSelectedValue().toString();
+				//INFORMSERVER THAT USER IS JOINGING GAME
 				
-				System.out.println("JOIN LISTENER OPPOENET: " + gameId);
-				System.out.println("thisUserID: " + thisUserID);
-				client.handleMessageFromClientUI("#join,"+ gameId+","+currentOpponent);
-				viewGameFrame.setVisible(false);
-				quitButton.setVisible(true);
-				quitButton.setEnabled(true);
-				//get board
-				String serialBoard = con.getSelectedGame(gameId);
-				String turn = con.getSelectedGamesTurn(gameId);
-				System.out.println("IM IN JOINLISTENER");
-				try {//if serialboard = 0 just createnewboard
-					rollBoard = Board.rebuildBoard(serialBoard,turn);
-					
-					//rollBoard = Board.createStandardBoard();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
-				System.out.println("AFTER ROLLBAORDM IN JOINRELISTENER");
-				//gameCreator = currentOpponent;
-				//gameOpponent = thisUserID;
+				client.handleMessageFromClientUI("#join,"+ gameId);
 				
-				
-				boardPanel.drawBoard(rollBoard);
-				mmFrame.setVisible(false);
-				gameFrame.setVisible(true);
-
 			}
 		} 
 		
@@ -1557,11 +1614,14 @@ public class ClientGUI implements ClientInterface {
 
 		public void actionPerformed(ActionEvent event) 
 		{
-			System.out.println("QUITTER OF GAMEID: " + gameId);
-			con.setSaveStatusOff(gameId);
-			System.out.println("YOU QUITTTTTT");
+			/*
+			//con.setSaveStatusOff(gameId);
 			client.handleMessageFromClientUI("#quit,"+currentOpponent);
 			currentOpponent = null;
+			*/
+			turn = false;
+			gameId = "0";
+			
 			gameFrame.setVisible(false);
 			mmFrame.setVisible(true);
 		}
@@ -1596,7 +1656,6 @@ public class ClientGUI implements ClientInterface {
 			{
 				String user = (String)userList.getSelectedItem();
 				oppo = user;
-				//System.out.println("#invite," + user);
 				client.handleMessageFromClientUI("#invite," + user);
 				createGameFrame.setVisible(false);
 				mmFrame.setVisible(true);

@@ -18,19 +18,18 @@ public class Client extends AbstractClient
 	@Override
 	protected void handleMessageFromServer(Object msg) 
 	{
-		//System.out.println(msg);
 			clientUI.display(msg);	
-		
 	}
 	public void handleMessageFromClientUI(Object message) 
 	{
 		try 
 		{	
-			System.out.println("CLIENT:" + message);
+			//System.out.println("CLIENT:" + message);
 			sendToServer(message);
 		} catch (IOException error) 
 		{
-			System.out.println(error);
+			System.out.println("COULD NOT SEND MESSAGE: " + message);
+			System.out.println("BECAUSE ERROR:" + error);
 			quit();
 		}
 	}

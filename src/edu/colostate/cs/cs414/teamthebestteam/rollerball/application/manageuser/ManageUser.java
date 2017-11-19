@@ -140,7 +140,7 @@ public class ManageUser {
 																		// entered
 																		// in
 																		// login
-					System.out.println(hashedPass);
+					//System.out.println(hashedPass);
 				} catch (NoSuchAlgorithmException e) {
 					e.printStackTrace();
 				}
@@ -175,7 +175,7 @@ public class ManageUser {
 																		// entered
 																		// in
 																		// login
-					System.out.println(hashedPass);
+					//System.out.println(hashedPass);
 				} catch (NoSuchAlgorithmException e) {
 					e.printStackTrace();
 				}
@@ -255,7 +255,7 @@ public class ManageUser {
 
 		String updateInvite = "UPDATE invites SET `status` = 'accepted' WHERE `reciever`='" + reciever
 				+ "' AND `sender` = '" + sender + "';";
-		System.out.println(updateInvite);
+		//System.out.println(updateInvite);
 
 		// insert the user into the database
 		try {
@@ -316,7 +316,7 @@ public class ManageUser {
 		String addRecord = "INSERT INTO record " + "VALUES (NULL,'" + gameCreator + "','" + gameOpponent + "','"
 				+ status + "','" + startDate + "', NULL,NULL,NULL);";
 
-		System.out.println("*********addRecord: " + addRecord);
+		//System.out.println("*********addRecord: " + addRecord);
 
 		try {
 			int effected = this.db.getStatement().executeUpdate(addRecord);
@@ -338,7 +338,7 @@ public class ManageUser {
 		// insert the record into the database
 		String getID = "Select recordID from record WHERE `creator`='" + gameCreator + "' AND `opponent`='"
 				+ gameOpponent + "' AND `status` = 'inProgress';";
-		System.out.println(getID);
+		//System.out.println(getID);
 		try {
 			result = this.db.getStatement().executeQuery(getID);
 			// if there were rows affected that means record was added
@@ -358,7 +358,7 @@ public class ManageUser {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("recordID: " + recordID);
+		//System.out.println("recordID: " + recordID);
 
 		return recordID;
 	}
@@ -528,9 +528,9 @@ public class ManageUser {
 	// insert save into db, return the id
 	public void insertSavedGame(String gameID, String gameBoard, String turn) {
 
-		System.out.println("TURN IS NOW" + turn);
+		//System.out.println("TURN IS NOW" + turn);
 
-		System.out.println("SETTING TURN TO : " + turn + " in DB");
+		//System.out.println("SETTING TURN TO : " + turn + " in DB");
 		String saveStmnt = "UPDATE saves SET game = '" + gameBoard + "',turn = '" + turn + "',isNew = 0 WHERE savesId ="
 				+ gameID + ";";
 		// insert the user into the database
@@ -554,7 +554,7 @@ public class ManageUser {
 		String saveStmnt = "INSERT INTO saves " + "VALUES (NULL,'" + inviter + "','" + opponent + "','" + "0" + "','"
 				+ status + "','" + turn + "','" + isFirst + "');";
 		// insert the user into the database
-		System.out.println(saveStmnt);
+		//System.out.println(saveStmnt);
 		try {
 			// System.out.println("INSERT");
 			int insert = this.db.getStatement().executeUpdate(saveStmnt);
@@ -590,7 +590,7 @@ public class ManageUser {
 
 		String getGames = "SELECT savesId FROM saves WHERE inviter = '" + user + "' OR opponent = '" + user + "';";
 		ResultSet findGames;
-		System.out.println("QUERY: " + getGames);
+		//System.out.println("QUERY: " + getGames);
 		ArrayList<String> activeGames = new ArrayList<String>();
 		try {
 			// System.out.println("INSERT");
@@ -598,7 +598,7 @@ public class ManageUser {
 			while (findGames.next()) {
 				String activeId = findGames.getString("savesId");
 				activeGames.add(activeId);
-				System.out.println("ADDED: " + activeId);
+				//System.out.println("ADDED: " + activeId);
 			}
 			// System.out.println("INSERT: " + insert);
 			// if there were rows affected that means user was added
@@ -612,8 +612,6 @@ public class ManageUser {
 	public String getSelectedGame(String gameId) {
 
 		String getBoard = "SELECT game FROM saves WHERE savesId = " + gameId + ";";
-		System.out.println("GETTING BOARD" + gameId);
-		System.out.println(getBoard);
 		ResultSet rs;
 		String serialBoard = "";
 		try {
@@ -629,11 +627,110 @@ public class ManageUser {
 
 		return serialBoard;
 	}
+	
+	public String getGameOpponent(String gameId, String userID) 
+	{
+
+		String getBoard = "SELECT inviter, opponent FROM saves WHERE savesId = " + gameId + ";";
+		ResultSet rs;
+		String inviter = "";
+		String opponent = "";
+		try {
+
+			rs = this.db.getStatement().executeQuery(getBoard);
+			if (rs.next()) {
+				inviter = rs.getString("inviter");
+				opponent = rs.getString("opponent");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if(inviter.equals(userID))
+		{
+			return opponent;
+		}
+		else
+		{
+			return inviter;
+		}
+	}
+	
+	public String getUserColor(String gameId,String userID) {
+
+		String getBoard = "SELECT inviter FROM saves WHERE savesId = " + gameId + ";";
+		ResultSet rs;
+		String inviterID = "";
+		try {
+
+			rs = this.db.getStatement().executeQuery(getBoard);
+			if (rs.next()) {
+				inviterID = rs.getString("inviter");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String color;
+		
+		if(userID.equals(inviterID))
+		{
+			color = "white";
+		}
+		else
+		{
+			color = "black";
+		}
+
+		return color;
+	}
+	
+	public boolean getUserTurn(String gameId,String userID) {
+
+		String getBoard = "SELECT turn, inviter FROM saves WHERE savesId = " + gameId + ";";
+		ResultSet rs;
+		String turnColor = "";
+		String inviterID = "";
+		try {
+
+			rs = this.db.getStatement().executeQuery(getBoard);
+			if (rs.next()) {
+				turnColor = rs.getString("turn");
+				inviterID = rs.getString("inviter");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String userColor;
+		
+		if(userID.equals(inviterID))
+		{
+			userColor = "white";
+		}
+		else
+		{
+			userColor = "black";
+		}
+		
+		boolean turn;
+		if(turnColor.equals(userColor))
+		{
+			turn = true;
+		}
+		else
+		{
+			turn = false;
+		}
+
+		return turn;
+	}
 
 	public String getSelectedGamesTurn(String gameId) {
 		String getBoard = "SELECT turn FROM saves WHERE savesId = " + gameId + ";";
-		System.out.println("GETTING BOARD" + gameId);
-		System.out.println(getBoard);
+		//System.out.println("GETTING BOARD" + gameId);
+		//System.out.println(getBoard);
 		ResultSet rs;
 		String serialBoard = "";
 		try {
@@ -665,7 +762,7 @@ public class ManageUser {
 
 	public int getSavedStatus(String gameId) {
 		String getstate = "SELECT status FROM saves WHERE savesId='" + gameId + "';";
-		System.out.println("GET SAVE: " + getstate);
+		//System.out.println("GET SAVE: " + getstate);
 		ResultSet rs;
 		int state = 0;
 		try {
@@ -673,7 +770,7 @@ public class ManageUser {
 			rs = this.db.getStatement().executeQuery(getstate);
 			if (rs.next()) {
 				state = rs.getInt("status");
-				System.out.println("BOARD STATUS: " + state);
+				//System.out.println("BOARD STATUS: " + state);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -724,8 +821,8 @@ public class ManageUser {
 
 	public String getOpponent(String gameId) {
 		String getBoard = "SELECT opponent FROM record WHERE savesId = " + gameId + ";";
-		System.out.println("GETTING BOARD" + gameId);
-		System.out.println(getBoard);
+		//System.out.println("GETTING BOARD" + gameId);
+		//System.out.println(getBoard);
 		ResultSet rs;
 		String serialBoard = "";
 		try {
@@ -743,9 +840,9 @@ public class ManageUser {
 	}
 
 	public int getRecordId(String date) {
-		System.out.println("d: " + date);
+		//System.out.println("d: " + date);
 		String getrecord = "SELECT recordID FROM record WHERE startDate='" + date + "';";
-		System.out.println(getrecord);
+		//System.out.println(getrecord);
 		ResultSet rs;
 		int state = 0;
 		try {

@@ -24,9 +24,9 @@ public class Server extends AbstractServer
 	final public static int DEFAULT_PORT = 5555;
 	Board board;
 	//static Table table;
-	ManageUser con = new ManageUser(new DatabaseConnection());
+	ManageUser conf = new ManageUser(new DatabaseConnection());
 	ArrayList<String> userList;
-	Game game;
+	//Game game;
 	
 	
 	protected boolean isClosed;
@@ -50,7 +50,7 @@ public class Server extends AbstractServer
 		}
 		else if(((String)message).contains("#userList"))
 		{
-			userList = con.populateUserList();
+			userList = conf.populateUserList();
 
 			ArrayList<String> tmpList = userList;
 			tmpList.add(0, "User List");
@@ -68,8 +68,8 @@ public class Server extends AbstractServer
 		{
 			
 			List<String> items = Arrays.asList(((String) message).split(","));
-			String userID =items.get(1);
-			accept(client,userID);
+			String opponnentUserID =items.get(1);
+			accept(client,opponnentUserID);
 		}
 		else if(((String)message).contains("#decline"))
 		{
@@ -79,15 +79,17 @@ public class Server extends AbstractServer
 		}
 		else if(((String)message).contains("#quit"))
 		{
+			/*
 			List<String> items = Arrays.asList(((String) message).split(","));
 			String userID =items.get(1);
-			quitGame(client,userID);
+			quitGame(client,userID);*/
 		}
 		else if(((String)message).contains("#save"))
 		{
 			List<String> items = Arrays.asList(((String)message).split(","));
-			String save = items.get(1);
-			saveGame(client,save);
+			String newGameState = items.get(1);
+			String gameID = items.get(2);
+			saveGame(client,newGameState,gameID);
 		}
 		
 		 else if(((String)message).contains("#join"))
@@ -95,70 +97,68 @@ public class Server extends AbstractServer
 			 //Get serial board
 			List<String> items = Arrays.asList(((String)message).split(","));
 			String gameId = items.get(1);
-			String userid = items.get(2);
-			//FIX!?!?
-			String currentgamestate = con.getSelectedGame(gameId);
-			System.out.println("OPPONENET?!??!!: " + gameId);
-			//joinGame(client, gameId,userid);
-			msgToCli(currentgamestate,client);
-		}
-		else
-		{
-			if((boolean) client.getInfo("turn"))
-			{
-				System.out.println("TURNNNING" + client.getName());
-				move(client,(String)message);
-							
-			}
-		}		
+			
+			joinGame(client,gameId);
+		}	
 	}
 	
 	protected void joinGame(ConnectionToClient joiningClient, String gameId)
 	{
-		/*
-		Config conf = new Config();
-		ConnectionToClient startingClient =null;
+		String currentgamestate = conf.getSelectedGame(gameId);
 		
-		String opponentUserID;
-		String color;
-		String turn;
+		String color=conf.getUserColor(gameId, (String)joiningClient.getInfo("userID"));
+		String turnColor = conf.getSelectedGamesTurn(gameId);
+		boolean turn =conf.getUserTurn(gameId, (String)joiningClient.getInfo("userID"));
 		
-		msgToCli("login,Your Color: White", startingClient);
-		
-		joiningClient.setInfo("opponent",opponentUserID);
-		msgToCli("login,Your Color: Black", joiningClient);
-		game = new Game((String)joiningClient.getInfo("userID"),opponentUserID,1); //creator,opponent,status = 1 (in prog)
-		String newGameID = conf.insertFirstSavedGame((String)startingClient.getInfo("userID"), (String)joiningClient.getInfo("userID"), 1,"white",1); //inviter,opp,status,turn,isnew
-		joiningClient.setInfo("gameId", newGameID);
-		*/
-		
-		
+		//Send client current game state, their color, and if its their move
+		msgToCli("join,"+currentgamestate+","+color+","+turnColor+","+turn,joiningClient);
 	}
 
 	
-	protected int saveGame(ConnectionToClient sendingClient, String savedGame) 
+	protected void saveGame(ConnectionToClient savingClient, String savedGame, String gameID) 
 	{
-		//save game in DB, return gameID
-		ManageUser conf = new ManageUser(new DatabaseConnection());
-		System.out.println("HOW CAN U KNOW SENIGN: " +sendingClient.toString());
-		String gameId = (String) sendingClient.getInfo("gameId");
-		//color isssue
-		System.out.println("SAVING GAME");
-		String turn = conf.getSelectedGamesTurn(gameId);
-		if(turn.equals("white"))
+		String turnColor = conf.getSelectedGamesTurn(gameID);
+		if(turnColor.equals("white"))
 		{
-			//then its black
-			turn = "black";
+			turnColor = "black";
 			
 		}
-		else {
-			turn = "white";
+		else 
+		{
+			turnColor = "white";
+		}	
+		conf.insertSavedGame(gameID,savedGame, turnColor);
+
+		String currentgamestate = conf.getSelectedGame(gameID);
+		String color=conf.getUserColor(gameID, (String)savingClient.getInfo("userID"));
+		boolean turn =conf.getUserTurn(gameID, (String)savingClient.getInfo("userID"));
+		
+		//Send client current game state, their color, and if its their move
+		msgToCli("move,"+gameID+","+currentgamestate+","+color+","+turnColor+","+turn,savingClient);
+		
+		
+		
+		
+		//SEND OTHER CLIENT INFOR ON NEW GAME STATE IF ONLINE
+		String opponentUserID = conf.getGameOpponent(gameID,(String)savingClient.getInfo("userID"));
+		ConnectionToClient opposingClient =null;
+
+		Thread[] clientThreadList = getClientConnections();
+		for (int i = 0; i < clientThreadList.length; i++) 
+		{
+			
+			if(((ConnectionToClient) clientThreadList[i]).getInfo("userID").equals(opponentUserID))
+			{
+				opposingClient = (ConnectionToClient)clientThreadList[i];
+			}
+			
 		}
+		String opColor=conf.getUserColor(gameID, opponentUserID);
+		boolean opTurn =conf.getUserTurn(gameID, opponentUserID);
 		
-		System.out.println("INSERTING TURN COLOR: " + turn);
-		conf.insertSavedGame(gameId,savedGame, turn);
+		msgToCli("move,"+gameID+","+currentgamestate+","+opColor+","+turnColor+","+opTurn,opposingClient);
 		
-		return 0;
+		
 	}
 
 	protected void serverStarted() {
@@ -305,7 +305,7 @@ public class Server extends AbstractServer
 		
 		if(userList.contains(recieverUserID))
 		{
-			con.addInvite((String)sendingClient.getInfo("userID"), recieverUserID);
+			conf.addInvite((String)sendingClient.getInfo("userID"), recieverUserID);
 		}
 		else
 		{
@@ -326,60 +326,24 @@ public class Server extends AbstractServer
 			{
 				msgToCli(move,(ConnectionToClient)clientThreadList[i]);
 				opposingClient = (ConnectionToClient)clientThreadList[i];
-				System.out.println("FOUND THE CLIENT YOU MOVE WITH");
 			}
 			
 		}
-		System.out.println("SENDING MOVE MESSAGE");
 		msgToCli(move,sendingClient);
-		
-		System.out.println("ASSIGNING MOVES");
-		sendingClient.setInfo("turn", false);
-		opposingClient.setInfo("turn", true);
+
 	}
 	
-	protected void accept(ConnectionToClient sendingClient, String userID) 
+	protected void accept(ConnectionToClient acceptingClient, String opponnentUserID) 
 	{
-		System.out.println("start");
-		ManageUser conf = new ManageUser(new DatabaseConnection());
-		ConnectionToClient startingClient =null;
+			
+		//MOVE BELOW COMMENT TO CLIENT GUI
+		//game = new Game(opponnentUserID,(String)thisClient.getInfo("userID"),1); //creator,opponent,status = 1 (in prog)
 		
-		Thread[] clientThreadList = getClientConnections();
+		//CREATE NEW GAME RECORD
+		String newGameID = conf.insertFirstSavedGame(opponnentUserID,(String)acceptingClient.getInfo("userID"), 1,"white",1); //inviter,opp,status,turn,isnew
 		
-		for (int i = 0; i < clientThreadList.length; i++) 
-		{
-			if(((ConnectionToClient) clientThreadList[i]).getInfo("userID").equals(userID))
-			{
-				startingClient = (ConnectionToClient)clientThreadList[i];
-			}
-		}
-		
-		System.out.println("SETTING INFO CLIENT");
-		
-		startingClient.setInfo("opponent",sendingClient.getInfo("userID"));
-		startingClient.setInfo("color", "white");
-		startingClient.setInfo("turn", true);
-		msgToCli("login,Your Color: White", startingClient);
-		System.out.println("STARTINGCLIENT OPPONENT: " + startingClient.getInfo("opponent"));
-		System.out.println("SETTING INFO SENDINGGGGGG");
-		
-		sendingClient.setInfo("opponent",userID);
-		System.out.println("SENDING CLIENT OPPONENT: " + sendingClient.getInfo("opponent"));
-		sendingClient.setInfo("color", "black");
-		sendingClient.setInfo("turn", false);
-		msgToCli("login,Your Color: Black", sendingClient);
-		System.out.println("NAME: " + (String)startingClient.getInfo("opponent") + " USERID: " + userID );
-		System.out.println("INVITER: " + (String)startingClient.getInfo("userID") + "OPPON: " + (String)sendingClient.getInfo("userID"));
-		game = new Game((String)sendingClient.getInfo("userID"),userID,1); //creator,opponent,status = 1 (in prog)
-		System.out.println("DATABSE CALL");
-		String newGameID = conf.insertFirstSavedGame((String)startingClient.getInfo("userID"), (String)sendingClient.getInfo("userID"), 1,"white",1); //inviter,opp,status,turn,isnew
-		System.out.println("GOT NEWGAMEID: " + newGameID);
-		startingClient.setInfo("gameId", newGameID);
-		sendingClient.setInfo("gameId", newGameID);
-		System.out.println("sending name: " + sendingClient.getInfo("gameId") + " userUD" + userID );
-		msgToCli("start,"+userID,startingClient);
-		
-		
+		//INFORM OPPONENT THAT USER HAS ACCEPTED INVITE
+		//msgToCli("start,"+(String)thisClient.getInfo("userID"),thisClient);
 	}
 	
 	protected void decline(ConnectionToClient sendingClient, String userID) 
@@ -404,8 +368,7 @@ public class Server extends AbstractServer
 	
 	protected void quitGame(ConnectionToClient sendingClient, String userID) 
 	{
-		
-		
+		/*
 		//ConnectionToClient opposingClient =null;
 		
 		Thread[] clientThreadList = getClientConnections();
@@ -420,29 +383,16 @@ public class Server extends AbstractServer
 			}
 			
 		}
-		
-		
-		/*
-		opposingClient.setInfo("opponent",null);
-		opposingClient.setInfo("color", null);
-		opposingClient.setInfo("turn", null);
-		
-		
-		sendingClient.setInfo("opponent",null);
-		sendingClient.setInfo("color", null);
-		sendingClient.setInfo("turn", null);
-		 */
-		
+		*/
 	}
 	
 
 	protected void msgToCli(Object msg, ConnectionToClient client) {
 		try {
-			System.out.println("MSGTOCLIC: " + msg + client.getId());
+
 			client.sendToClient(msg);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("CLIENT DISCONNECTED FOLLOWING MESSAGE FAILED TO SEND: " + msg);
 		}
 	}
 

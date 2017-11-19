@@ -106,7 +106,8 @@ public abstract class Player {
 		if(!kingAttacks.isEmpty())
 		{
 			//System.out.println("not empty.");
-			return new MoveTransition(this.board, move, StatusOfMove.RESULTS_IN_CHECK);
+			//return new MoveTransition(this.board, move, StatusOfMove.RESULTS_IN_CHECK);
+			return new MoveTransition(transitionBoard, move, StatusOfMove.Done);
 		}
 		
 		return  new MoveTransition(transitionBoard, move, StatusOfMove.Done); //all is well so return transitionboard and done status

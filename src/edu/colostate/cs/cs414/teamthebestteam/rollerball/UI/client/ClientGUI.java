@@ -29,6 +29,7 @@ import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.game.Board;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.game.BoardUtilities;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.game.Move;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.game.Tile;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.pieces.Alliance;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.pieces.Piece;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.pieces.Piece.PieceType;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.player.MoveTransition;
@@ -575,6 +576,29 @@ public class ClientGUI implements ClientInterface {
 													con.updateWinLossRecord(updateWinner);
 													con.updateWinLossRecord(updateLoser);
 												}
+											}
+										}
+										
+										//Check for check mate
+										if(trans.getBoard().black.isInCheck())
+										{
+											System.out.println("Black Player Is In Check Better Get Free");
+											if(trans.getBoard().currentPlayer.getAlliance().equals(Alliance.WHITE))
+											{
+												JOptionPane.showMessageDialog(null, "GAME OVER. White TEAM WINS");
+												
+												//TODO Update win and loss column
+											}
+											
+										}
+										if(trans.getBoard().white.isInCheck())
+										{
+											System.out.println("White Player Is In Check Better Get Free");
+											if(trans.getBoard().currentPlayer.getAlliance().equals(Alliance.BLACK))
+											{
+												JOptionPane.showMessageDialog(null, "GAME OVER. Black TEAM WINS");
+
+												//TODO Update win and loss column
 											}
 										}
 									}

@@ -26,17 +26,16 @@ public class King extends Piece {
 		int possibleDestinationCoordinate;
 		final List<Move> legalMoves = new ArrayList<>();
 		for (final int currentCandidate : CANDIDATE_MOVE_COORDINATES) {
+			//don't want to do any of this if we are in corner cases
+			System.out.println("CC: " + currentCandidate);
+			if(isFirstColumnExclusion(this.piecePosition, currentCandidate) || isLastColumnExclusion(this.piecePosition, currentCandidate)){
+				System.out.println("Exclusion triggered for CC: " + currentCandidate);
+				continue;
+			}
+			
 			possibleDestinationCoordinate = this.piecePosition + currentCandidate;
 			if (BoardUtilities.isValidTileCoordinate(possibleDestinationCoordinate)) {
-				final Tile possibleDestinationTile = board.getTile(possibleDestinationCoordinate);
-
-				//don't want to do any of this if we are in corner cases
-				if(isFirstColumnExclusion(this.piecePosition, currentCandidate) || isLastColumnExclusion(this.piecePosition, currentCandidate)){
-					if(currentCandidate == 1)
-					{
-						continue;
-					}
-				}
+				final Tile possibleDestinationTile = board.getTile(possibleDestinationCoordinate);				
 
 				// check if tile is occupied
 				// if not add it to moves
@@ -75,7 +74,7 @@ public class King extends Piece {
 	//NOT SURE IF THIS IS ALL OF THE EXCLUSIONS
 	private static boolean isLastColumnExclusion(final int currentPosition, final int candidateOffset)
 	{
-		return BoardUtilities.FIRST_COLUMN[currentPosition] && (candidateOffset == 8 || candidateOffset == 1 || candidateOffset == -6);
+		return BoardUtilities.LAST_COLUMN[currentPosition] && (candidateOffset == 8 || candidateOffset == 1 || candidateOffset == -6);
 	}
 
 	

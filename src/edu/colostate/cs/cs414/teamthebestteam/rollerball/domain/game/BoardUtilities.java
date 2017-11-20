@@ -77,19 +77,19 @@ public class BoardUtilities {
 	public static final boolean[] FIFTH_ROW = initRow(28);
 	public static final boolean[] SIXTH_ROW = initRow(35);
 	public static final boolean[] LAST_ROW = initRow(42);
-	
+
 	private static Set<Integer> initOuterRing() {
-		Integer[] o_ring = { 0,1,2,3,4,5,6,13,20,27,34,41,48,47,46,45,44,43,42,35,28,21,14,7};
+		Integer[] o_ring = { 0, 1, 2, 3, 4, 5, 6, 13, 20, 27, 34, 41, 48, 47, 46, 45, 44, 43, 42, 35, 28, 21, 14, 7 };
 		Set<Integer> out_ring = new HashSet<>(Arrays.asList(o_ring));
 		return out_ring;
 	}
-	
+
 	private static Set<Integer> initInnerRing() {
-		Integer[] i_ring = { 8,9,10,11,12,19,26,33,40,39,38,37,36,29,22,15};
+		Integer[] i_ring = { 8, 9, 10, 11, 12, 19, 26, 33, 40, 39, 38, 37, 36, 29, 22, 15 };
 		Set<Integer> in_ring = new HashSet<>(Arrays.asList(i_ring));
 		return in_ring;
 	}
-	
+
 	private static boolean[] initColumn(int columnNumber) {
 		// initialize spot in column to true then increment counter by 7 to make
 		// whole column true
@@ -119,7 +119,7 @@ public class BoardUtilities {
 	private static Set<Integer> initQuadrantOne() {
 		Set<Integer> quadrant = new HashSet<>();
 		for (int i = 0; i < 12; i++) {
-			if (i != 5 || i != 6) {
+			if (i != 5 && i != 6) {
 				quadrant.add(i);
 			}
 		}
@@ -142,10 +142,11 @@ public class BoardUtilities {
 	 */
 	private static Set<Integer> initQuadrantThree() {
 		Set<Integer> quadrant = new HashSet<>();
-		for (int i = 37; i < 49; i++) {
-			if (i != 42 || i != 43) {
-				quadrant.add(i);
-			}
+		for (int i = 37; i < 41; i++) {
+			quadrant.add(i);
+		}
+		for (int j = 44; j < 49; j++) {
+			quadrant.add(j);
 		}
 		return quadrant;
 	}
@@ -183,6 +184,7 @@ public class BoardUtilities {
 	 */
 	public static int getQuadrantCoordinates(int coordinate) {
 
+			
 		if (QUADRANT_ONE.contains(coordinate)) {
 			return 1;
 		}

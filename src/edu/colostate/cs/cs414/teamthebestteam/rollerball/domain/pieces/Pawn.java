@@ -14,17 +14,18 @@ import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.game.BoardUtilit
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.game.Move;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.game.Tile;
 
-
-public class Pawn extends Piece{
+public class Pawn extends Piece {
 
 	/**
-	 * one step orthogonally forward on the ring on which it currently stands, or one step diagonally forward to either ring.
-	 * A pawn does not move backward or sideways, and there is no initial two-step option.
-	 * A pawn promotes to rook or bishop when reaching either of the two starting squares of the opponent's pawns.
-	 * CANDIDATE_MOVE_COORDINATES will be an array that gets populated by determining which Quadrant a player is in.
+	 * one step orthogonally forward on the ring on which it currently stands,
+	 * or one step diagonally forward to either ring. A pawn does not move
+	 * backward or sideways, and there is no initial two-step option. A pawn
+	 * promotes to rook or bishop when reaching either of the two starting
+	 * squares of the opponent's pawns. CANDIDATE_MOVE_COORDINATES will be an
+	 * array that gets populated by determining which Quadrant a player is in.
 	 * This will help enforce direction
 	 */
-	public static Set<Integer> CANDIDATE_MOVE_COORDINATES = null;	
+	public static Set<Integer> CANDIDATE_MOVE_COORDINATES = null;
 
 	public Pawn(int piecePosition, Alliance pieceAlliance) {
 		super(PieceType.Pawn, piecePosition, pieceAlliance);
@@ -32,157 +33,161 @@ public class Pawn extends Piece{
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return PieceType.Pawn.toString();
 	}
 
 	@Override
-	public Collection<Move> calculateLegalMoves(Board board) 
-	{
-		//List will hold all valid moves and will be returned
+	public Collection<Move> calculateLegalMoves(Board board) {
+		// List will hold all valid moves and will be returned
 		final List<Move> legalMove = new ArrayList<>();
 
 		/**
 		 * Get the quadrant that the piece is in
 		 */
 		int quadrant = BoardUtilities.getQuadrantCoordinates(this.piecePosition);
+		System.out.println("BU GET QUAD: " + quadrant);
 		int column = BoardUtilities.getColumn(this.piecePosition);
 
-		CANDIDATE_MOVE_COORDINATES = determineCoordinates(quadrant,column, this.piecePosition);
+		CANDIDATE_MOVE_COORDINATES = determineCoordinates(quadrant, column, this.piecePosition);
 
-		for(int candidateOffset : CANDIDATE_MOVE_COORDINATES)
-		{
+		for (int candidateOffset : CANDIDATE_MOVE_COORDINATES) {
 			int possibleDestinationCoordinate = this.piecePosition + candidateOffset;
 
-			if(!BoardUtilities.isValidTileCoordinate(possibleDestinationCoordinate))
-			{
+			if (!BoardUtilities.isValidTileCoordinate(possibleDestinationCoordinate)) {
 				continue;
 			}
 
-			//get tile of the board of the destination coordinate where you want to move your piece
+			// get tile of the board of the destination coordinate where you
+			// want to move your piece
 			final Tile candidateTile = board.getTile(possibleDestinationCoordinate);
-			//if moving to a none occupied tile, add to legal moves
-			//pass in board, current piece that we are on,
-			if(!candidateTile.isTileOccupided())
-			{
+			// if moving to a none occupied tile, add to legal moves
+			// pass in board, current piece that we are on,
+			if (!candidateTile.isTileOccupided()) {
 				System.out.println(possibleDestinationCoordinate);
 				legalMove.add(new Move.BasicMove(board, this, possibleDestinationCoordinate));
 			}
 
-			//There is a piece at this coordinate
-			else
-			{
-				//get the piece at this location
+			// There is a piece at this coordinate
+			else {
+				// get the piece at this location
 				final Piece pieceAtDestination = candidateTile.getPiece();
 
-				//get the association of the piece
+				// get the association of the piece
 				final Alliance pieceAssociation = pieceAtDestination.getPieceAssociation();
 
-				//if THIS piece that we are examining is not = to piece association that is at our destination tile
-				//we know this is an enemy piece. So do a capture move
-				if(this.getPieceAssociation() != pieceAssociation)
-				{
-					//need board, piece, destination tile, and piece that is being captured
+				// if THIS piece that we are examining is not = to piece
+				// association that is at our destination tile
+				// we know this is an enemy piece. So do a capture move
+				if (this.getPieceAssociation() != pieceAssociation) {
+					// need board, piece, destination tile, and piece that is
+					// being captured
 					legalMove.add(new Move.CaptureMove(board, this, possibleDestinationCoordinate, pieceAtDestination));
 				}
 			}
-		}//end loop through 
-		
+		} // end loop through
+
 		return ImmutableList.copyOf(legalMove);
-	}//end calculateLegalMove
+	}// end calculateLegalMove
 
 	/**
 	 * @author kb
+	 * @author cm
 	 * @param quadrant
 	 * @param column
 	 * @return possible move coordinates depending on which quadrant you are in
 	 */
-	private Set<Integer> determineCoordinates(int quadrant, int column, int idOfTile) 
-	{
+
+	// This is an excellent method just need a couple tweeks to the coordinates
+	private Set<Integer> determineCoordinates(int quadrant, int column, int idOfTile) {
 		Set<Integer> coords = new HashSet<>();
-		Integer[] r1 = {0,7,14,21,28,35,42};
+		Integer[] r1 = { 0, 7, 14, 21, 28, 35, 42 };
 		Set<Integer> rowZero = new HashSet<>(Arrays.asList(r1));
-		Integer[] r2 = {6,13,20,27,34,41,48};
+		Integer[] r2 = { 6, 13, 20, 27, 34, 41, 48 };
 		Set<Integer> rowSix = new HashSet<>(Arrays.asList(r2));
-
-		if(quadrant == 1)
-		{
-			if(column == 0 && idOfTile != 6)
-			{
-				coords.add(8);
+		System.out.println("QUAD: " + quadrant);
+		System.out.println("COLU: " + column);
+		System.out.println("TILE: " + idOfTile);
+		// 6 is never in q1
+		// 0 is however
+		if (quadrant == 1) {
+			if (idOfTile == 7) {
+				coords.add(-6);
+				coords.add(-7);
+			} else if (idOfTile == 0) {
 				coords.add(1);
-			}
-			else if(idOfTile == 6)
-			{
-				coords.add(7);
-				coords.add(6);
-			}
-			else
-			{
+				coords.add(8);
+			} else {
 				coords.add(8);
 				coords.add(1);
 				coords.add(-6);
 			}
 		}
 
-		if(quadrant == 3)
-		{
-			if(column == 6)
-			{
-				coords.add(-8);
-				coords.add(-1);
-			}
-			else if(idOfTile == 42)
-			{
-				coords.add(-7);
-				coords.add(-6);
-			}
-			else
-			{
-				coords.add(-8);
-				coords.add(-1);
-				coords.add(6);
-			}
-		}
-		
-		if(quadrant == 2)
-		{
-			//if you are NOT in first row 
-			if(column == 6 && !rowSix.contains(idOfTile))
-			{
+		if (quadrant == 2) {
+			if (idOfTile == 5) {
 				coords.add(8);
-				coords.add(7);
-			}
-			//if you are in first row in quadrant 4 
-			else 
-			{
+				coords.add(1);
+			} else if (idOfTile == 6) {
 				coords.add(7);
 				coords.add(6);
 			}
-		}
-		
-		if(quadrant == 4)
-		{
-			//if you are NOT in last row 
-			if(column == 6 && !rowZero.contains(idOfTile))
-			{
-				coords.add(-8);
-				coords.add(-7);
+
+			else {
+				if(BoardUtilities.INNER_RING.contains(idOfTile)){
+					coords.add(8);
+					coords.add(7);
+				}
+				
+				if(BoardUtilities.OUTER_RING.contains(idOfTile)){
+					coords.add(6);
+					coords.add(7);
+				}
 			}
-			//if you are in last row in quadrant 4 
-			else 
-			{
+		}
+
+		if (quadrant == 3) {
+			if (idOfTile == 41) {
+				coords.add(6);
+				coords.add(7);
+			} else if (idOfTile == 48) {
+				coords.add(-1);
+				coords.add(-8);
+			} else {
+				coords.add(-8);
+				coords.add(-1);
+				coords.add(6);
+			}
+		}
+
+		if (quadrant == 4) {
+			// if you are NOT in last row
+			if (idOfTile == 43) {
+				coords.add(-8);
+				coords.add(-1);
+
+			} else if (idOfTile == 42) {
 				coords.add(-7);
 				coords.add(-6);
+			}
+
+			else {
+				if(BoardUtilities.INNER_RING.contains(idOfTile)){
+					coords.add(-8);
+					coords.add(-7);
+				}
+				
+				if(BoardUtilities.OUTER_RING.contains(idOfTile)){
+					coords.add(-6);
+					coords.add(-7);
+				}
 			}
 		}
 		return coords;
 	}
 
 	@Override
-	public Piece movePiece(Move move) 
-	{
+	public Piece movePiece(Move move) {
 		return new Pawn(move.getDestCoordinate(), move.getMovedPiece().getPieceAssociation());
 	}
 

@@ -61,10 +61,12 @@ public class Pawn extends Piece {
 			// get tile of the board of the destination coordinate where you
 			// want to move your piece
 			final Tile candidateTile = board.getTile(possibleDestinationCoordinate);
-			// if moving to a none occupied tile, add to legal moves
-			// pass in board, current piece that we are on,
-			if (!candidateTile.isTileOccupided()) {
-				System.out.println(possibleDestinationCoordinate);
+
+			//if moving to a none occupied tile, add to legal moves
+			//pass in board, current piece that we are on,
+			if(!candidateTile.isTileOccupided())
+			{
+				//System.out.println(possibleDestinationCoordinate);
 				legalMove.add(new Move.BasicMove(board, this, possibleDestinationCoordinate));
 			}
 

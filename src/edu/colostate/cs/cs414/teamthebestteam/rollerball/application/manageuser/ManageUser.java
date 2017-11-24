@@ -303,10 +303,10 @@ public class ManageUser {
 		return userList;
 	}
 
-	public String createGameRecord(String gameCreator, String gameOpponent) {
+	public int createGameRecord(String gameCreator, String gameOpponent) {
 
 		String status = "inProgress";
-
+		int recordID = 0;
 		// formatting the date to match the datetime format in mysql database
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date curDate = new Date();
@@ -318,20 +318,29 @@ public class ManageUser {
 
 		//System.out.println("*********addRecord: " + addRecord);
 
+		
 		try {
 			int effected = this.db.getStatement().executeUpdate(addRecord);
 			// if there were rows affected that means record was added
 
 			if (effected != 0) {
-				return startDate;
+				recordID = getGameRecordID(gameCreator, gameOpponent);
+				//System.out.println("***************recordID: " + recordID);
+				//return startDate;
+				return recordID;
+
 			}
 
-			return startDate;
+			//return startDate;
+			return recordID;
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		return startDate;
+		//return startDate;
+		return recordID;
+
 	}
 
 	public int getGameRecordID(String gameCreator, String gameOpponent) {
@@ -349,7 +358,8 @@ public class ManageUser {
 		int recordID = 0;
 		try {
 			while (result.next()) {
-				recordID = result.getInt(1);
+				//recordID = result.getInt(1);
+				recordID = result.getInt("recordID");
 			}
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block

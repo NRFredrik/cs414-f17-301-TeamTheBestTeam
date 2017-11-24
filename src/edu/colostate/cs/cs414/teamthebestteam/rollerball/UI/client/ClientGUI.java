@@ -19,10 +19,13 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.game.Board;
@@ -158,7 +161,8 @@ public class ClientGUI implements ClientInterface {
 	private String gameOpponent;
 	private String gameCreator;
 	private String oppo;
-	private String findDate;
+	//private String findDate;
+	private int recordID;
 	//private String gameLoser;
 	private String thisUserID;
 	private String gameId;
@@ -541,7 +545,7 @@ public class ClientGUI implements ClientInterface {
 											//////////////////////////////////
 											//check white pieces King to see if he landed on opposing Kings starting tile
 											//if so, GAME OVER
-										int temp  = con.getRecordId(findDate);
+										//int temp  = con.getRecordId(findDate);
 										for(Piece p : trans.getBoard().getWhitePieces())
 										{
 											if(p.getPieceType().equals(PieceType.King))
@@ -550,15 +554,23 @@ public class ClientGUI implements ClientInterface {
 												{
 													JOptionPane.showMessageDialog(null, "GAME OVER. WHITE TEAM WINS");
 													System.out.println("GAME OVER. WHITE TEAM WINS");
-													int recordId = con.getRecordId(findDate);
-													System.out.println("reiD: " + recordId);
-													//Update the record to database and increment the win count
-													String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + currentOpponent + "' WHERE `recordID`='"+recordId+"'";
-													System.out.println(updateWinner);
+													int recordId = con.getGameRecordID( thisUserID,  oppo);
+													
+													String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + thisUserID + "' WHERE `recordID`='"+recordId+"'";
 													String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ oppo+"' WHERE `recordID`='"+recordId+"'";
-													System.out.println(updateLoser);
+													
+													DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+													Date curDate = new Date();
+													String endDate = dateFormat.format(curDate);
+													String updateEndDate = "UPDATE `Rollerball`.`record` SET `endDate`='"+ endDate+"' WHERE `recordID`='"+recordId+"'";
+													
+													String status = "finished";
+													String updateStatus = "UPDATE `Rollerball`.`record` SET `status`='"+ status+"' WHERE `recordID`='"+recordId+"'";
+
 													con.updateWinLossRecord(updateWinner);												
 													con.updateWinLossRecord(updateLoser);
+													con.updateWinLossRecord(updateEndDate);
+													con.updateWinLossRecord(updateStatus);
 												}
 											}
 										}
@@ -573,8 +585,19 @@ public class ClientGUI implements ClientInterface {
 													//Update the record to database and increment the win count
 													String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + gameOpponent + "' WHERE `recordID`='"+gameId+"'";
 													String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ gameCreator +"' WHERE `recordID`='"+gameId+"'";
+													
+													DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+													Date curDate = new Date();
+													String endDate = dateFormat.format(curDate);
+													String updateEndDate = "UPDATE `Rollerball`.`record` SET `endDate`='"+ endDate+"' WHERE `recordID`='"+gameId+"'";
+													
+													String status = "finished";
+													String updateStatus = "UPDATE `Rollerball`.`record` SET `status`='"+ status+"' WHERE `recordID`='"+gameId+"'";
+													
 													con.updateWinLossRecord(updateWinner);
 													con.updateWinLossRecord(updateLoser);
+													con.updateWinLossRecord(updateEndDate);
+													con.updateWinLossRecord(updateStatus);
 												}
 											}
 										}
@@ -1406,7 +1429,9 @@ public class ClientGUI implements ClientInterface {
 			
 			gameCreator = currentOpponent;
 			gameOpponent = thisUserID;
-			findDate = con.createGameRecord(gameCreator, gameOpponent);
+			//findDate = con.createGameRecord(gameCreator, gameOpponent);
+
+			System.out.println();
 			//System.out.println(x);
 			con.acceptInviteDB(currentOpponent, thisUserID);
 			
@@ -1414,7 +1439,10 @@ public class ClientGUI implements ClientInterface {
 	//***********creating game record***************
 			gameCreator = currentOpponent;
 			gameOpponent = thisUserID;
-			con.createGameRecord(gameCreator, gameOpponent);
+			recordID = con.createGameRecord(gameCreator, gameOpponent);
+			//findDate = con.createGameRecord(gameCreator, gameOpponent);
+
+			//con.createGameRecord(gameCreator, gameOpponent);
 			con.acceptInviteDB(currentOpponent, thisUserID);
 		
 		}

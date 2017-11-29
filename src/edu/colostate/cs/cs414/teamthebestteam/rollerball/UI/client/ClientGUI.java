@@ -162,6 +162,7 @@ public class ClientGUI implements ClientInterface {
 	//private String gameLoser;
 	private String thisUserID;
 	private String gameId;
+	private String promotedTo = "";
 	final ManageUser con = new ManageUser(new DatabaseConnection());
 	
 	private boolean turn;
@@ -531,6 +532,7 @@ public class ClientGUI implements ClientInterface {
 											//client.handleMessageFromClientUI(tilePieceIsOn.getTileCoord() + "," + destinationTile.getTileCoord());
 											
 											rollBoard = trans.getBoard();
+											
 											//now save the board
 											String boardString = rollBoard.breakDownBoard(rollBoard);
 											client.handleMessageFromClientUI("#save,"+ boardString +"," + gameId);
@@ -542,6 +544,10 @@ public class ClientGUI implements ClientInterface {
 											//check white pieces King to see if he landed on opposing Kings starting tile
 											//if so, GAME OVER
 										int temp  = con.getRecordId(findDate);
+										
+										List<String> optionList = new ArrayList<String>();
+										optionList.add("Bishop");
+										optionList.add("Rook");
 										for(Piece p : trans.getBoard().getWhitePieces())
 										{
 											if(p.getPieceType().equals(PieceType.King))
@@ -561,6 +567,20 @@ public class ClientGUI implements ClientInterface {
 													con.updateWinLossRecord(updateLoser);
 												}
 											}
+											if(p.getPieceType().equals(PieceType.Pawn))
+											{
+												if(p.getPiecePosition() == 4 || p.getPiecePosition() == 11)
+												{
+													Object[] options = optionList.toArray();
+													promotedTo = (String) JOptionPane.showInputDialog(null, 
+															"You have been promoted.", 
+															"Choose your piece", 
+															JOptionPane.QUESTION_MESSAGE, 
+															null,
+															options, 
+															options[0]);
+												}
+											}
 										}
 										for(Piece p : trans.getBoard().getBlackPieces())
 										{
@@ -575,6 +595,20 @@ public class ClientGUI implements ClientInterface {
 													String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ gameCreator +"' WHERE `recordID`='"+gameId+"'";
 													con.updateWinLossRecord(updateWinner);
 													con.updateWinLossRecord(updateLoser);
+												}
+											}
+											if(p.getPieceType().equals(PieceType.Pawn))
+											{
+												if(p.getPiecePosition() == 37 || p.getPiecePosition() == 44)
+												{
+													Object[] options = optionList.toArray();
+													promotedTo = (String) JOptionPane.showInputDialog(null, 
+															"You have been promoted.", 
+															"Choose your piece", 
+															JOptionPane.QUESTION_MESSAGE, 
+															null,
+															options, 
+															options[0]);
 												}
 											}
 										}
@@ -601,6 +635,8 @@ public class ClientGUI implements ClientInterface {
 												//TODO Update win and loss column
 											}
 										}
+										
+										//TODO Remove Moves
 									}
 									else
 									{
@@ -822,6 +858,7 @@ public class ClientGUI implements ClientInterface {
 	@Override
 	public void display(Object message) 
 	{
+		
 		if(message instanceof String)
 		{
 			System.out.println("MESSAGE RECIEVED FROM SERVER: "+ (String)message);

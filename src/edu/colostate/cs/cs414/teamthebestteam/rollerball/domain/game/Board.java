@@ -188,6 +188,7 @@ public class Board {
 
 		//keep track of which player's turn it is to move
 		Alliance nextMoveMaker;
+		Move transitionMove;
 
 		public Builder()
 		{
@@ -216,6 +217,11 @@ public class Board {
 			this.nextMoveMaker = nextMoveMaker;
 			return this;
 		}
+		
+		public Builder setMoveTransition(final Move transitionMove) {
+            this.transitionMove = transitionMove;
+            return this;
+        }
 
 		public Board build()throws Exception
 		{

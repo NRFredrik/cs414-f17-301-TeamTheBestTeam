@@ -66,6 +66,12 @@ public class Pawn extends Piece {
 			//pass in board, current piece that we are on,
 			if(!candidateTile.isTileOccupided())
 			{
+				//if the pawn can land on a promtion square without an attack
+				if(this.pieceAlliance.isPawnPromotionSquare(possibleDestinationCoordinate)){
+					legalMove.add(new Move.pawnPromotion(new Move.BasicMove(board, this, possibleDestinationCoordinate), new Rook(possibleDestinationCoordinate,this.pieceAlliance)));
+					//legalMove.add(new Move.pawnPromotion(new Move.BasicMove(board, this, possibleDestinationCoordinate), new Bishop(possibleDestinationCoordinate,this.pieceAlliance)));
+
+				}
 				//System.out.println(possibleDestinationCoordinate);
 				legalMove.add(new Move.BasicMove(board, this, possibleDestinationCoordinate));
 			}
@@ -84,6 +90,11 @@ public class Pawn extends Piece {
 				if (this.getPieceAssociation() != pieceAssociation) {
 					// need board, piece, destination tile, and piece that is
 					// being captured
+					//if the pawn can land on a promtion square without an attack
+					if(this.pieceAlliance.isPawnPromotionSquare(possibleDestinationCoordinate)){
+						//legalMove.add(new Move.pawnPromotion(new Move.CaptureMove(board, this, possibleDestinationCoordinate, pieceAtDestination),new Rook(possibleDestinationCoordinate,this.pieceAlliance)));
+						legalMove.add(new Move.pawnPromotion(new Move.CaptureMove(board, this, possibleDestinationCoordinate, pieceAtDestination),new Bishop(possibleDestinationCoordinate,this.pieceAlliance)));
+					}
 					legalMove.add(new Move.CaptureMove(board, this, possibleDestinationCoordinate, pieceAtDestination));
 				}
 			}
@@ -191,6 +202,11 @@ public class Pawn extends Piece {
 	@Override
 	public Piece movePiece(Move move) {
 		return new Pawn(move.getDestCoordinate(), move.getMovedPiece().getPieceAssociation());
+	}
+
+	public Piece getPromotionPiece() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

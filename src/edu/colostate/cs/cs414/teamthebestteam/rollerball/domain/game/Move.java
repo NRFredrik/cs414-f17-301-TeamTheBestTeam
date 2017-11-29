@@ -1,6 +1,7 @@
 package edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.game;
 
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.game.Board.Builder;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.pieces.Pawn;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.pieces.Piece;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.pieces.Piece.PieceType;
 
@@ -27,7 +28,10 @@ public abstract class Move {
 		this.movedPiece = movedPiece;
 		this.destinationCoordinate = destinationCoordinate;
 	}
-
+	
+	public Board getBoard(){
+		return this.board;
+	}
 	// return a new board with the newly executed move/piece position
 	public Board executeMove() throws Exception {
 		final Builder builder = new Builder();
@@ -106,6 +110,58 @@ public abstract class Move {
 		public int hashCode() {
 			return this.capturedPiece.hashCode() + super.hashCode();
 		}
+	}
+	
+	public static class pawnPromotion extends Move {
+		final Move decoratedMove;
+        final Pawn promotedPawn;
+        final Piece promotionPiece;
+
+        public pawnPromotion(final Move decoratedMove,
+                             final Piece promotionPiece) {
+            super(decoratedMove.getBoard(), decoratedMove.getMovedPiece(), decoratedMove.getDestCoordinate());
+            this.decoratedMove = decoratedMove;
+            this.promotedPawn = (Pawn) decoratedMove.getMovedPiece();
+            this.promotionPiece = promotionPiece;
+        }
+        
+        @Override
+        public int hashCode() {
+            return decoratedMove.hashCode() + (53 * promotedPawn.hashCode());
+        }
+
+        @Override
+        public boolean equals(final Object other) {
+            return this == other || other instanceof pawnPromotion && (super.equals(other));
+        }
+        
+        @Override
+        public Board executeMove() throws Exception {
+            final Board pawnMovedBoard = this.decoratedMove.executeMove();
+            final Board.Builder builder = new Builder();
+            for (final Piece piece : pawnMovedBoard.currentPlayer().getActivePieces()) {
+                if (!this.promotedPawn.equals(piece)) {
+                    builder.setPiece(piece);
+                }
+            }
+            for (final Piece piece : pawnMovedBoard.currentPlayer().getOpponent().getActivePieces()) {
+                builder.setPiece(piece);
+            }
+           builder.setPiece(this.promotionPiece.movePiece(this));
+            builder.setMoveMaker(pawnMovedBoard.currentPlayer().getAlliance());
+            builder.setMoveTransition(this);
+            return builder.build();
+        }
+
+        @Override
+        public boolean isAttack() {
+            return this.decoratedMove.isAttack();
+        }
+
+        @Override
+        public Piece getAttackedPiece() {
+            return this.decoratedMove.getAttackedPiece();
+        }
 	}
 
 	/**

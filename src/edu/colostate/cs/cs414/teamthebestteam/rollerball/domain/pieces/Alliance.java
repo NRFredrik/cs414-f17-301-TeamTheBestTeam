@@ -28,6 +28,14 @@ public enum Alliance {
 		public Player playersTurn(WhitePlayer white, BlackPlayer black) {
 			return white;
 		}
+
+		@Override
+		public boolean isPawnPromotionSquare(int position) {
+			if(position == 4 || position == 11){
+				return true;
+			}
+			return false;
+		}
 	},
 	
 	BLACK
@@ -49,10 +57,19 @@ public enum Alliance {
 		public Player playersTurn(WhitePlayer white, BlackPlayer black) {
 			return black;
 		}
+
+		@Override
+		public boolean isPawnPromotionSquare(int position) {
+			if(position == 44 || position == 37){
+				return true;
+			}
+			return false;
+		}
 		
 	};
 	
 	public abstract boolean isWhite();
 	public abstract boolean isBlack();
 	public abstract Player playersTurn(WhitePlayer white, BlackPlayer black); //determine who's turn it is
+	public abstract boolean isPawnPromotionSquare(int position);
 }

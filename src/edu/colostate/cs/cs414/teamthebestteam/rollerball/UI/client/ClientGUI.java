@@ -861,6 +861,14 @@ public class ClientGUI implements ClientInterface {
 		//get board
 		try {
 			rollBoard = Board.rebuildBoard(serializedBoard,turnColor);
+			if(rollBoard.black.isInCheck())
+			{
+				JOptionPane.showMessageDialog(null, "GAME OVER. WHITE PLAYER WINS");
+			}
+			if(rollBoard.white.isInCheck())
+			{
+				JOptionPane.showMessageDialog(null, "GAME OVER. BLACK PLAYER WINS");
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();

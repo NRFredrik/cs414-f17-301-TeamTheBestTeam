@@ -864,10 +864,45 @@ public class ClientGUI implements ClientInterface {
 			if(rollBoard.black.isInCheck())
 			{
 				JOptionPane.showMessageDialog(null, "GAME OVER. WHITE PLAYER WINS");
+				
+				int recordId = con.getGameRecordID( thisUserID,  oppo);
+				
+				String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + thisUserID + "' WHERE `recordID`='"+recordId+"'";
+				String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ oppo+"' WHERE `recordID`='"+recordId+"'";
+				
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date curDate = new Date();
+				String endDate = dateFormat.format(curDate);
+				String updateEndDate = "UPDATE `Rollerball`.`record` SET `endDate`='"+ endDate+"' WHERE `recordID`='"+recordId+"'";
+				
+				String status = "finished";
+				String updateStatus = "UPDATE `Rollerball`.`record` SET `status`='"+ status+"' WHERE `recordID`='"+recordId+"'";
+
+				con.updateWinLossRecord(updateWinner);												
+				con.updateWinLossRecord(updateLoser);
+				con.updateWinLossRecord(updateEndDate);
+				con.updateWinLossRecord(updateStatus);
 			}
 			if(rollBoard.white.isInCheck())
 			{
 				JOptionPane.showMessageDialog(null, "GAME OVER. BLACK PLAYER WINS");
+				
+				//Update the record to database and increment the win count
+				String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + gameOpponent + "' WHERE `recordID`='"+gameId+"'";
+				String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ gameCreator +"' WHERE `recordID`='"+gameId+"'";
+				
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date curDate = new Date();
+				String endDate = dateFormat.format(curDate);
+				String updateEndDate = "UPDATE `Rollerball`.`record` SET `endDate`='"+ endDate+"' WHERE `recordID`='"+gameId+"'";
+				
+				String status = "finished";
+				String updateStatus = "UPDATE `Rollerball`.`record` SET `status`='"+ status+"' WHERE `recordID`='"+gameId+"'";
+				
+				con.updateWinLossRecord(updateWinner);
+				con.updateWinLossRecord(updateLoser);
+				con.updateWinLossRecord(updateEndDate);
+				con.updateWinLossRecord(updateStatus);
 			}
 
 		} catch (Exception e) {

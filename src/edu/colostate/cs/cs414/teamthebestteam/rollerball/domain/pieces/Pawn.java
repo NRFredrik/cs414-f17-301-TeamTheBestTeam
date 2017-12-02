@@ -144,6 +144,10 @@ public class Pawn extends Piece {
 			} else if (idOfTile == 6) {
 				coords.add(7);
 				coords.add(6);
+			} else if(idOfTile == 33){
+				coords.add(6);
+				coords.add(7);
+				coords.add(8);
 			}
 
 			else {
@@ -182,7 +186,12 @@ public class Pawn extends Piece {
 			} else if (idOfTile == 42) {
 				coords.add(-7);
 				coords.add(-6);
+			} else if(idOfTile==15){
+				coords.add(-8);
+				coords.add(-7);
+				coords.add(-6);
 			}
+			
 
 			else {
 				if(BoardUtilities.INNER_RING.contains(idOfTile)){

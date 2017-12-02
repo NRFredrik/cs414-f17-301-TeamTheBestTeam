@@ -550,9 +550,9 @@ public class ClientGUI implements ClientInterface {
 
 										//int temp  = con.getRecordId(findDate);
 										
-										List<String> optionList = new ArrayList<String>();
-										optionList.add("Bishop");
-										optionList.add("Rook");
+//										List<String> optionList = new ArrayList<String>();
+//										optionList.add("Bishop");
+//										optionList.add("Rook");
 
 										for(Piece p : trans.getBoard().getWhitePieces())
 										{
@@ -581,20 +581,20 @@ public class ClientGUI implements ClientInterface {
 													con.updateWinLossRecord(updateStatus);
 												}
 											}
-											if(p.getPieceType().equals(PieceType.Pawn))
-											{
-												if(p.getPiecePosition() == 4 || p.getPiecePosition() == 11)
-												{
-													Object[] options = optionList.toArray();
-													promotedTo = (String) JOptionPane.showInputDialog(null, 
-															"You have been promoted.", 
-															"Choose your piece", 
-															JOptionPane.QUESTION_MESSAGE, 
-															null,
-															options, 
-															options[0]);
-												}
-											}
+//											if(p.getPieceType().equals(PieceType.Pawn))
+//											{
+//												if(p.getPiecePosition() == 4 || p.getPiecePosition() == 11)
+//												{
+//													Object[] options = optionList.toArray();
+//													promotedTo = (String) JOptionPane.showInputDialog(null, 
+//															"You have been promoted.", 
+//															"Choose your piece", 
+//															JOptionPane.QUESTION_MESSAGE, 
+//															null,
+//															options, 
+//															options[0]);
+//												}
+//											}
 										}
 										for(Piece p : trans.getBoard().getBlackPieces())
 										{
@@ -622,20 +622,20 @@ public class ClientGUI implements ClientInterface {
 													con.updateWinLossRecord(updateStatus);
 												}
 											}
-											if(p.getPieceType().equals(PieceType.Pawn))
-											{
-												if(p.getPiecePosition() == 37 || p.getPiecePosition() == 44)
-												{
-													Object[] options = optionList.toArray();
-													promotedTo = (String) JOptionPane.showInputDialog(null, 
-															"You have been promoted.", 
-															"Choose your piece", 
-															JOptionPane.QUESTION_MESSAGE, 
-															null,
-															options, 
-															options[0]);
-												}
-											}
+//											if(p.getPieceType().equals(PieceType.Pawn))
+//											{
+//												if(p.getPiecePosition() == 37 || p.getPiecePosition() == 44)
+//												{
+//													Object[] options = optionList.toArray();
+//													promotedTo = (String) JOptionPane.showInputDialog(null, 
+//															"You have been promoted.", 
+//															"Choose your piece", 
+//															JOptionPane.QUESTION_MESSAGE, 
+//															null,
+//															options, 
+//															options[0]);
+//												}
+//											}
 										}
 										
 										//Check for check mate
@@ -861,14 +861,6 @@ public class ClientGUI implements ClientInterface {
 		//get board
 		try {
 			rollBoard = Board.rebuildBoard(serializedBoard,turnColor);
-			if(rollBoard.black.isInCheck())
-			{
-				JOptionPane.showMessageDialog(null, "GAME OVER. WHITE PLAYER WINS");
-			}
-			if(rollBoard.white.isInCheck())
-			{
-				JOptionPane.showMessageDialog(null, "GAME OVER. BLACK PLAYER WINS");
-			}
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -8,17 +8,48 @@ public class Client extends AbstractClient
 {
 	ClientInterface clientUI;
 	
-	public Client(String userID, String host, int port, ClientInterface clientUI) throws IOException 
+	public Client(String userID, String password, String host, int port, ClientInterface clientUI) throws IOException 
 	{	
 		super(host, port); // Call the superclass constructor
 		this.clientUI = clientUI;
 		openConnection();
-		handleMessageFromClientUI("#login," + userID);		
+		handleMessageFromClientUI("#login," + userID+ "," + password);		
 	}
+	public Client(String host, int port, ClientInterface clientUI) throws IOException 
+	{	
+		super(host, port); // Call the superclass constructor
+		this.clientUI = clientUI;
+		openConnection();	
+	}
+	
 	@Override
 	protected void handleMessageFromServer(Object msg) 
 	{
-			clientUI.display(msg);	
+			if(msg.toString().contains("login"))
+			{
+				List<String> items = Arrays.asList(((String) msg).split(","));
+				boolean correctLogin =Boolean.valueOf(items.get(1));
+				if(!correctLogin)
+				{
+					try {
+						clientUI.display("loginIncorrect");	
+						closeConnection();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+				else
+				{
+					clientUI.display("loginCorrect");		
+				}
+			}
+			else
+			{
+				clientUI.display(msg);	
+			}
+			
 	}
 	public void handleMessageFromClientUI(Object message) 
 	{

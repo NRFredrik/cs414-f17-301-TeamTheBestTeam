@@ -193,7 +193,7 @@ public class Server extends AbstractServer
 			conf.updateWinLossRecord(updateEndDate);
 			conf.updateWinLossRecord(updateStatus);
 		}
-		else if(((String)message).contains("#userHistory"))
+		else if(((String)message).contains("#gameHistory"))
 		{
 			List<String> items = Arrays.asList(((String)message).split(","));
 			String selectedUser = items.get(1);

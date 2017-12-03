@@ -1120,6 +1120,12 @@ public class ClientGUI implements ClientInterface {
 				profileSelectionFrame.setVisible(false);
 				String selectedUser = (String)userProfileList.getSelectedItem();
 				client.handleMessageFromClientUI("#gameHistory,"+ selectedUser);
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 					//login frame
 					viewProfileFrame = new JFrame("Profile");
 					viewProfileFrame.setBounds(100, 100, 400, 400);
@@ -1482,6 +1488,12 @@ public class ClientGUI implements ClientInterface {
 		public void actionPerformed(ActionEvent event) 
 		{
 			client.handleMessageFromClientUI("#needInvites,"+thisUserID);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			//login frame
 			inviteFrame = new JFrame("View Invites");
 			inviteFrame.setBounds(100, 100, 300, 250);
@@ -1552,6 +1564,12 @@ public class ClientGUI implements ClientInterface {
 			public void actionPerformed(ActionEvent event) 
 			{
 				client.handleMessageFromClientUI("#needGames,"+ thisUserID);
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				//login frame
 				viewGameFrame = new JFrame("Current Games");
 				viewGameFrame.setBounds(100, 100, 300, 250);

@@ -162,6 +162,15 @@ public class ClientGUI implements ClientInterface {
 	private boolean turn;
 	//int runningGame;
 	
+	
+	//***************************************************
+	//USE localhost if you want use own server
+	//USE 10.1.36.56 if you want to connect to my sever and are on my network
+	//USE 129.82.94.110 if you want to connect to my sever and are on a DIFFERENT network
+	//not sure if the last one works
+	//***************************************************
+	String host = "localhost";
+	
 	public ClientGUI()throws Exception
 	{
 //*****************INITIALIZE MAIN MENU COMPONENTS***********************		
@@ -1098,7 +1107,7 @@ public class ClientGUI implements ClientInterface {
 
 			if(registerMMText.equals("Register"))
 			{
-				Register register = new Register("localhost",5555);
+				Register register = new Register(host,5555);
 				register.frame.setVisible(true);
 			}
 			else
@@ -1405,8 +1414,9 @@ public class ClientGUI implements ClientInterface {
 			password = passField.getText();
 			gameId = "0";
 			
+			
 			try {
-				client = new Client(thisUserID,password,"localhost", 5555, ClientGUI.this);
+				client = new Client(thisUserID,password,host, 5555, ClientGUI.this);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

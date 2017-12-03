@@ -1389,6 +1389,8 @@ public class ClientGUI implements ClientInterface {
 		public void serverRequestUsers() 
 		{
 			client.handleMessageFromClientUI(("#userList"));
+			client.handleMessageFromClientUI("#needInvites,"+thisUserID);
+			client.handleMessageFromClientUI("#needGames,"+ thisUserID);
 		}
 		
 		public void actionPerformed(ActionEvent event) 
@@ -1495,6 +1497,8 @@ public class ClientGUI implements ClientInterface {
 			invitePanel.setLayout(null);
 			invitePanel.setBackground(Color.lightGray);
 			inviteFrame.add(invitePanel);
+			
+			Thread inviteThread = new Thread();
 			
 			userInviteList = new JList(userInvites.toArray());
 			userInviteList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

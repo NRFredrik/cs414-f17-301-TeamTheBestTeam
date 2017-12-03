@@ -102,8 +102,8 @@ public class Login {
 					/**
 					 * redirect to register page
 					 */
-					Register register = new Register();
-					register.frame.setVisible(true);
+					//Register register = new Register();
+					//register.frame.setVisible(true);
 				}
 				
 			}

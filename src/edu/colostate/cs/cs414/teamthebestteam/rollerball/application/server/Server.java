@@ -6,11 +6,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.application.manageuser.HashPassword;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.application.manageuser.ManageUser;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.game.Board;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.domain.game.Game;
@@ -48,11 +54,47 @@ public class Server extends AbstractServer
 			
 			List<String> items = Arrays.asList(((String) message).split(","));
 			String userID =items.get(1);
-			login(client,userID);
+			String password =items.get(2);
+			
+			login(client,userID,password);
+		}
+		else if(((String)message).contains("#unregister"))
+		{
+			List<String> items = Arrays.asList(((String) message).split(","));
+			String email =items.get(1);
+			String password =items.get(2);
+			
+			if(conf.userExistsEmail(email,password))
+			{
+				conf.removeUser(email);
+				msgToCli("unregisterSuccess", client);
+			}
+			else
+			{
+				msgToCli("unregisterFail", client);
+			}
 		}
 		else if(((String)message).contains("#userList"))
 		{
 			msgToCli(userList, client);
+		}
+		else if(((String)message).contains("#needInvites"))
+		{
+			List<String> items = Arrays.asList(((String) message).split(","));
+			String thisUserID =items.get(1);
+			
+			ArrayList<String> inviteList = conf.populateInviteList(thisUserID);
+			inviteList.add(0, "invites");
+			msgToCli(inviteList, client);
+		}
+		else if(((String)message).contains("#needGames"))
+		{
+			List<String> items = Arrays.asList(((String) message).split(","));
+			String thisUserID =items.get(1);
+			
+			ArrayList<String> gameArray = conf.getCurrentGames(thisUserID);
+			gameArray.add(0, "games");
+			msgToCli(gameArray, client);
 		}
 		else if(((String)message).contains("#invite"))
 		{
@@ -66,8 +108,9 @@ public class Server extends AbstractServer
 		{
 			
 			List<String> items = Arrays.asList(((String) message).split(","));
-			String opponnentUserID =items.get(1);
-			accept(client,opponnentUserID);
+			String thisUserID =items.get(1);
+			String opponnentUserID =items.get(2);
+			accept(client,thisUserID,opponnentUserID);
 		}
 		else if(((String)message).contains("#decline"))
 		{		
@@ -92,14 +135,89 @@ public class Server extends AbstractServer
 			saveGame(client,newGameState,gameID);
 		}
 		
-		 else if(((String)message).contains("#join"))
+		else if(((String)message).contains("#join"))
 		{
 			 //Get serial board
 			List<String> items = Arrays.asList(((String)message).split(","));
 			String gameId = items.get(1);
 			
 			joinGame(client,gameId);
-		}	
+		}
+		else if(((String)message).contains("#whiteWin"))
+		{
+			List<String> items = Arrays.asList(((String)message).split(","));
+			
+			String thisUserID = items.get(1);
+			String oppo = items.get(2);
+			
+			int recordId = conf.getGameRecordID( thisUserID,  oppo);
+			
+			String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + thisUserID + "' WHERE `recordID`='"+recordId+"'";
+			String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ oppo+"' WHERE `recordID`='"+recordId+"'";
+			
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date curDate = new Date();
+			String endDate = dateFormat.format(curDate);
+			String updateEndDate = "UPDATE `Rollerball`.`record` SET `endDate`='"+ endDate+"' WHERE `recordID`='"+recordId+"'";
+			
+			String status = "finished";
+			String updateStatus = "UPDATE `Rollerball`.`record` SET `status`='"+ status+"' WHERE `recordID`='"+recordId+"'";
+
+			conf.updateWinLossRecord(updateWinner);												
+			conf.updateWinLossRecord(updateLoser);
+			conf.updateWinLossRecord(updateEndDate);
+			conf.updateWinLossRecord(updateStatus);
+		}
+		else if(((String)message).contains("#blackWin"))
+		{
+			List<String> items = Arrays.asList(((String)message).split(","));
+			
+			String gameOpponent = items.get(1);
+			String gameCreator = items.get(2);
+			String gameId = items.get(3);
+			
+			//Update the record to database and increment the win count
+			String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + gameOpponent + "' WHERE `recordID`='"+gameId+"'";
+			String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ gameCreator +"' WHERE `recordID`='"+gameId+"'";
+			
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date curDate = new Date();
+			String endDate = dateFormat.format(curDate);
+			String updateEndDate = "UPDATE `Rollerball`.`record` SET `endDate`='"+ endDate+"' WHERE `recordID`='"+gameId+"'";
+			
+			String status = "finished";
+			String updateStatus = "UPDATE `Rollerball`.`record` SET `status`='"+ status+"' WHERE `recordID`='"+gameId+"'";
+			
+			conf.updateWinLossRecord(updateWinner);
+			conf.updateWinLossRecord(updateLoser);
+			conf.updateWinLossRecord(updateEndDate);
+			conf.updateWinLossRecord(updateStatus);
+		}
+		else if(((String)message).contains("#userHistory"))
+		{
+			List<String> items = Arrays.asList(((String)message).split(","));
+			String selectedUser = items.get(1);
+			ArrayList<String> userGameHistoryList = conf.getUserGameHistory(selectedUser);
+			
+			userGameHistoryList.add(0, "profile");
+			msgToCli(userGameHistoryList, client);
+		}
+		else if(((String)message).contains("#finishGame"))
+		{
+			List<String> items = Arrays.asList(((String)message).split(","));
+			String gameCreator=items.get(1);
+			String gameOpponent=items.get(2);
+			
+			conf.finishGameRecord(gameCreator, gameOpponent);
+		}
+		else if(((String)message).contains("#register"))
+		{
+			List<String> items = Arrays.asList(((String)message).split(","));
+			String userID=items.get(1);
+			String email=items.get(2);
+			String password =items.get(3);
+			register(client,userID,email,password);
+		}
 	}
 	
 	protected void joinGame(ConnectionToClient joiningClient, String gameId)
@@ -287,10 +405,59 @@ public class Server extends AbstractServer
 	}
 
 
-	protected void login(ConnectionToClient client, String userID) 
+	protected void login(ConnectionToClient client, String userID, String password) 
 	{
-		client.setInfo("userID", userID);
-		
+		boolean correctLogin = conf.userExists(userID,password);
+		if(correctLogin)
+		{
+			client.setInfo("userID", userID);
+			msgToCli("login,"+correctLogin,client);
+		}
+		else
+		{
+			msgToCli("login,"+correctLogin,client);
+		}
+	}
+	
+	protected void register(ConnectionToClient client, String userID, String email, String password) 
+	{
+		//check to see if email is unique
+			if(!conf.isUniqueEmail(email))
+			{
+				//Alert user to enter unique email
+				//System.out.println("email is not unique");
+				msgToCli("incorrectRegister",client);
+
+			}//end of if
+			else
+			{
+				
+					//TODO get specifications from professor how long password needs to be 
+					//TODO check password length and other properties
+					String hashedPass = "";
+					//salt password
+					HashPassword hash = new HashPassword();
+					try {
+						hashedPass = hash.hashPassword(password); //holds hashed version of password
+					} catch (NoSuchAlgorithmException e1) {
+						e1.printStackTrace();
+					}		
+					
+					/**
+					 * store user in database with name and salted password
+					 * if result is true, user should be in database
+					 */
+					boolean addedUser = conf.addNewUser(userID, email, hashedPass);
+					
+					if (addedUser)
+					{
+						msgToCli("correctRegister",client);
+					}
+					else
+					{
+						msgToCli("incorrectRegister",client);
+					}	
+			}
 	}
 
 	protected void logoff(String userID) 
@@ -334,17 +501,15 @@ public class Server extends AbstractServer
 
 	}
 	
-	protected void accept(ConnectionToClient acceptingClient, String opponnentUserID) 
+	protected void accept(ConnectionToClient acceptingClient,String thisUserID, String opponnentUserID) 
 	{
-			
-		//MOVE BELOW COMMENT TO CLIENT GUI
-		//game = new Game(opponnentUserID,(String)thisClient.getInfo("userID"),1); //creator,opponent,status = 1 (in prog)
-		
 		//CREATE NEW GAME RECORD
-		String newGameID = conf.insertFirstSavedGame(opponnentUserID,(String)acceptingClient.getInfo("userID"), 1,"white",1); //inviter,opp,status,turn,isnew
+		conf.insertFirstSavedGame(opponnentUserID,(String)acceptingClient.getInfo("userID"), 1,"white",1); //inviter,opp,status,turn,isnew
 		
-		//INFORM OPPONENT THAT USER HAS ACCEPTED INVITE
-		//msgToCli("start,"+(String)thisClient.getInfo("userID"),thisClient);
+		conf.acceptInviteDB(opponnentUserID, thisUserID);
+		
+		conf.createGameRecord(opponnentUserID, thisUserID);
+
 	}
 	
 	protected void decline(ConnectionToClient sendingClient, String userID) 

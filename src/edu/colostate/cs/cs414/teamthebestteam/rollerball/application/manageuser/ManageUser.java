@@ -113,6 +113,24 @@ public class ManageUser {
 		}
 	}
 
+	public boolean finishGameState(String gameID) 
+	{
+		String deleteState = "DELETE FROM saves WHERE savesId = " + gameID + ";";
+		//System.out.println(updateInvite);
+
+		// insert the user into the database
+		try {
+			int effected = this.db.getStatement().executeUpdate(deleteState);
+			// if there were rows affected that means user was added
+			if (effected != 0) {
+				return true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 	/**
 	 * @param username
 	 * @param password

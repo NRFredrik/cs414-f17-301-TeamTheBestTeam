@@ -558,9 +558,11 @@ public class ClientGUI implements ClientInterface {
 											{
 												if(p.getPiecePosition() == 10)
 												{
-													JOptionPane.showMessageDialog(null, "GAME OVER. WHITE TEAM WINS");
+													//JOptionPane.showMessageDialog(null, "GAME OVER. WHITE TEAM WINS");
 													System.out.println("GAME OVER. WHITE TEAM WINS");
-													client.handleMessageFromClientUI("#whiteWin,"+ thisUserID +"," + oppo);
+													client.handleMessageFromClientUI("#whiteWin,"+ thisUserID +"," + oppo+","+gameId);
+													//gameFrame.setVisible(false);
+													///mmFrame.setVisible(true);
 												}
 											}
 //											if(p.getPieceType().equals(PieceType.Pawn))
@@ -584,9 +586,11 @@ public class ClientGUI implements ClientInterface {
 											{
 												if(p.getPiecePosition() == 38)
 												{
-													JOptionPane.showMessageDialog(null, "GAME OVER. BLACK TEAM WINS");
+													//JOptionPane.showMessageDialog(null, "GAME OVER. BLACK TEAM WINS");
 													System.out.println("GAME OVER. BLACK TEAM WINS");
 													client.handleMessageFromClientUI("#blackWin,"+ gameOpponent +"," + gameCreator+"," + gameId);
+													//gameFrame.setVisible(false);
+													//mmFrame.setVisible(true);
 													
 												}
 											}
@@ -612,8 +616,9 @@ public class ClientGUI implements ClientInterface {
 											System.out.println("Black Player Is In Check Better Get Free");
 											if(trans.getBoard().currentPlayer.getAlliance().equals(Alliance.WHITE))
 											{
-												JOptionPane.showMessageDialog(null, "GAME OVER. White TEAM WINS");
-												
+												//JOptionPane.showMessageDialog(null, "GAME OVER. White TEAM WINS");
+												//gameFrame.setVisible(false);
+												//mmFrame.setVisible(true);
 												//TODO Update win and loss column
 											}
 											
@@ -623,8 +628,9 @@ public class ClientGUI implements ClientInterface {
 											System.out.println("White Player Is In Check Better Get Free");
 											if(trans.getBoard().currentPlayer.getAlliance().equals(Alliance.BLACK))
 											{
-												JOptionPane.showMessageDialog(null, "GAME OVER. Black TEAM WINS");
-
+												//JOptionPane.showMessageDialog(null, "GAME OVER. Black TEAM WINS");
+												//gameFrame.setVisible(false);
+												//mmFrame.setVisible(true);
 												//TODO Update win and loss column
 											}
 										}
@@ -829,7 +835,6 @@ public class ClientGUI implements ClientInterface {
 		//get board
 		try {
 			rollBoard = Board.rebuildBoard(serializedBoard,turnColor);
-
 //			if(rollBoard.black.isInCheck())
 //			{
 //				JOptionPane.showMessageDialog(null, "GAME OVER. WHITE PLAYER WINS");
@@ -898,9 +903,11 @@ public class ClientGUI implements ClientInterface {
 			{
 				JOptionPane.showMessageDialog(loginFrame, "Your invite has been declined!");
 			}
-			else if(message.toString().contains("start"))
+			else if(message.toString().contains("over"))
 			{
-				
+				JOptionPane.showMessageDialog(mmFrame, "GAME OVER");
+				gameFrame.setVisible(false);
+				mmFrame.setVisible(true);
 			}
 			else if(message.toString().contains("quit"))
 			{
@@ -1661,7 +1668,7 @@ public class ClientGUI implements ClientInterface {
 			{
 				gameCreator = currentOpponent;
 				gameOpponent = thisUserID;
-				client.handleMessageFromClientUI("#finishGame,"+ gameCreator + "," +gameOpponent);
+				client.handleMessageFromClientUI("#finishGame,"+ gameCreator + "," +gameOpponent +","+gameId);
 				
 			}
 		} 

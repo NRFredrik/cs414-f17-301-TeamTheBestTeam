@@ -34,6 +34,7 @@ public class Server extends AbstractServer
 	ArrayList<String> userList;
 	//Game game;
 	
+	int recordID = 0;
 	
 	protected boolean isClosed;
 	// Constructors ****************************************************
@@ -145,10 +146,13 @@ public class Server extends AbstractServer
 		}
 		else if(((String)message).contains("#whiteWin"))
 		{
+			
 			List<String> items = Arrays.asList(((String)message).split(","));
 			
 			String thisUserID = items.get(1);
 			String oppo = items.get(2);
+			String gameID=items.get(3);
+			winGame(client,gameID);
 			
 			int recordId = conf.getGameRecordID( thisUserID,  oppo);
 			
@@ -167,6 +171,7 @@ public class Server extends AbstractServer
 			conf.updateWinLossRecord(updateLoser);
 			conf.updateWinLossRecord(updateEndDate);
 			conf.updateWinLossRecord(updateStatus);
+			conf.finishGameState(gameID);
 		}
 		else if(((String)message).contains("#blackWin"))
 		{
@@ -175,23 +180,26 @@ public class Server extends AbstractServer
 			String gameOpponent = items.get(1);
 			String gameCreator = items.get(2);
 			String gameId = items.get(3);
+			winGame(client,gameId);
 			
+			int recordId = conf.getGameRecordID(gameCreator,  gameOpponent);
 			//Update the record to database and increment the win count
-			String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + gameOpponent + "' WHERE `recordID`='"+gameId+"'";
-			String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ gameCreator +"' WHERE `recordID`='"+gameId+"'";
+			String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + gameOpponent + "' WHERE `recordID`='"+recordId+"'";
+			String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ gameCreator +"' WHERE `recordID`='"+recordId+"'";
 			
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date curDate = new Date();
 			String endDate = dateFormat.format(curDate);
-			String updateEndDate = "UPDATE `Rollerball`.`record` SET `endDate`='"+ endDate+"' WHERE `recordID`='"+gameId+"'";
+			String updateEndDate = "UPDATE `Rollerball`.`record` SET `endDate`='"+ endDate+"' WHERE `recordID`='"+recordId+"'";
 			
 			String status = "finished";
-			String updateStatus = "UPDATE `Rollerball`.`record` SET `status`='"+ status+"' WHERE `recordID`='"+gameId+"'";
+			String updateStatus = "UPDATE `Rollerball`.`record` SET `status`='"+ status+"' WHERE `recordID`='"+recordId+"'";
 			
 			conf.updateWinLossRecord(updateWinner);
 			conf.updateWinLossRecord(updateLoser);
 			conf.updateWinLossRecord(updateEndDate);
 			conf.updateWinLossRecord(updateStatus);
+			conf.finishGameState(gameId);
 		}
 		else if(((String)message).contains("#gameHistory"))
 		{
@@ -207,8 +215,10 @@ public class Server extends AbstractServer
 			List<String> items = Arrays.asList(((String)message).split(","));
 			String gameCreator=items.get(1);
 			String gameOpponent=items.get(2);
+			String gameID=items.get(3);
 			
 			conf.finishGameRecord(gameCreator, gameOpponent);
+			conf.finishGameState(gameID);
 		}
 		else if(((String)message).contains("#register"))
 		{
@@ -277,6 +287,30 @@ public class Server extends AbstractServer
 		msgToCli("move,"+gameID+","+currentgamestate+","+opColor+","+turnColor+","+opTurn,opposingClient);
 		
 		
+	}
+	
+	protected void winGame(ConnectionToClient savingClient, String gameID) 
+	{
+
+		//Send client current game state, their color, and if its their move
+		msgToCli("over",savingClient);
+
+		//SEND OTHER CLIENT INFOR ON NEW GAME STATE IF ONLINE
+		String opponentUserID = conf.getGameOpponent(gameID,(String)savingClient.getInfo("userID"));
+		ConnectionToClient opposingClient =null;
+
+		Thread[] clientThreadList = getClientConnections();
+		for (int i = 0; i < clientThreadList.length; i++) 
+		{
+			
+			if(((ConnectionToClient) clientThreadList[i]).getInfo("userID").equals(opponentUserID))
+			{
+				opposingClient = (ConnectionToClient)clientThreadList[i];
+			}
+			
+		}
+		msgToCli("over",opposingClient);
+	
 	}
 
 	protected void serverStarted() {
@@ -506,10 +540,7 @@ public class Server extends AbstractServer
 		//CREATE NEW GAME RECORD
 		conf.insertFirstSavedGame(opponnentUserID,(String)acceptingClient.getInfo("userID"), 1,"white",1); //inviter,opp,status,turn,isnew
 		
-		conf.acceptInviteDB(opponnentUserID, thisUserID);
-		
-		conf.createGameRecord(opponnentUserID, thisUserID);
-
+		conf.acceptInviteDB(opponnentUserID, thisUserID);		
 	}
 	
 	protected void decline(ConnectionToClient sendingClient, String userID) 

@@ -369,18 +369,6 @@ public class ClientGUI implements ClientInterface {
 		statusArea.setEditable(false);
 		statusArea.setFont(new Font("Arial", Font.PLAIN, 15));
 		statusArea.setBackground(Color.lightGray);
-
-		/*//Pane for main message feed
-		JScrollPane textBoxScrollPane = new JScrollPane();
-		textBoxScrollPane.setBounds(140, 33, 355, 350);
-		left.add(textBoxScrollPane);
-
-		//Textbox for main message feed
-		textBox = new JTextArea();
-		textBox.setFont(new Font("Dialog", Font.PLAIN, 17));       
-		textBoxScrollPane.setViewportView(textBox);
-		textBox.setEditable(false);
-		textBox.setBackground(Color.lightGray);*/
 		
 		colorLabel = new JLabel();
 		colorLabel.setBounds(140, 33, 300, 100);
@@ -389,23 +377,6 @@ public class ClientGUI implements ClientInterface {
 		turnLabel = new JLabel();
 		turnLabel.setBounds(140, 100, 300, 100);
 		left.add(turnLabel);
-		
-
-		//message feild for typing messages
-		messageField = new JTextField();
-		messageField.setEnabled(false);
-		messageField.setBounds(10, 400, 350, 45);
-		//messageField.addKeyListener(new EnterPressed());
-		left.add(messageField);
-
-		//button to send messages
-		sendButton = new JButton("Send");
-		sendButton.setName("Send");
-		sendButton.setToolTipText("Send message");
-		sendButton.setEnabled(false);
-		//sendButton.addActionListener(new sendAction());
-		sendButton.setBounds(365, 400, 115, 25);
-		left.add(sendButton);
 
 		right = boardPanel;
 		mainPane.add(left);
@@ -868,13 +839,12 @@ public class ClientGUI implements ClientInterface {
 	@Override
 	public void display(Object message) 
 	{
-		
 		if(message instanceof String)
 		{
 			System.out.println("MESSAGE RECIEVED FROM SERVER: "+ (String)message);
 			if(message.toString().contains("loginIncorrect"))
 			{
-				JOptionPane.showMessageDialog(loginFrame, "This user does not exist. Register?");
+				JOptionPane.showMessageDialog(loginFrame, "This user does not exist.");
 			}
 			else if(message.toString().contains("loginCorrect"))
 			{
@@ -1480,7 +1450,7 @@ public class ClientGUI implements ClientInterface {
 			client.handleMessageFromClientUI("#accept,"+thisUserID+","+currentOpponent);
 			inviteFrame.setVisible(false);
 			mmFrame.setVisible(true);
-
+			JOptionPane.showMessageDialog(mmFrame, "Invite accepted. Go to 'View Games to join.'");
 			gameCreator = currentOpponent;
 			gameOpponent = thisUserID;
 
@@ -1611,13 +1581,16 @@ public class ClientGUI implements ClientInterface {
 				
 				JScrollPane listScroller = new JScrollPane(gameList);
 				
+				JLabel label = new JLabel("GameID: Opponent");
+				label.setBounds(10, 10, 250, 30);
+				viewGamePanel.add(label);
 				
 				listScroller.setVisible(true);
 				listScroller.setEnabled(true);
-				listScroller.setBounds(10, 10, 250, 100);
+				listScroller.setBounds(10, 40, 250, 100);
 				viewGamePanel.add(listScroller); 
 				
-				
+				viewGamePanel.add(new JLabel("GameID: Opponent"));
 				joinButton = new JButton("Join");
 				joinButton.addActionListener(new joinListener());;
 				joinButton.setBounds(60, 150, 100, 25);
@@ -1642,7 +1615,9 @@ public class ClientGUI implements ClientInterface {
 				@Override
 			    public void valueChanged(ListSelectionEvent event)
 			    {
-			    	gameId= gameList.getSelectedValue().toString();
+					List<String> items = Arrays.asList((gameList.getSelectedValue().toString()).split(":"));
+			    	//gameId= gameList.getSelectedValue().toString();
+					gameId = items.get(0);
 			    	joinButton.setEnabled(true);
 			    	forfeitButton.setEnabled(true);
 			    }

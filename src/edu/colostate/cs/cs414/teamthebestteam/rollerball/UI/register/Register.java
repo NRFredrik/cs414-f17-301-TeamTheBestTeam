@@ -5,32 +5,27 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import java.awt.BorderLayout;
-
-import javax.swing.SwingConstants;
-
-import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
-
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.UI.client.ClientGUI;
 import edu.colostate.cs.cs414.teamthebestteam.rollerball.application.manageuser.HashPassword;
-import edu.colostate.cs.cs414.teamthebestteam.rollerball.application.manageuser.ManageUser;
-import edu.colostate.cs.cs414.teamthebestteam.rollerball.technicalservice.databaseconnector.DatabaseConnection;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.application.server.Client;
+import edu.colostate.cs.cs414.teamthebestteam.rollerball.application.server.ClientInterface;
 
 import java.awt.Color;
 
 import javax.swing.JTextPane;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.AbstractAction;
 
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
-public class Register {
+public class Register implements ClientInterface {
 
 	public JFrame frame;
 	private JTextField typeUsername;
@@ -38,27 +33,15 @@ public class Register {
 	private JPasswordField typePassword;
 	private JPasswordField typePasswordFinal;
 	private final Action action = new SwingAction();
+	Client client;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Register window = new Register();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the application.
-	 */
-	public Register() {
+	public Register(String host, int port) 
+	{
+		try {
+			client = new Client(host, port, Register.this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		initialize();
 	}
 
@@ -66,7 +49,7 @@ public class Register {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
+		frame = new JFrame("Register");
 		frame.getContentPane().setBackground(Color.WHITE);
 		frame.setBounds(100, 100, 450, 450);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -152,56 +135,35 @@ public class Register {
 			
 			if(typePasswordFinal.getText().equals(typePassword.getText()))
 			{
-				boolean isValid = false;
-				//check to see if email is unique
-					String mail = typeEmail.getText(); //holds current email address entered
-					ManageUser con =  new ManageUser(new DatabaseConnection());
-					if(!con.isUniqueEmail(mail))
-					{
-						//Alert user to enter unique email
-						System.out.println("email is not unique");
-						JOptionPane.showMessageDialog(null, "email is not unique. Enter a unique email");
-					}//end of if
-					else
-					{
-						
-							//TODO get specifications from professor how long password needs to be 
-							//TODO check password length and other properties
-							String hashedPass = "";
-							//salt password
-							HashPassword hash = new HashPassword();
-							try {
-								hashedPass = hash.hashPassword(typePasswordFinal.getText()); //holds hashed version of password
-							} catch (NoSuchAlgorithmException e1) {
-								e1.printStackTrace();
-							}
-							String uname = typeUsername.getText();
-							
-							/**
-							 * store user in database with name and salted password
-							 * if result is true, user should be in database
-							 */
-							boolean addedUser = con.addNewUser(uname, mail, hashedPass);
-							
-							//break out of while loop
-							isValid = true;
-							
-							//indicator telling user they registered and now need to login
-							JOptionPane.showMessageDialog(null,"You have Successfully registered. Please login now");
-							
-							/**
-							 * redirect to login page
-							 */
-							//Login login = new Login();
-							//login.frame.setVisible(true);
-							frame.setVisible(false);
-						}
-				}
-			
+				String email = typeEmail.getText(); //holds current email address entered
+				String userID = typeUsername.getText();
+				String password = typePasswordFinal.getText();
+				client.handleMessageFromClientUI("#register,"+ userID +","+email +","+password);
+				//frame.setVisible(false);
+			}
 			else
 			{
 				System.out.println("passwords do not match");
 			}
 		}//end actionPerformed
 	}//end SwingAction class
+
+	@Override
+	public void display(Object message) 
+	{
+			
+		if(message instanceof String)
+		{
+			if(message.toString().contains("incorrectRegister"))
+			{
+				JOptionPane.showMessageDialog(frame, "Registration failed. Is this user already registered?");
+			}
+			else if(message.toString().contains("correctRegister"))
+			{
+				JOptionPane.showMessageDialog(frame,"You have Successfully registered. Please login now");
+				frame.setVisible(false);
+				//client.quit();
+			}
+		}
+	}
 }

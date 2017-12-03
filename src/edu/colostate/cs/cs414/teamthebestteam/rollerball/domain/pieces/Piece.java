@@ -100,6 +100,10 @@ public abstract class Piece {
 	{
 		return this.piecePosition;
 	}
+	public int getPieceValue() 
+	{
+		return this.pieceType.getPieceValue();
+	}
 	
 	public Alliance getPieceAssociation()
 	{
@@ -114,25 +118,25 @@ public abstract class Piece {
 	//used for printing since I don't have GUI
 	public enum PieceType
 	{
-		Pawn("pawn") {
+		Pawn(100,"pawn") {
 			@Override
 			public boolean isKing() {
 				return false;
 			}
 		},
-		Rook("rook") {
+		Rook(500,"rook") {
 			@Override
 			public boolean isKing() {
 				return false;
 			}
 		},
-		Bishop("bishop") {
+		Bishop(300,"bishop") {
 			@Override
 			public boolean isKing() {
 				return false;
 			}
 		},
-		King("king") {
+		King(1000,"king") {
 			@Override
 			public boolean isKing() {
 				return true;
@@ -140,18 +144,27 @@ public abstract class Piece {
 		};
 		
 		private String pieceName;
+		private int pieceValue;
 		
-		PieceType(final String pieceName)
+		PieceType(int pieceValue, final String pieceName)
 		{
 			this.pieceName = pieceName;
+			this.pieceValue = pieceValue;
 		}
 		
+		
+		public int getPieceValue() {
+			// TODO Auto-generated method stub
+			return this.pieceValue;
+		}
+
 		@Override
 		public String toString()
 		{
 			return this.pieceName;
 		}
 		public abstract boolean isKing();
+		
 	}
 	
 	public abstract Collection<Move> calculateLegalMoves(final Board board);

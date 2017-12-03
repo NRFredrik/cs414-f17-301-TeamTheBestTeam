@@ -548,9 +548,9 @@ public class ClientGUI implements ClientInterface {
 											//if so, GAME OVER
 
 										
-										List<String> optionList = new ArrayList<String>();
-										optionList.add("Bishop");
-										optionList.add("Rook");
+//										List<String> optionList = new ArrayList<String>();
+//										optionList.add("Bishop");
+//										optionList.add("Rook");
 
 										for(Piece p : trans.getBoard().getWhitePieces())
 										{
@@ -565,20 +565,20 @@ public class ClientGUI implements ClientInterface {
 													///mmFrame.setVisible(true);
 												}
 											}
-											if(p.getPieceType().equals(PieceType.Pawn))
-											{
-												if(p.getPiecePosition() == 4 || p.getPiecePosition() == 11)
-												{
-													Object[] options = optionList.toArray();
-													promotedTo = (String) JOptionPane.showInputDialog(null, 
-															"You have been promoted.", 
-															"Choose your piece", 
-															JOptionPane.QUESTION_MESSAGE, 
-															null,
-															options, 
-															options[0]);
-												}
-											}
+//											if(p.getPieceType().equals(PieceType.Pawn))
+//											{
+//												if(p.getPiecePosition() == 4 || p.getPiecePosition() == 11)
+//												{
+//													Object[] options = optionList.toArray();
+//													promotedTo = (String) JOptionPane.showInputDialog(null, 
+//															"You have been promoted.", 
+//															"Choose your piece", 
+//															JOptionPane.QUESTION_MESSAGE, 
+//															null,
+//															options, 
+//															options[0]);
+//												}
+//											}
 										}
 										for(Piece p : trans.getBoard().getBlackPieces())
 										{
@@ -594,20 +594,20 @@ public class ClientGUI implements ClientInterface {
 													
 												}
 											}
-											if(p.getPieceType().equals(PieceType.Pawn))
-											{
-												if(p.getPiecePosition() == 37 || p.getPiecePosition() == 44)
-												{
-													Object[] options = optionList.toArray();
-													promotedTo = (String) JOptionPane.showInputDialog(null, 
-															"You have been promoted.", 
-															"Choose your piece", 
-															JOptionPane.QUESTION_MESSAGE, 
-															null,
-															options, 
-															options[0]);
-												}
-											}
+//											if(p.getPieceType().equals(PieceType.Pawn))
+//											{
+//												if(p.getPiecePosition() == 37 || p.getPiecePosition() == 44)
+//												{
+//													Object[] options = optionList.toArray();
+//													promotedTo = (String) JOptionPane.showInputDialog(null, 
+//															"You have been promoted.", 
+//															"Choose your piece", 
+//															JOptionPane.QUESTION_MESSAGE, 
+//															null,
+//															options, 
+//															options[0]);
+//												}
+//											}
 										}
 										
 										//Check for check mate
@@ -835,20 +835,17 @@ public class ClientGUI implements ClientInterface {
 		//get board
 		try {
 			rollBoard = Board.rebuildBoard(serializedBoard,turnColor);
-			if(rollBoard.black.isInCheck())
-			{
-				//JOptionPane.showMessageDialog(null, "GAME OVER. WHITE PLAYER WINS");
-				client.handleMessageFromClientUI("#whiteWin,"+ thisUserID +"," + oppo+","+gameId);
-				//gameFrame.setVisible(false);
-				//mmFrame.setVisible(true);
-			}
-			if(rollBoard.white.isInCheck())
-			{
-				//JOptionPane.showMessageDialog(null, "GAME OVER. BLACK PLAYER WINS");
-				client.handleMessageFromClientUI("#blackWin,"+ gameOpponent +"," + gameCreator+"," +gameId);
-				//gameFrame.setVisible(false);
-				//mmFrame.setVisible(true);
-			}
+//			if(rollBoard.black.isInCheck())
+//			{
+//				JOptionPane.showMessageDialog(null, "GAME OVER. WHITE PLAYER WINS");
+//				client.handleMessageFromClientUI("#whiteWin,"+ thisUserID +"," + oppo);
+				
+//			}
+//			if(rollBoard.white.isInCheck())
+//			{
+//				JOptionPane.showMessageDialog(null, "GAME OVER. BLACK PLAYER WINS");
+//				client.handleMessageFromClientUI("#blackWin,"+ gameOpponent +"," + gameCreator+"," +gameId);
+//			}
 
 		} catch (Exception e) {
 			e.printStackTrace();

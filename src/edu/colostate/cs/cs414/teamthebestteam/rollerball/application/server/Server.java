@@ -94,6 +94,13 @@ public class Server extends AbstractServer
 			String thisUserID =items.get(1);
 			
 			ArrayList<String> gameArray = conf.getCurrentGames(thisUserID);
+			
+			
+			for(int i = 0; i < gameArray.size(); i++)
+			{
+				String opponent = conf.getGameOpponent(gameArray.get(i), thisUserID);
+				gameArray.set(i, gameArray.get(i)+": "+opponent);
+			}
 			gameArray.add(0, "games");
 			msgToCli(gameArray, client);
 		}
@@ -232,6 +239,7 @@ public class Server extends AbstractServer
 	
 	protected void joinGame(ConnectionToClient joiningClient, String gameId)
 	{
+		System.out.println(gameId);
 		String currentgamestate = conf.getSelectedGame(gameId);
 		
 		String color=conf.getUserColor(gameId, (String)joiningClient.getInfo("userID"));
@@ -539,8 +547,8 @@ public class Server extends AbstractServer
 	{
 		//CREATE NEW GAME RECORD
 		conf.insertFirstSavedGame(opponnentUserID,(String)acceptingClient.getInfo("userID"), 1,"white",1); //inviter,opp,status,turn,isnew
-		
 		conf.acceptInviteDB(opponnentUserID, thisUserID);		
+		
 	}
 	
 	protected void decline(ConnectionToClient sendingClient, String userID) 
@@ -563,25 +571,6 @@ public class Server extends AbstractServer
 	}
 	
 	
-	protected void quitGame(ConnectionToClient sendingClient, String userID) 
-	{
-		/*
-		//ConnectionToClient opposingClient =null;
-		
-		Thread[] clientThreadList = getClientConnections();
-		
-		for (int i = 0; i < clientThreadList.length; i++) 
-		{
-			
-			if(((ConnectionToClient) clientThreadList[i]).getInfo("userID").equals(sendingClient.getInfo("opponent")))
-			{
-				msgToCli("quit",(ConnectionToClient)clientThreadList[i]);
-				//opposingClient = (ConnectionToClient)clientThreadList[i];
-			}
-			
-		}
-		*/
-	}
 	
 
 	protected void msgToCli(Object msg, ConnectionToClient client) {

@@ -43,13 +43,13 @@ public class Server extends AbstractServer
 		this.isClosed = false;
 		
 		//MOVE TO FUTURE REGISTER MESSAGE
-		userList = conf.populateUserList();
+		
 	}
 
 
 	public void handleMessageFromClient(Object message, ConnectionToClient client) 
 	{
-		
+		userList = conf.populateUserList();
 		if(((String)message).contains("#login"))
 		{
 			

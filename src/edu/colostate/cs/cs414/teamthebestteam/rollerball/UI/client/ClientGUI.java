@@ -1310,14 +1310,7 @@ public class ClientGUI implements ClientInterface {
 
 		public void actionPerformed(ActionEvent event) 
 		{
-			
-			client.handleMessageFromClientUI(("#userList"));
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+
 			//login frame
 			createGameFrame = new JFrame("Invite Player");
 			createGameFrame.setBounds(100, 100, 300, 250);
@@ -1339,6 +1332,8 @@ public class ClientGUI implements ClientInterface {
 			JLabel userLabel = new JLabel("User");
 			userLabel.setBounds(10, 70, 80, 25);
 			createGamePanel.add(userLabel);
+
+
 			userList = new JComboBox<>();
 			userList.setEnabled(false);
 			userList.setModel(new DefaultComboBoxModel(users.toArray()));

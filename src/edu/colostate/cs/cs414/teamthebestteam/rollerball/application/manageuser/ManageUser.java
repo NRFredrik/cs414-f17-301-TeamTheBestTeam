@@ -105,7 +105,7 @@ public class ManageUser {
 	 *            remove a user using the user's email
 	 */
 	public void removeUser(String email) {
-		String delete_him = "DELETE FROM `Rollerball`.`users` WHERE `email`='" + email + "';";
+		String delete_him = "DELETE FROM `rollerball`.`users` WHERE `email`='" + email + "';";
 		try {
 			int res = this.db.getStatement().executeUpdate(delete_him);
 		} catch (SQLException e) {

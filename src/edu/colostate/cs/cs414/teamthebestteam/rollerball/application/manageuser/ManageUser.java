@@ -391,10 +391,10 @@ public class ManageUser {
 		return recordID;
 	}
 
-	public boolean finishGameRecord(String gameCreator, String gameOpponent) {
+	public boolean finishGameRecord(String thisUserId, String gameOpponent, int recordID) {
 
-		String updateInvite = "UPDATE record SET `status` = 'finished', `winner`='" + gameCreator + "', `loser`='"
-				+ gameOpponent + "' WHERE `creator`='" + gameCreator + "' AND `opponent` = '" + gameOpponent + "';";
+		String updateInvite = "UPDATE record SET `status` = 'finished', `winner`='" + gameOpponent + "', `loser`='"
+				+ thisUserId + "' WHERE `recordID`='" + recordID + "';";
 
 		// insert the user into the database
 		try {

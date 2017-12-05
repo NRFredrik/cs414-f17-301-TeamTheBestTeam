@@ -162,7 +162,7 @@ public class Register implements ClientInterface {
 			{
 				JOptionPane.showMessageDialog(frame,"You have Successfully registered. Please login now");
 				frame.setVisible(false);
-				//client.quit();
+				client.quit();
 			}
 		}
 	}

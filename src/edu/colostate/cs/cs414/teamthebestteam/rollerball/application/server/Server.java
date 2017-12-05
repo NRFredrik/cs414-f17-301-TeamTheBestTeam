@@ -51,8 +51,7 @@ public class Server extends AbstractServer
 	{
 		
 		if(((String)message).contains("#login"))
-		{
-			
+		{	
 			List<String> items = Arrays.asList(((String) message).split(","));
 			String userID =items.get(1);
 			String password =items.get(2);
@@ -77,6 +76,7 @@ public class Server extends AbstractServer
 		}
 		else if(((String)message).contains("#userList"))
 		{
+			userList = conf.populateUserList();
 			msgToCli(userList, client);
 		}
 		else if(((String)message).contains("#needInvites"))
@@ -128,13 +128,6 @@ public class Server extends AbstractServer
 			
 			//decline(client,inviterID);
 		}
-		else if(((String)message).contains("#quit"))
-		{
-			/*
-			List<String> items = Arrays.asList(((String) message).split(","));
-			String userID =items.get(1);
-			quitGame(client,userID);*/
-		}
 		else if(((String)message).contains("#save"))
 		{
 			List<String> items = Arrays.asList(((String)message).split(","));
@@ -157,14 +150,14 @@ public class Server extends AbstractServer
 			List<String> items = Arrays.asList(((String)message).split(","));
 			
 			String thisUserID = items.get(1);
-			String oppo = items.get(2);
-			String gameID=items.get(3);
+			String gameID=items.get(2);
 			winGame(client,gameID);
+			String opponent = conf.getGameOpponent(gameID, thisUserID);
 			
-			int recordId = conf.getGameRecordID( thisUserID,  oppo);
+			int recordId = conf.getGameRecordID( thisUserID,  opponent);
 			
 			String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + thisUserID + "' WHERE `recordID`='"+recordId+"'";
-			String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ oppo+"' WHERE `recordID`='"+recordId+"'";
+			String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ opponent+"' WHERE `recordID`='"+recordId+"'";
 			
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date curDate = new Date();
@@ -184,15 +177,15 @@ public class Server extends AbstractServer
 		{
 			List<String> items = Arrays.asList(((String)message).split(","));
 			
-			String gameOpponent = items.get(1);
-			String gameCreator = items.get(2);
-			String gameId = items.get(3);
-			winGame(client,gameId);
+			String thisUserID = items.get(1);
+			String gameID = items.get(2);
+			winGame(client,gameID);
+			String opponent = conf.getGameOpponent(gameID, thisUserID);
 			
-			int recordId = conf.getGameRecordID(gameCreator,  gameOpponent);
+			int recordId = conf.getGameRecordID(opponent,  thisUserID);
 			//Update the record to database and increment the win count
-			String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + gameOpponent + "' WHERE `recordID`='"+recordId+"'";
-			String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ gameCreator +"' WHERE `recordID`='"+recordId+"'";
+			String updateWinner = "UPDATE `Rollerball`.`record` SET `winner`='" + thisUserID + "' WHERE `recordID`='"+recordId+"'";
+			String updateLoser = "UPDATE `Rollerball`.`record` SET `loser`='"+ opponent +"' WHERE `recordID`='"+recordId+"'";
 			
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Date curDate = new Date();
@@ -206,7 +199,7 @@ public class Server extends AbstractServer
 			conf.updateWinLossRecord(updateLoser);
 			conf.updateWinLossRecord(updateEndDate);
 			conf.updateWinLossRecord(updateStatus);
-			conf.finishGameState(gameId);
+			conf.finishGameState(gameID);
 		}
 		else if(((String)message).contains("#gameHistory"))
 		{
@@ -220,11 +213,14 @@ public class Server extends AbstractServer
 		else if(((String)message).contains("#finishGame"))
 		{
 			List<String> items = Arrays.asList(((String)message).split(","));
-			String gameCreator=items.get(1);
+			String thisUserID=items.get(1);
 			String gameOpponent=items.get(2);
+			int recordID1 = conf.getGameRecordID(gameOpponent,  thisUserID);
+			int recordID2 = conf.getGameRecordID(thisUserID,  gameOpponent);
 			String gameID=items.get(3);
 			
-			conf.finishGameRecord(gameCreator, gameOpponent);
+			conf.finishGameRecord(thisUserID, gameOpponent,recordID1);
+			conf.finishGameRecord(thisUserID, gameOpponent,recordID2);
 			conf.finishGameState(gameID);
 		}
 		else if(((String)message).contains("#register"))
@@ -546,6 +542,7 @@ public class Server extends AbstractServer
 	protected void accept(ConnectionToClient acceptingClient,String thisUserID, String opponnentUserID) 
 	{
 		//CREATE NEW GAME RECORD
+		conf.createGameRecord(opponnentUserID,thisUserID);
 		conf.insertFirstSavedGame(opponnentUserID,(String)acceptingClient.getInfo("userID"), 1,"white",1); //inviter,opp,status,turn,isnew
 		conf.acceptInviteDB(opponnentUserID, thisUserID);		
 		

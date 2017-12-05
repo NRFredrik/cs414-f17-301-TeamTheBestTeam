@@ -531,7 +531,7 @@ public class ClientGUI implements ClientInterface {
 												{
 													//JOptionPane.showMessageDialog(null, "GAME OVER. WHITE TEAM WINS");
 													System.out.println("GAME OVER. WHITE TEAM WINS");
-													client.handleMessageFromClientUI("#whiteWin,"+ thisUserID +"," + oppo+","+gameId);
+													client.handleMessageFromClientUI("#whiteWin,"+ thisUserID +","+gameId);
 													//gameFrame.setVisible(false);
 													///mmFrame.setVisible(true);
 												}
@@ -559,7 +559,7 @@ public class ClientGUI implements ClientInterface {
 												{
 													//JOptionPane.showMessageDialog(null, "GAME OVER. BLACK TEAM WINS");
 													System.out.println("GAME OVER. BLACK TEAM WINS");
-													client.handleMessageFromClientUI("#blackWin,"+ gameOpponent +"," + gameCreator+"," + gameId);
+													client.handleMessageFromClientUI("#blackWin,"+ thisUserID +","+ gameId);
 													//gameFrame.setVisible(false);
 													//mmFrame.setVisible(true);
 													
@@ -1312,6 +1312,13 @@ public class ClientGUI implements ClientInterface {
 		{
 
 			//login frame
+			client.handleMessageFromClientUI(("#userList"));
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			createGameFrame = new JFrame("Invite Player");
 			createGameFrame.setBounds(100, 100, 300, 250);
 			createGameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -1641,9 +1648,11 @@ public class ClientGUI implements ClientInterface {
 		{
 			public void actionPerformed(ActionEvent event) 
 			{
-				gameCreator = currentOpponent;
-				gameOpponent = thisUserID;
-				client.handleMessageFromClientUI("#finishGame,"+ gameCreator + "," +gameOpponent +","+gameId);
+				//gameCreator = currentOpponent;
+				//gameOpponent = thisUserID;
+				client.handleMessageFromClientUI("#finishGame,"+ thisUserID + "," +gameOpponent +","+gameId);
+				viewGameFrame.setVisible(true);
+				mmFrame.setVisible(false);
 				
 			}
 		} 

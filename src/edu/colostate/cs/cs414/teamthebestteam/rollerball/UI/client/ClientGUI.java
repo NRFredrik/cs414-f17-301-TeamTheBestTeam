@@ -891,7 +891,6 @@ public class ClientGUI implements ClientInterface {
 				String userColor =items.get(2);
 				String turnColor = items.get(3);
 				boolean userTurn = Boolean.parseBoolean(items.get(4));
-				//get board
 				try {
 					rollBoard = Board.createStandardBoard();
 

@@ -878,10 +878,22 @@ public class ClientGUI implements ClientInterface {
 				JOptionPane.showMessageDialog(mmFrame, "GAME OVER");
 				gameFrame.setVisible(false);
 				mmFrame.setVisible(true);
-				
+					
+			}
+			else if(message.toString().contains("quit"))
+			{
+				JOptionPane.showMessageDialog(loginFrame, "Your opponent has quit!");
+			}
+			else if(message.toString().contains("join"))
+			{
+				List<String> items = Arrays.asList(((String) message).split(","));
+				String gameState =items.get(1);
+				String userColor =items.get(2);
+				String turnColor = items.get(3);
+				boolean userTurn = Boolean.parseBoolean(items.get(4));
 				//get board
 				try {
-					rollBoard = Board.rebuildBoard("0","white");
+					rollBoard = Board.createStandardBoard();
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -898,20 +910,6 @@ public class ClientGUI implements ClientInterface {
 						boardPanel.drawBoard(rollBoard);
 					}
 				});
-			
-			}
-			else if(message.toString().contains("quit"))
-			{
-				JOptionPane.showMessageDialog(loginFrame, "Your opponent has quit!");
-			}
-			else if(message.toString().contains("join"))
-			{
-				List<String> items = Arrays.asList(((String) message).split(","));
-				String gameState =items.get(1);
-				String userColor =items.get(2);
-				String turnColor = items.get(3);
-				boolean userTurn = Boolean.parseBoolean(items.get(4));
-				//System.out.println(message);
 				
 				joinGame(gameState,userColor,turnColor,userTurn);
 			}

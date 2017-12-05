@@ -878,6 +878,27 @@ public class ClientGUI implements ClientInterface {
 				JOptionPane.showMessageDialog(mmFrame, "GAME OVER");
 				gameFrame.setVisible(false);
 				mmFrame.setVisible(true);
+				
+				//get board
+				try {
+					rollBoard = Board.rebuildBoard("0","white");
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				} 
+				tilePieceIsOn = null;
+				destinationTile = null;
+				movedByPlayer = null;
+				
+				SwingUtilities.invokeLater(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						boardPanel.drawBoard(rollBoard);
+					}
+				});
+			
 			}
 			else if(message.toString().contains("quit"))
 			{
